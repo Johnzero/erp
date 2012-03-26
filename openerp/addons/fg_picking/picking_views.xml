@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="picking_uom_form_view">
+            <field name="name">fuguang.picking.item.uom.form</field>
+            <field name="model">fuguang.picking.item.uom</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="计量单位">
+                    <field name="name" select="1"/>
+                    <field name="factor" select="1"/>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="picking_uom_tree_view">
+            <field name="name">fuguang.picking.item.uom.tree</field>
+            <field name="model">fuguang.picking.item.uom</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="计量单位">
+                    <field name="name"/>
+                    <field name="factor"/>
+                </tree>
+            </field>
+        </record>
+        
+		<record id="view_fg_picking_item_form" model="ir.ui.view">
+			<field name="name">fg_picking.item.form</field>
+            <field name="model">fuguang.picking.item</field>
+            <field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="产品">
+					<field name="name" />
+					<field name="category" />
+					<field name="code" />
+					<field name="barcode"/>
+					<field name="price"/>
+					<field name="sequence"/>
+					<notebook colspan="5">
+					    <page string="颜色">
+					        <field colspan="4" mode="tree,form" name="colors" nolabel="1" widget="one2many_list">
+								<form string="颜色">
+									<field name="color"/>
+									<field name="sequence"/>
+								</form>
+								<tree string="颜色">
+									<field name="color"/>
+									<field name="sequence"/>
+								</tree>
+							</field>
+					    </page>
+					    <page string="可见客户">
+					       <field colspan="4" mode="tree,form" name="user_ids"  nolabel="1" widget="many2many_list"/>
+					    </page>
+					    <page string="计量单位">
+					       <field colspan="4" mode="tree,form" name="uoms" nolabel="1" widget="many2many_list"/>
+					    </page>
+					</notebook>
+					
+					
+				</form>
+			</field>
+		</record>
+		
+		<record id="view_fg_picking_item_tree" model="ir.ui.view">
+            <field name="name">fg_picking.item.tree</field>
+            <field name="model">fuguang.picking.item</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="产品列表">
+                    <field name="name" select="1"/>
+					<field name="category" select="1"/>
+					<field name="code" select="1"/>
+					<field name="sequence"/>
+					<field name="price"/>
+                </tree>
+            </field>
+        </record>
+		
+		
+		<record id="view_partner_client_form" model="ir.ui.view">
+			<field name="name">res.partner.client.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+			<field name="inherit_id" ref="base.view_partner_form"/>
+			<field name="arch" type="xml">
+				<field name="parent_id" position="after">
+					<field name="client_id"/>
+				</field>
+			</field>
+		</record>
+	    <record id="view_fuguang_pick_form" model="ir.ui.view">
+	        <field name="name">fuguang.pick.form</field>
+            <field name="model">fuguang.pick</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="仓库发货单">
+                    <field name="name" select="2" />
+					<field name="date_order" select="1"/>
+					<field name="user_id" select="1"/>
+					<field name="partner_id" required="1"/>
+					<newline/>
+					<notebook colspan="5">
+						<page string="仓库发货单明细">
+                    		<field colspan="4" mode="tree,form" name="pick_line" nolabel="1" widget="one2many_list">
+								<form string="仓库发货单明细">
+									<field name="product"/>
+									<field name="code"/>
+				                    <field name="product_uom"/>
+				                    <field name="color"/>
+									<field name="qty"/>
+									<field name="notes"/>
+								</form>
+								<tree string="仓库发货单明细" editable="bottom">
+									<field name="product" />
+									<field name="code"/>
+				                    <field name="product_uom"/>
+									<field name="color"/>
+									<field name="qty"/>
+									<field name="notes"/>
+								</tree>
+		                    </field>
+						</page>
+						<page string="附注">
+							<field name="note"/>
+						</page>
+					</notebook>
+                </form>
+            </field>
+	    </record>
+	    <record id="view_fuguang_pick_tree" model="ir.ui.view">
+            <field name="name">fuguang.pick.tree</field>
+            <field name="model">fuguang.pick</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="仓库发货单">
+                    <field name="name"/>
+                    <field name="user_id"/>
+					<field name="partner_id"/>
+					<field name="date_order"/>
+                </tree>
+            </field>
+        </record>
+	    
+		<record id="view_fuguang_order_form" model="ir.ui.view">
+			<field name="name">fuguang.order.form</field>
+            <field name="model">fuguang.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="订单">
+					<field name="name" select="2" />
+					<field name="date_order" select="1"/>
+					<field name="user_id" select="1"/>
+					<field name="partner_id" domain="[('customer','=',True)]" required="1"/>
+					<field name="partner_address_id" select="2"/>
+					<field name="total_amount"/>
+					<newline/>
+					<notebook colspan="5">
+						<page string="订单明细">
+                    		<field colspan="4" mode="tree,form" name="order_line" nolabel="1" widget="one2many_list">
+								<form string="订单明细">
+									<field colspan="4" name="product_id"/>
+									<field name="product_uom"/>
+									<field name="color"/>
+									<field name="qty"/>
+									<field name="amount"/>
+									<field name="notes"/>
+								</form>
+								<tree string="订单明细" editable="bottom">
+									<field colspan="4" name="product_id" on_change="product_id_change(product_id)"/>
+									<field name="product_uom" on_change="product_uom_change(product_id, product_uom)"/>
+									<field name="color"/>
+									<field name="qty" on_change="qty_change(product_id, product_uom, qty)"/>
+									<field name="amount"/>
+									<field name="notes"/>
+								</tree>
+		                    </field>
+						</page>
+						<page string="附注">
+							<field name="note"/>
+						</page>
+					</notebook>
+				</form>
+			</field>
+		</record>
+		
+		<record id="view_fuguang_order_tree" model="ir.ui.view">
+            <field name="name">fuguang.order.tree</field>
+            <field name="model">fuguang.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="订单列表">
+                    <field name="name"/>
+                    <field name="user_id"/>
+					<field name="partner_id"/>
+					<field name="date_order"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record id="wizard_fgpick_create" model="ir.ui.view">
+            <field name="name">fuguang.pick.create.wizard.form</field>
+            <field name="model">fuguang.pick.create.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="创建仓库发货单">
+                    <field name="partner_id"/>
+                    <field name="date_order"/>
+                    <field name="text_order_lines" colspan="4" />
+                    <group colspan="4">
+                        <button string="取消" special="cancel" icon="gtk-cancel"/>
+                        <button string="创建" name="finish" type="object" icon="gtk-ok"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+		<record id="action_fuguang_order_form" model="ir.actions.act_window">
+            <field name="name">全部订单列表</field>
+            <field name="res_model">fuguang.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <record id="action_fuguang_order_client_form" model="ir.actions.act_window">
+            <field name="name">订单列表</field>
+            <field name="res_model">fuguang.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('user_id','=',uid)]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <record id="action_fuguang_pick_form" model="ir.actions.act_window">
+            <field name="name">仓库发货单</field>
+            <field name="res_model">fuguang.pick</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+		<record id="action_fuguang_picking_item_form" model="ir.actions.act_window">
+            <field name="name">产品列表</field>
+            <field name="res_model">fuguang.picking.item</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        
+        <record id="action_fg_pick_add_wizard" model="ir.actions.act_window">
+            <field name="name">导入单据</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuguang.pick.create.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_picking_uom_tree_view">
+            <field name="name">计量单位</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuguang.picking.item.uom</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="picking_uom_tree_view"/>
+        </record>
+        
+        
+		
+		<report auto="False" id="report_fuguang_order_html" model="fuguang.order" name="fuguang.order.html" rml="fg_picking/report/order.html" string="导出订单" report_type="mako2html" />
+		<report auto="False" id="report_fuguang_pick_html" model="fuguang.pick" name="fuguang.pick.html" rml="fg_picking/report/picking.html" string="打印" report_type="mako2html" />
+		
+		<menuitem id="menu_fg_picking" name="订单" sequence="1" web_icon="icon/icon.png" web_icon_hover="icon/icon_hover.png"/>
+		<menuitem id="fg_order_menu" name="客户订单" parent="menu_fg_picking" sequence="1"/>
+		<menuitem id="fg_picking_parent_menu" name="仓库发货单" parent="menu_fg_picking" sequence="2" groups="fg_picking.group_fgp_user,fg_picking.group_fgp_admin"/>
+		<menuitem id="fg_picking_config_menu" name="配置" parent="menu_fg_picking" sequence="3" groups="fg_picking.group_fgp_admin"/>
+		
+		<menuitem action="action_fuguang_order_form" id="menu_action_fuguang_picking_order_form"
+            parent="fg_order_menu" sequence="1" groups="fg_picking.group_fgp_user,fg_picking.group_fgp_admin"/>
+        <menuitem action="action_fuguang_order_client_form" id="menu_action_fuguang_picking_order_client_form"
+            parent="fg_order_menu" sequence="2" groups="fg_picking.group_fgp_client"/>
+            
+        <menuitem id="menu_fg_picking_add_wizard" name="导入发货单" parent="fg_picking_parent_menu" sequence="1" action="action_fg_pick_add_wizard"/>
+        <menuitem id="fg_picking_list_menu" name="仓库发货单" parent="fg_picking_parent_menu" sequence="2" action="action_fuguang_pick_form"/>
+
+		<menuitem id="menu_fg_picking_item_manage" name="产品管理" parent="fg_picking_config_menu" sequence="1" action="action_fuguang_picking_item_form"/>
+		<menuitem id="menu_fg_picking_uom_manage" name="计量单位管理" parent="fg_picking_config_menu" sequence="2" action="action_picking_uom_tree_view"/>
+
+    </data>
+</openerp>

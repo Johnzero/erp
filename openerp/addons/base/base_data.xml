@@ -1056,7 +1056,7 @@
         </record>
 
         <record id="main_partner" model="res.partner">
-            <field name="name">Your Company</field>
+            <field name="name">安徽省富光实业股份有限公司</field>
             <!-- Address and Company ID will be set later -->
             <field name="address" eval="[]"/>
             <field name="company_id" eval="None"/>
@@ -1083,13 +1083,25 @@
             <field eval="time.strftime('%Y-01-01')" name="name"/>
         </record>
 
+        <record id="CNY" model="res.currency">
+            <field name="name">CNY</field>
+            <field name="symbol">¥</field>
+            <field name="rounding">0.01</field>
+            <field name="accuracy">4</field>
+        </record>
+        <record id="rateCNY" model="res.currency.rate">
+            <field name="rate">8.7556</field>
+            <field name="currency_id" ref="CNY"/>
+            <field eval="time.strftime('%Y-01-01')" name="name"/>
+        </record>
+        
         <!-- Basic Company  -->
         <record id="main_company" model="res.company">
-            <field name="name">Your Company</field>
+            <field name="name">安徽省富光实业股份有限公司</field>
             <field name="partner_id" ref="main_partner"/>
-            <field name="rml_footer1">Web: www.companyname.com - Tel: +1-212-555-12345</field>
-            <field name="rml_footer2">IBAN: XX12 3456 7890 1234 5678 - SWIFT: SWIFTCODE - VAT: Company vat number</field>
-            <field name="currency_id" ref="base.EUR"/>
+            <field name="rml_footer1">网址: www.fuguangchina.com - 电话: (+86) 551-8751888</field>
+            <field name="rml_footer2">真情相伴富光杯</field>
+            <field name="currency_id" ref="base.CNY"/>
         </record>
 
         <record model="res.users" id="base.user_root">
@@ -1181,18 +1193,6 @@
             <field eval="time.strftime('%Y-01-01')" name="name"/>
         </record>
 
-        <record id="CNY" model="res.currency">
-            <field name="name">CNY</field>
-            <field name="symbol">¥</field>
-            <field name="rounding">0.01</field>
-            <field name="accuracy">4</field>
-            <field name="company_id" ref="main_company"/>
-        </record>
-        <record id="rateCNY" model="res.currency.rate">
-            <field name="rate">8.7556</field>
-            <field name="currency_id" ref="CNY"/>
-            <field eval="time.strftime('%Y-01-01')" name="name"/>
-        </record>
 
 
         <record id="COP" model="res.currency">
