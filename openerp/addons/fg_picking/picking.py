@@ -142,11 +142,11 @@ class fg_order(osv.osv):
         partner_obj = self.pool.get('res.partner')
         addr = partner_obj.address_get(cr, uid, [partner], ['default'])['default']
         return addr
-
+        
     _defaults = {
         'date_order': lambda *a: time.strftime('%Y-%m-%d'),
         'user_id': lambda obj, cr, uid, context: uid,
-        #'name': lambda obj, cr, uid, context: obj.pool.get('ir.sequence').get(cr, uid, 'fuguang.picking'),
+        'name': lambda obj, cr, uid, context: obj.pool.get('ir.sequence').get(cr, uid, 'fuguang.order'),
         'partner_id': _default_partner, 
         'partner_address_id': _default_partner_address,
     }

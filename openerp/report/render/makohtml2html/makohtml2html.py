@@ -50,7 +50,8 @@ class makohtml2html(object):
         body = html.findall('body')
         body_list = []
         footer =  self.format_footer(body[-1].getchildren())
-        for b in body[:-1]:
+         
+        for b in len(body)>1 and body[:-1] or body:
             body_list.append(etree.tostring(b).replace('\t', '').replace('\n',''))
         html_body ='''
         <script type="text/javascript">

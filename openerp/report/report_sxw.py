@@ -154,6 +154,7 @@ class rml_parse(object):
         self.uid = uid
         self.pool = pooler.get_pool(cr.dbname)
         user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+
         self.localcontext = {
             'user': user,
             'setCompany': self.setCompany,
@@ -163,7 +164,7 @@ class rml_parse(object):
             'removeParentNode': self.removeParentNode,
             'format': self.format,
             'formatLang': self.formatLang,
-            'lang' : user.company_id.partner_id.lang,
+            #'lang' : user.company_id.partner_id.lang,
             'translate' : self._translate,
             'setHtmlImage' : self.set_html_image,
             'strip_name' : self._strip_name,
