@@ -140,7 +140,7 @@ class fg_order(osv.osv):
         partner = res[0]
         
         partner_obj = self.pool.get('res.partner')
-        addr = partner_obj.address_get(cr, uid, partner, ['default'])['default']
+        addr = partner_obj.address_get(cr, uid, [partner], ['default'])['default']
         return addr
 
     _defaults = {
