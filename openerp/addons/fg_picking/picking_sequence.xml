@@ -13,7 +13,7 @@
             <field name="padding">4</field>
         </record>
         
-        <record id="seq_type_fuguang_pick" model="ir.sequence.type">
+<!--          <record id="seq_type_fuguang_pick" model="ir.sequence.type">
             <field name="name">Fuguang Pick</field>
             <field name="code">fuguang.pick</field>
         </record>
@@ -22,6 +22,6 @@
             <field name="code">fuguang.pick</field>
             <field name="prefix">FGP-%(year)s%(month)s</field>
             <field name="padding">4</field>
-        </record>
+        </record> -->
     </data>
 </openerp>
