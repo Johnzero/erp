@@ -107,7 +107,7 @@ class fg_order(osv.osv):
         return res
     
     _columns = {
-        'name': fields.char('编号', size=64, required=True, readonly=True),
+        'name': fields.char('编号', size=64, readonly=True),
         'date_order': fields.date('开单日期', required=True, readonly=True),
         'user_id': fields.many2one('res.users', '创建人', readonly=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=True),
@@ -142,11 +142,15 @@ class fg_order(osv.osv):
         partner_obj = self.pool.get('res.partner')
         addr = partner_obj.address_get(cr, uid, [partner], ['default'])['default']
         return addr
+    
+    def _default_name(self, cr, uid, context=None):
+        name = self.pool.get('ir.sequence').get(cr, uid, 'fuguang.order')
+        return name
         
     _defaults = {
         'date_order': lambda *a: time.strftime('%Y-%m-%d'),
         'user_id': lambda obj, cr, uid, context: uid,
-        'name': lambda obj, cr, uid, context: obj.pool.get('ir.sequence').get(cr, uid, 'fuguang.order'),
+        #'name': _default_name,
         'partner_id': _default_partner, 
         'partner_address_id': _default_partner_address,
     }

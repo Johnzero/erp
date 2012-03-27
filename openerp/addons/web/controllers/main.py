@@ -1712,7 +1712,6 @@ class Export(View):
         else:
             columns_headers = [val['label'].strip() for val in fields]
 
-
         return req.make_response(self.from_data(columns_headers, import_data),
             headers=[('Content-Disposition', 'attachment; filename="%s"' % self.filename(model)),
                      ('Content-Type', self.content_type)],
