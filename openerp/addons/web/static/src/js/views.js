@@ -191,18 +191,25 @@ session.web.ActionManager = session.web.OldWidget.extend({
         }).then(function(res) {
             action = _.clone(action);
             action.context = res.context;
-            self.session.get_file({
-                url: '/web/report',
-                data: {action: JSON.stringify(action)},
-                complete: $.unblockUI,
-                success: function(){
-                    if (!self.dialog && on_closed) {
-                        on_closed();
-                    }
-                    self.dialog_stop();
-                },
-                error: session.webclient.crashmanager.on_rpc_error
-            })
+            
+            post_data = {
+                    url: '/web/report',
+                    data: {action: JSON.stringify(action)},
+                    complete: $.unblockUI,
+                    success: function(){
+                        if (!self.dialog && on_closed) {
+                            on_closed();
+                        }
+                        self.dialog_stop();
+                    },
+                    error: session.webclient.crashmanager.on_rpc_error
+                };
+            
+            if(action.report_type == 'mako2html'){
+                self.session.open_report_page(post_data)
+            }else{
+                self.session.get_file(post_data)
+            }
         });
     },
     ir_actions_act_url: function (action) {

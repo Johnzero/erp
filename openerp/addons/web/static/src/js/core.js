@@ -824,6 +824,25 @@ openerp.web.Connection = openerp.web.CallbackEnabled.extend( /** @lends openerp.
     get_url: function (file) {
         return this.prefix + file;
     },
+    
+    /**
+     *Open an html report.
+     *
+    **/
+    open_report_page: function(options) {
+        var token = new Date().getTime();
+        params = options.data;
+        params['session_id'] = this.session_id;
+        params['token'] = token;
+        $.post(options.url, params, function(data){
+            report_window=window.open('','','width=100,height=100');
+
+            report_window.document.write(data);
+            report_window.focus();
+            options.complete();
+            if (options.success) { options.success(); }
+        });
+    },
     /**
      * Cooperative file download implementation, for ajaxy APIs.
      *
