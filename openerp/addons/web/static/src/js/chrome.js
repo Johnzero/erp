@@ -1057,7 +1057,7 @@ openerp.web.WebClient = openerp.web.OldWidget.extend(/** @lends openerp.web.WebC
             self.bind_hashchange();
             var version_label = _t("OpenERP - Unsupported/Community Version");
             if (!self.session.openerp_entreprise) {
-                self.$element.find('.oe_footer_powered').append(_.str.sprintf('<span> - <a href="http://www.openerp.com/support-or-publisher-warranty-contract" target="_blank">%s</a></span>', version_label));
+                self.$element.find('.oe_footer_powered').append(_.str.sprintf('<span> - <a href="http://www.fuguangchina.com/" target="_blank">%s</a></span>', version_label));
                 document.title = version_label;
             }
         });

@@ -125,7 +125,7 @@ msgstr "更改密码"
 #: addons/web/static/src/js/chrome.js:1096
 #: addons/web/static/src/js/chrome.js:1100
 msgid "OpenERP - Unsupported/Community Version"
-msgstr "OpenERP社区支持版"
+msgstr "富光实业ERP系统"
 
 #. openerp-web
 #: addons/web/static/src/js/chrome.js:1131
@@ -739,7 +739,7 @@ msgstr "翻译"
 #: addons/web/static/src/xml/base.xml:44
 #: addons/web/static/src/xml/base.xml:315
 msgid "Powered by"
-msgstr "选择自由，选择"
+msgstr "安徽省富光实业股份有限公司"
 
 #. openerp-web
 #: addons/web/static/src/xml/base.xml:44
