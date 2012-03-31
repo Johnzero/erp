@@ -25,6 +25,7 @@
         "static/lib/jquery.superfish/js/hoverIntent.js",
         "static/lib/jquery.superfish/js/superfish.js",
         "static/lib/jquery.ui/js/jquery-ui-1.8.17.custom.min.js",
+        "static/lib/jquery.ui/js/jquery-ui-i18n.min.js",
         "static/lib/jquery.ui.timepicker/js/jquery-ui-timepicker-addon.js",
         "static/lib/jquery.ui.notify/js/jquery.notify.js",
         "static/lib/jquery.deferred-queue/jquery.deferred-queue.js",
