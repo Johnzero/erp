@@ -422,12 +422,12 @@ def serve():
     interface = config['xmlrpc_interface'] or '0.0.0.0'
     port = config['xmlrpc_port']
     
-    # ctx = {}
-    # if config.has_ssl and config['secure_pkey_file'] and config['secure_cert_file']:
-    #     from OpenSSL import SSL
-    #     ctx = SSL.Context(SSL.SSLv23_METHOD)
-    #     ctx.use_privatekey_file(config['secure_pkey_file'])
-    #     ctx.use_certificate_file(config['secure_cert_file'])
+    #ctx = {}
+    #if config.has_ssl and config['secure_pkey_file'] and config['secure_cert_file']:
+    #    from OpenSSL import SSL
+    #    ctx = SSL.Context(SSL.SSLv23_METHOD)
+    #    ctx.use_privatekey_file(config['secure_pkey_file'])
+    #    ctx.use_certificate_file(config['secure_cert_file'])
     
     try:
         import werkzeug.serving
