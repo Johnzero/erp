@@ -10383,7 +10383,7 @@ msgstr "创建日期"
 #. module: base
 #: view:ir.module.module:0
 msgid "Keywords"
-msgstr ""
+msgstr "关键字"
 
 #. module: base
 #: model:ir.module.module,shortdesc:base.module_l10n_cn
