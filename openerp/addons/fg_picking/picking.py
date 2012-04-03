@@ -189,7 +189,7 @@ class fg_order_line(osv.osv):
     
     _columns = {
         'order_id': fields.many2one('fuguang.order', 'Order Reference', required=True, ondelete='cascade', select=True),
-        'barcode':fields.char('附注', size=20),
+        'barcode':fields.char('条码', size=20),
         'product_id': fields.many2one('fuguang.picking.item', '产品', required=True),
         'qty': fields.float('数量', digits=(16, 0), required=True),
         'product_uom': fields.many2one('fuguang.picking.item.uom', '单位', required=True),
