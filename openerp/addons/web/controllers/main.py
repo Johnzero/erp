@@ -96,7 +96,7 @@ html_template = """<!DOCTYPE html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title>加载系统...</title>
+        <title>富光实业ERP系统</title>
         <link rel="shortcut icon" href="/web/static/src/img/favicon.ico" type="image/x-icon"/>
         %(css)s
         %(js)s

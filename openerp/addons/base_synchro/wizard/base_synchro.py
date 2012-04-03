@@ -90,7 +90,7 @@ class base_synchro(osv.osv_memory):
         ids.sort()
         iii = 0
         for dt, id, action in ids:
-            print 'Process', dt, id, action
+            #print 'Process', dt, id, action
             iii +=1
             if action=='u':
                 pool_src = pool2
@@ -98,7 +98,7 @@ class base_synchro(osv.osv_memory):
             else:
                 pool_src = pool1
                 pool_dest = pool2
-            print 'Read', object.model_id.model, id
+            #print 'Read', object.model_id.model, id
             fields = False
             if object.model_id.model=='crm.case.history':
                 fields = ['email','description','log_id']
@@ -110,16 +110,19 @@ class base_synchro(osv.osv_memory):
                     value.update({key:val[0]})
             value = self.data_transform(cr, uid, pool_src, pool_dest, object.model_id.model, value, action, context=context)
             id2 = self.get_id(cr, uid, object.id, id, action, context)
+
             #
             # Transform value
             #
             #tid=pool_dest.get(object.model_id.model).name_search(cr, uid, value['name'],[],'=',)
             if not (iii%50):
-                print 'Record', iii
+                pass
+                #print 'Record', iii
             # Filter fields to not sync
-            for field in object.avoid_ids:
-                if field.name in value:
-                    del value[field.name]
+            # for field in object.avoid_ids:
+            #                 print 'field', field
+            #                 if field.name in value:
+            #                     del value[field.name]
 
             if id2:
                 #try:
@@ -129,7 +132,6 @@ class base_synchro(osv.osv_memory):
                 self.report_total+=1
                 self.report_write+=1
             else:
-                print value
                 idnew = pool_dest.get(object.model_id.model).create(cr, uid, value)
                 synid = self.pool.get('base.synchro.obj.line').create(cr, uid, {
                     'obj_id': object.id,
@@ -176,7 +178,7 @@ class base_synchro(osv.osv_memory):
                 result = res[0][0]
             else:
                 # LOG this in the report, better message.
-                print self.report.append('WARNING: Record "%s" on relation %s not found, set to null.' % (names,object))
+                self.report.append('WARNING: Record "%s" on relation %s not found, set to null.' % (names,object))
         return result
 
     #
