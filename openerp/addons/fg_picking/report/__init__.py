@@ -29,16 +29,6 @@ class order_html(report_sxw.rml_parse):
             'picking_items':result,
         })
 
-# class pick_html(report_sxw.rml_parse):
-#     def __init__(self, cr, uid, name, context):
-#         super(pick_html, self).__init__(cr, uid, name, context)
-#         # self.localcontext.update({
-#         #             'data': 'data',
-#         #         })
-#         pass
 
 report_sxw.report_sxw('report.fuguang.order.html','fuguang.order',
     'addons/fg_picking/report/order.html',parser=order_html)
-    
-# report_sxw.report_sxw('report.fuguang.pick.html','fuguang.pick',
-#     'addons/fg_picking/report/picking.html',parser=pick_html)

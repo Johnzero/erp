@@ -90,58 +90,6 @@
 				</field>
 			</field>
 		</record>
-<!-- 	    <record id="view_fuguang_pick_form" model="ir.ui.view">
-	        <field name="name">fuguang.pick.form</field>
-            <field name="model">fuguang.pick</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="仓库发货单">
-                    <field name="name" select="2" />
-					<field name="date_order" select="1"/>
-					<field name="user_id" select="1"/>
-					<field name="partner_id" required="1"/>
-					<newline/>
-					<notebook colspan="5">
-						<page string="仓库发货单明细">
-                    		<field colspan="4" mode="tree,form" name="pick_line" nolabel="1" widget="one2many_list">
-								<form string="仓库发货单明细">
-									<field name="product"/>
-									<field name="code"/>
-				                    <field name="product_uom"/>
-				                    <field name="color"/>
-									<field name="qty"/>
-									<field name="notes"/>
-								</form>
-								<tree string="仓库发货单明细" editable="bottom">
-									<field name="product" />
-									<field name="code"/>
-				                    <field name="product_uom"/>
-									<field name="color"/>
-									<field name="qty"/>
-									<field name="notes"/>
-								</tree>
-		                    </field>
-						</page>
-						<page string="附注">
-							<field name="note"/>
-						</page>
-					</notebook>
-                </form>
-            </field>
-	    </record>
-	    <record id="view_fuguang_pick_tree" model="ir.ui.view">
-            <field name="name">fuguang.pick.tree</field>
-            <field name="model">fuguang.pick</field>
-            <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <tree string="仓库发货单">
-                    <field name="name"/>
-                    <field name="user_id"/>
-					<field name="partner_id"/>
-					<field name="date_order"/>
-                </tree>
-            </field>
-        </record> -->
 	    
 		<record id="view_fuguang_order_form" model="ir.ui.view">
 			<field name="name">fuguang.order.form</field>
@@ -232,27 +180,12 @@
             <field name="view_mode">tree,form</field>
         </record>
         
-<!--         <record id="action_fuguang_pick_form" model="ir.actions.act_window">
-            <field name="name">仓库发货单</field>
-            <field name="res_model">fuguang.pick</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-        </record> -->
 		<record id="action_fuguang_picking_item_form" model="ir.actions.act_window">
             <field name="name">产品列表</field>
             <field name="res_model">fuguang.picking.item</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
-        
-<!--         <record id="action_fg_pick_add_wizard" model="ir.actions.act_window">
-            <field name="name">导入单据</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fuguang.pick.create.wizard</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-        </record> -->
         
         <record model="ir.actions.act_window" id="action_picking_uom_tree_view">
             <field name="name">计量单位</field>
@@ -266,20 +199,15 @@
         
 		
 		<report auto="False" id="report_fuguang_order_html" model="fuguang.order" name="fuguang.order.html" rml="fg_picking/report/order.html" string="导出订单" report_type="mako2html" />
-		<!--<report auto="False" id="report_fuguang_pick_html" model="fuguang.pick" name="fuguang.pick.html" rml="fg_picking/report/picking.html" string="打印" report_type="mako2html" />-->
 		
 		<menuitem id="menu_fg_picking" name="订单" sequence="1" web_icon="icon/icon.png" web_icon_hover="icon/icon_hover.png"/>
 		<menuitem id="fg_order_menu" name="客户订单" parent="menu_fg_picking" sequence="1"/>
-<!-- 		<menuitem id="fg_picking_parent_menu" name="仓库发货单" parent="menu_fg_picking" sequence="2" groups="fg_picking.group_fgp_user,fg_picking.group_fgp_admin"/> -->
 		<menuitem id="fg_picking_config_menu" name="配置" parent="menu_fg_picking" sequence="3" groups="fg_picking.group_fgp_admin"/>
 		
 		<menuitem action="action_fuguang_order_form" id="menu_action_fuguang_picking_order_form"
             parent="fg_order_menu" sequence="1" groups="fg_picking.group_fgp_user,fg_picking.group_fgp_admin"/>
         <menuitem action="action_fuguang_order_client_form" id="menu_action_fuguang_picking_order_client_form"
             parent="fg_order_menu" sequence="2" groups="fg_picking.group_fgp_client"/>
-            
-<!--         <menuitem id="menu_fg_picking_add_wizard" name="导入发货单" parent="fg_picking_parent_menu" sequence="1" action="action_fg_pick_add_wizard"/>
-        <menuitem id="fg_picking_list_menu" name="仓库发货单" parent="fg_picking_parent_menu" sequence="2" action="action_fuguang_pick_form"/> -->
 
 		<menuitem id="menu_fg_picking_item_manage" name="产品管理" parent="fg_picking_config_menu" sequence="1" action="action_fuguang_picking_item_form"/>
 		<menuitem id="menu_fg_picking_uom_manage" name="计量单位管理" parent="fg_picking_config_menu" sequence="2" action="action_picking_uom_tree_view"/>

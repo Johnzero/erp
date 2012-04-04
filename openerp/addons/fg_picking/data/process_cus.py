@@ -22,16 +22,25 @@ xml = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 template = """
+<record id="fg_picking_user_%s" model="res.users">
+    <field name="login">%s</field>
+    <field name="password">05518751888</field>
+    <field name="name">%s</field>
+    <field name="signature"></field>
+    <field name="company_id" ref="base.main_company"/>
+    <field name="groups_id" eval="[(6,0,[ref('fg_picking.group_fgp_client')])]"/>
+</record>
 <record id="res_partner_%s" model="res.partner">
     <field name="name">%s</field>
     <field eval="[(6, 0, [ref('res_partner_category_%s')])]" name="category_id"/>
     <field name="customer">1</field>
+    <field name="client_id" ref="fg_picking_user_%s"/>
 </record>
 <record id="res_partner_address_%s" model="res.partner.address">
     <field name="city">%s</field>
     <field name="name">%s</field>
-    <field name="country_id" search="[('model','=','res.country'),('name','=','China')]"/>
-    <field name="state_id" search="[('model','=','res.country.state'),('name','=','%s')]"/>
+    <field name="country_id" ref="base.cn"/>
+    <field name="state_id" model="res.country.state" search="[('name','=','%s')]"/>
     <field name="mobile">%s</field>
     <field name="phone">%s</field>
     <field name="street">%s</field>
@@ -52,9 +61,8 @@ def main():
 	doc = ""
 	for line in lines:
 	    data = line.split(',') #got 11 elm.
-	    print data[2]
 	    c = 0
-	    cus = template % (i, data[0], c, i, data[4], data[0], data[5], data[2], data[3], data[1], i)
+	    cus = template % (i,data[0], data[0], i, data[0], c, i, i, data[4], data[0], data[5].strip(), data[2], data[3], data[1], i)
 	    i = i + 1
 	    doc = doc + cus
 	
