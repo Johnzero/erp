@@ -132,9 +132,9 @@ class configmanager(object):
                          help="specify the TCP port for the XML-RPC Secure protocol", type="int")
         group.add_option("--no-xmlrpcs", dest="xmlrpcs", action="store_false", my_default=True,
                          help="disable the XML-RPC Secure protocol")
-        group.add_option("--cert-file", dest="secure_cert_file", my_default='server.cert',
+        group.add_option("--cert-file", dest="secure_cert_file", my_default='',
                          help="specify the certificate file for the SSL connection")
-        group.add_option("--pkey-file", dest="secure_pkey_file", my_default='server.pkey',
+        group.add_option("--pkey-file", dest="secure_pkey_file", my_default='',
                          help="specify the private key file for the SSL connection")
         parser.add_option_group(group)
 

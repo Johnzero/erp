@@ -422,13 +422,6 @@ def serve():
     interface = config['xmlrpc_interface'] or '0.0.0.0'
     port = config['xmlrpc_port']
     
-    # ctx = {}
-    #     if config.has_ssl and config['secure_pkey_file'] and config['secure_cert_file']:
-    #        from OpenSSL import SSL
-    #        ctx = SSL.Context(SSL.SSLv23_METHOD)
-    #        ctx.use_privatekey_file(config['secure_pkey_file'])
-    #        ctx.use_certificate_file(config['secure_cert_file'])
-    
     try:
         import werkzeug.serving
         if config['proxy_mode']:
@@ -438,7 +431,16 @@ def serve():
         else:
             app = application
             suffix = ''
-        httpd = werkzeug.serving.make_server(interface, port, app, threaded=True) #ssl_context=ctx
+        if config.has_ssl and config['secure_pkey_file'] and config['secure_cert_file']:
+            ctx = {}
+            from OpenSSL import SSL
+            ctx = SSL.Context(SSL.SSLv23_METHOD)
+            ctx.use_privatekey_file(config['secure_pkey_file'])
+            ctx.use_certificate_file(config['secure_cert_file'])
+            httpd = werkzeug.serving.make_server(interface, port, app, threaded=True, ssl_context=ctx)
+        else:
+            httpd = werkzeug.serving.make_server(interface, port, app, threaded=True)
+            
         _logger.info('HTTP service (werkzeug) running on %s:%s%s', interface, port, suffix)
     except ImportError:
         import wsgiref.simple_server

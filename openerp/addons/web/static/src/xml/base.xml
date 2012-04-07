@@ -293,25 +293,25 @@
 <t t-name="Login">
   <div class="login">
     <div class="bottom"> </div>
-    <div class="login_error_message">Invalid username or password</div>
+    <div class="login_error_message">账户或者登录密码错误. 请联系富光ERP系统的管理员.</div>
     <div class="pane">
       <div id="logo"><img src='/web/static/src/img/logo2.png'/></div>
       <form action="" method="post">
         <div class="dbpane" >
-          Database:
+          数据库:
           <input name="db" t-att-value="widget.selected_db || ''"/>
         </div>
         <ul>
-          <li>Username</li>
+          <li>账户</li>
           <li><input type="text" name="login" t-att-value="widget.selected_login || ''" autofocus="autofocus"/></li>
-          <li>Password</li>
+          <li>密码</li>
           <li><input type="password" name="password" t-att-value="widget.selected_password || ''"/></li>
-          <li><button name="submit">Log in</button></li>
+          <li><button name="submit">用户登录 </button></li>
         </ul>
       </form>
       <div class="footer">
-        <a href="#" id="oe-db-config">Manage Databases</a> |
-        <a href="http://www.openerp.com">Powered by <span class="openerp">OpenERP</span></a>
+        <a href="#" id="oe-db-config">管理数据库</a> |
+        <a href="http://www.fuguangchina.com" target="_blank">富光实业</a>
       </div>
     </div>
   </div>

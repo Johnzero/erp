@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="fg_sale_order_tree_view">
+            <field name="name">fg_sale.order.tree</field>
+            <field name="model">fg_sale.order</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="销售订单">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</openerp>

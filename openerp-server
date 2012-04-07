@@ -43,6 +43,8 @@ if sys.getdefaultencoding() != 'utf-8':
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
+os.environ["LC_ALL"] = "en_US.UTF-8"
+
 import openerp
 __author__ = openerp.release.author
 __version__ = openerp.release.version
