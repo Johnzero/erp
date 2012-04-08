@@ -15,7 +15,6 @@ class sale_order(osv.osv):
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),        
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
-        'pricelist_id': fields.many2one('product.pricelist', 'Pricelist', required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '草稿'), ('done', '已审核'), ], '订单状态', readonly=True, select=True),
         'note': fields.text('附注'),
     }

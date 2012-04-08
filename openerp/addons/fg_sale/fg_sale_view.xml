@@ -8,8 +8,35 @@
             <field name="arch" type="xml">
                 <tree string="销售订单">
                     <field name="name"/>
+                    <field name="date_order"/>
+                    <field name="date_confirm"/>
+                    <field name="user_id"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="fg_sale_order_form_view">
+            <field name="name">fg_sale.order.form</field>
+            <field name="model">fg_sale.order</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="销售订单">
+                    <field name="name"/>
+                    <field name="date_order"/>
+                    <field name="date_confirm"/>
+                    <field name="user_id"/>
+                    <field name="partner_id"/>
+                    <field name="partner_shipping_id"/>
+                    <field name="order_line"/>
+                    <field name="note"/>
+                    <field name="state"/>
+                </form>
+            </field>
+        </record>
+        
+        
+        
     </data>
 </openerp>
