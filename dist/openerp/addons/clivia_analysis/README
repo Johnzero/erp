@@ -1,5 +1,0 @@
-export LC_ALL=en_US.UTF-8
-
-
-./openerp-server -c install/openerp-server.conf
-./openerp-web --log-level=error
