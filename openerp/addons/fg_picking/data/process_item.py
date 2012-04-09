@@ -110,8 +110,7 @@ def gen_xml():
 	xml = ''
 	
 	xml_file = open('items.xml','w')
-    
-    
+
 	price_file = open('prices.csv', 'r')
 	price_data = {}
     

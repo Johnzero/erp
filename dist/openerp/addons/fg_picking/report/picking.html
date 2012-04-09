@@ -1,0 +1,102 @@
+<%inherit file="fg_base.html"/>
+<%block name="title">仓库发货单</%block>
+<%block name="body">
+<style type="text/css">
+    
+    table#body, table#body td
+    {
+        border:1px solid #ccc;
+    }
+</style>
+    % if len(objects) > 1:
+		不支持多单据下载.
+	% else:
+	    <table width="800" id="header">
+	        <tr>
+	            <td width="45%">&nbsp; &nbsp; </td>
+    			<td width="25%">
+    				<div>
+    					<b>仓库发货单</b>
+    				</div>
+    			</td>
+    			<td>
+    				<div style="text-align:right;font-size:14px;">
+    					单号: ${ objects[0].name }
+    				</div>
+    			</td>
+	        </tr>
+	    </table>
+	    <table width="800" id="body" style="border-collapse:collapse;border:1px solid #ccc;">
+	        <tr>
+	            <td colspan="6">单位名称: ${ objects[0].partner_id.name }</td>
+	            <td>事业部: </td>
+	            <td>日期: ${ objects[0].date_order }</td>
+	        </tr>
+	        <tr>
+	            <td align="center">品名</td>
+                <td align="center">货号</td>
+                <td align="center">颜色</td>
+                <td align="center">单位</td>
+                <td align="center">计划发送数</td>
+                <td align="center">实际发出数</td>
+                <td align="center">货物所在地</td>
+                <td align="center">备注</td>
+            </tr>
+	        % for line in objects[0].pick_line:
+	        <tr>
+	            <td>${ line.product }</td>
+                <td>${ line.code }</td>
+                <td>${ line.color }</td>
+                <td>${ line.product_uom }</td>
+                <td>${ line.qty }</td>
+                <td></td>
+                <td></td>
+                <td>${ line.notes or '' }</td>
+	        </tr>
+	        % endfor 
+	    </table>
+	    <div id="footer">
+	        <table width="800">
+	            <tr>
+	                <td width="25%">下单签字: ${ objects[0].user_id.name }</td>
+	                <td width="25%">仓库签字:</td>
+	                <td width="25%">装卸签字:</td>
+	                <td width="25%">装卸复核:</td>
+	            </tr>
+	        </table>
+	    </div>
+	    
+	    <script language="javascript" type="text/javascript">
+			var LODOP; 
+			LODOP=getLodop(document.getElementById('LODOP'),document.getElementById('LODOP_EM')); 
+			LODOP.SET_LICENSES("","292881049110510152101109126561","","");
+
+			function PreviewMytable(){
+				LODOP.PRINT_INIT("fg_picking");
+				LODOP.SET_PRINT_PAGESIZE(1, 2300, 1300, 'fg_picking');
+				
+				LODOP.ADD_PRINT_HTM("0mm", "0mm", "189mm", "14mm",document.getElementById("header").innerHTML);
+				LODOP.SET_PRINT_STYLEA(0,"ItemType",1);
+				LODOP.SET_PRINT_STYLEA(0,"LinkedItem",1);
+				LODOP.SET_PRINT_STYLEA(0,"Horient",2);
+				LODOP.ADD_PRINT_TABLE("15mm", "5mm", "189mm", "89mm",document.getElementById("body").innerHTML);
+				LODOP.SET_PRINT_STYLEA(0,"Horient",2);
+				
+				LODOP.ADD_PRINT_HTM("110mm","0mm","160mm","8mm",document.getElementById("footer").innerHTML);
+				LODOP.SET_PRINT_STYLEA(0,"ItemType",1);
+				LODOP.SET_PRINT_STYLEA(0,"LinkedItem",1);
+				
+				LODOP.ADD_PRINT_TEXT("117mm","184mm","15mm","5mm","第#页/共&页");
+				LODOP.SET_PRINT_STYLEA(0,"ItemType",2);
+				
+				LODOP.NewPageA();
+				
+				LODOP.PREVIEW();
+				//window.close();
+			}
+			PreviewMytable();
+			
+		</script>
+	    
+	% endif 
+</%block>

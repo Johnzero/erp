@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <menuitem id="menu_fg_sale" name="业务开单" sequence="2" web_icon="icon/fg_sale.png" web_icon_hover="icon/fg_sale_hover.png"/>
+        <record id="view_partner_client_form" model="ir.ui.view">
+	    <field name="name">res.partner.client.form</field>
+            <field name="model">res.partner</field>
+            <field name="type">form</field>
+                <field name="inherit_id" ref="base.view_partner_form"/>
+                <field name="arch" type="xml">
+                <field name="client_id" position="after">
+                <field name="ratio"/>
+                </field>
+            </field>
+        </record>
+        
+        
         <record model="ir.ui.view" id="fg_sale_order_tree_view">
             <field name="name">fg_sale.order.tree</field>
             <field name="model">fg_sale.order</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="销售订单">
-                    <field name="name"/>
+                    <field name="name"/>                 
                     <field name="date_order"/>
                     <field name="date_confirm"/>
                     <field name="user_id"/>
@@ -23,20 +37,61 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="销售订单">
-                    <field name="name"/>
-                    <field name="date_order"/>
-                    <field name="date_confirm"/>
-                    <field name="user_id"/>
-                    <field name="partner_id"/>
-                    <field name="partner_shipping_id"/>
-                    <field name="order_line"/>
-                    <field name="note"/>
-                    <field name="state"/>
+                    <group col="6" colspan="4">
+                        <field name="name"/>
+                        <field name="user_id"/>
+                        <field name="date_order"/>
+                        <field name="partner_id" options='{"quick_create": false}' domain="[('customer','=',True)]" required="1"/>
+                        <field domain="[('partner_id','=',partner_id)]" name="partner_shipping_id" options='{"quick_create": false}'/>
+                        <field name="date_confirm"/>
+                    </group>
+                    <notebook colspan="5">
+                        <page string="销售明细">
+                            <newline/>
+                            <field colspan="4" name="order_line" nolabel="1" widget="one2many_list">
+                                <form string="销售明细">
+                                    <field name="product_id"/>
+                                    <field name="product_uom"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_discount"/>
+                                    <field name="price_subtotal" sum="共计"/>
+                                    <field name="notes"/>
+                                </form>
+                                <tree string="销售明细" editable="top">
+                                    <field name="product_id"/>
+                                    <field name="product_uom"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_discount"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="notes"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="附注">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                    <newline/>
+                    <group col="6" colspan="4">
+                    <field name="amount_total"/>
+                    <field name="state" string="状态" icon="gtk-ok"/>
+                    <button name="review" confirm="一旦审核以后,将不能被修改, 确认审核?" 
+    			    string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                    </group>
                 </form>
             </field>
         </record>
         
+        <record id="action_fg_saleorder_form" model="ir.actions.act_window">
+            <field name="name">销售订单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_sale.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{}</field>
+        </record>
         
-        
+        <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
+        <menuitem id="menu_fg_sale_order_all" name="所有订单" parent="menu_fg_sale_order" action="action_fg_saleorder_form"/>
     </data>
 </openerp>
