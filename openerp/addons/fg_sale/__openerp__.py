@@ -7,7 +7,7 @@
     'description': """富光业务部销售子系统""",
     'author': 'Daniel',
     'website': 'http://www.ide.fm',
-    'depends': ['base', 'board', 'product'],
+    'depends': ['base', 'board', 'product', 'fg_data'],
     'init_xml': [],
     'update_xml': [
 	'fg_sale_view.xml',

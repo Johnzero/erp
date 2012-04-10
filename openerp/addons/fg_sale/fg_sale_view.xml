@@ -26,6 +26,7 @@
                     <field name="date_confirm"/>
                     <field name="user_id"/>
                     <field name="partner_id"/>
+                    <field name="minus"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -73,10 +74,10 @@
                     </notebook>
                     <newline/>
                     <group col="6" colspan="4">
-                    <field name="amount_total"/>
-                    <field name="state" string="状态" icon="gtk-ok"/>
-                    <button name="review" confirm="一旦审核以后,将不能被修改, 确认审核?" 
-    			    string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                        <field name="minus"/>
+                        <field name="amount_total"/>
+                        <field name="state" string="状态" icon="gtk-ok"/>
+                        <button name="review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
                     </group>
                 </form>
             </field>

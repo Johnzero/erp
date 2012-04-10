@@ -39,24 +39,24 @@ def check_ean(eancode):
         int(eancode)
     except:
         return False
-    oddsum=0
-    evensum=0
-    total=0
-    eanvalue=eancode
-    reversevalue = eanvalue[::-1]
-    finalean=reversevalue[1:]
-
-    for i in range(len(finalean)):
-        if is_pair(i):
-            oddsum += int(finalean[i])
-        else:
-            evensum += int(finalean[i])
-    total=(oddsum * 3) + evensum
-
-    check = int(10 - math.ceil(total % 10.0)) %10
-
-    if check != int(eancode[-1]):
-        return False
+    # oddsum=0
+    #     evensum=0
+    #     total=0
+    #     eanvalue=eancode
+    #     reversevalue = eanvalue[::-1]
+    #     finalean=reversevalue[1:]
+    # 
+    #     for i in range(len(finalean)):
+    #         if is_pair(i):
+    #             oddsum += int(finalean[i])
+    #         else:
+    #             evensum += int(finalean[i])
+    #     total=(oddsum * 3) + evensum
+    # 
+    #     check = int(10 - math.ceil(total % 10.0)) %10
+    # 
+    #     if check != int(eancode[-1]):
+    #         return False
     return True
 #----------------------------------------------------------
 # UOM

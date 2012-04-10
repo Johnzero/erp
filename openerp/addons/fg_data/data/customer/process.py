@@ -27,7 +27,7 @@ template = """
 <record id="res_partner_address_%s" model="res.partner.address">
     <field name="city">%s</field>
     <field name="name">%s</field>
-    <field name="country_id" model="res.country" search="('name','=','China')]"/>
+    <field name="country_id" model="res.country" search="[('name','=','China')]"/>
     <field name="state_id" model="res.country.state" search="[('name','=','%s')]"/>
     <field name="mobile">%s</field>
     <field name="phone">%s</field>

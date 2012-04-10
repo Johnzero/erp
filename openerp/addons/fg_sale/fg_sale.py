@@ -27,12 +27,14 @@ class sale_order(osv.osv):
         'amount_total': fields.function(_amount_all, string='金额', store = True, multi='sums'),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '草稿'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
+        'minus': fields.boolean('红字'),
         'note': fields.text('附注'),
     }
     
     _defaults = {
         'date_order': fields.date.context_today,
         'state': 'draft',
+        'minus': False, 
         'user_id': lambda obj, cr, uid, context: uid,
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['default'])['default'],
     }
