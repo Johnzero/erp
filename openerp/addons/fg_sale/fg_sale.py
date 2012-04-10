@@ -79,7 +79,7 @@ class sale_order_line(osv.osv):
             res[line.id] = 0.0
         
         return res
-        
+    
     _columns = {
         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
         'sequence': fields.integer('Sequence'),
