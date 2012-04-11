@@ -42,7 +42,7 @@
                         <field name="name"/>
                         <field name="user_id"/>
                         <field name="date_order"/>
-                        <field name="partner_id" options='{"quick_create": false}' domain="[('customer','=',True)]" required="1"/>
+                        <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" required="1"/>
                         <field domain="[('partner_id','=',partner_id)]" name="partner_shipping_id" options='{"quick_create": false}'/>
                         <field name="date_confirm"/>
                     </group>
@@ -54,16 +54,16 @@
                                     <field name="product_id"/>
                                     <field name="product_uom"/>
                                     <field name="product_uom_qty"/>
+                                    <field name="price_subtotal"/>
                                     <field name="price_discount"/>
-                                    <field name="price_subtotal" sum="共计"/>
                                     <field name="notes"/>
                                 </form>
                                 <tree string="销售明细" editable="top">
                                     <field name="product_id"/>
                                     <field name="product_uom"/>
                                     <field name="product_uom_qty"/>
-                                    <field name="price_discount"/>
-                                    <field name="price_subtotal"/>
+                                    <field name="price_subtotal" sum="原价共计"/>
+                                    <field name="price_discount" sum="折后共计"/>
                                     <field name="notes"/>
                                 </tree>
                             </field>
