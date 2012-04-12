@@ -16,6 +16,7 @@
         'data/product/color.xml',
         'data/product/category_ex.xml',
         'data/product/product.xml',
+        'data/user.xml',
     ],
     'demo_xml': [],
     'installable': True,

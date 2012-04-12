@@ -19,7 +19,7 @@ class sale_order(osv.osv):
     
     _columns = {
         'name': fields.char('单号', size=64, required=True, readonly=True, select=True),
-        'date_order': fields.date('日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
+        'date_order': fields.date('开单日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
         'date_confirm': fields.date('审核日期', readonly=True, select=True, ),
         'user_id': fields.many2one('res.users', '制单人', states={'draft': [('readonly', False)]}, select=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),        

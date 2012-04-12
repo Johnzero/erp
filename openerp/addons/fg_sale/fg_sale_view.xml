@@ -26,6 +26,7 @@
                     <field name="date_confirm"/>
                     <field name="user_id"/>
                     <field name="partner_id"/>
+                    <field name="amount_total"/>
                     <field name="minus"/>
                     <field name="state"/>
                 </tree>
@@ -83,6 +84,35 @@
             </field>
         </record>
         
+        
+        <record id="view_fg_sales_order_filter" model="ir.ui.view">
+            <field name="name">fg_sale.order.list.select</field>
+            <field name="model">fg_sale.order</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="搜索订单">
+                    <filter icon="terp-document-new" string="未审核" domain="[('state','=','draft')]"/>
+                    <filter icon="terp-check" string="已审核" domain="[('state','=','done')]"/>
+                    <separator orientation="vertical"/>
+                    <field name="partner_id"/>
+                    <field name="user_id">
+                        <filter domain="[('user_id','=',uid)]" help="我创建的订单" icon="terp-personal"/>
+                    </field>
+                    <field name="name"/>
+                    <field name="minus"/>
+                    <newline/>
+                    <group expand="0" string="分组为..." groups="base.group_extended">
+                        <filter string="客户" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="业务员" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="状态" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="订单日期" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
         <record id="action_fg_sale_order_all" model="ir.actions.act_window">
             <field name="name">所有销售订单</field>
             <field name="type">ir.actions.act_window</field>
@@ -90,6 +120,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar</field>
             <field name="context">{}</field>
+            <field name="search_view_id" ref="view_fg_sales_order_filter"/>
         </record>
         
         <record id="action_fg_sale_order_my" model="ir.actions.act_window">
@@ -100,40 +131,11 @@
             <field name="view_mode">tree,form,calendar</field>
             <field name="context">{}</field>
             <field name="domain">[('user_id','=',uid)]</field>
-        </record>
-        <record id="action_fg_sale_order_state_draft" model="ir.actions.act_window">
-            <field name="name">待审核销售订单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_sale.order</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form,calendar</field>
-            <field name="context">{}</field>
-            <field name="domain">[('state','=','draft')]</field>
-        </record>
-        <record id="action_fg_sale_order_state_done" model="ir.actions.act_window">
-            <field name="name">已审核销售订单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_sale.order</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form,calendar</field>
-            <field name="context">{}</field>
-            <field name="domain">[('state','=','done')]</field>
-        </record>
-        <record id="action_fg_sale_order_state_cancel" model="ir.actions.act_window">
-            <field name="name">已取消销售订单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_sale.order</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form,calendar</field>
-            <field name="context">{}</field>
-            <field name="domain">[('state','=','cancel')]</field>
+            <field name="search_view_id" ref="view_fg_sales_order_filter"/>
         </record>
         
         <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my"/>
-        <menuitem id="menu_fg_sale_order_draft" parent="menu_fg_sale_order" action="action_fg_sale_order_state_draft"/>
-        <menuitem id="menu_fg_sale_order_done" parent="menu_fg_sale_order" action="action_fg_sale_order_state_done"/>
-        <menuitem id="menu_fg_sale_order_cancel" parent="menu_fg_sale_order" action="action_fg_sale_order_state_cancel"/>
     </data>
 </openerp>

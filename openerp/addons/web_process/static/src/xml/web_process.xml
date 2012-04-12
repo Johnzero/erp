@@ -13,32 +13,6 @@
                     <h1 class="process_h1">
                         <t t-esc="action.name"/> (<t t-esc="model"/>)
                     </h1>
-                    <p class="process-links">
-                        <a class="cta-a" target="_blank" href="http://doc.openerp.com/">
-                            <span>
-                                <strong>Documentation</strong>
-                                Read Documentation Online
-                            </span>
-                        </a>
-                        <a class="cta-a" target="_blank" href="http://www.openerp.com/forum/">
-                            <span>
-                                <strong>Forum</strong>
-                                Community Discussion
-                            </span>
-                        </a>
-                        <a class="cta-a" target="_blank" href="http://www.openerp.com/catalog/150">
-                            <span>
-                                <strong>Books</strong>
-                                Get the books
-                            </span>
-                        </a>
-                        <a class="cta-a" target="_blank" href="http://www.openerp.com/catalog">
-                            <span>
-                                <strong>OpenERP Enterprise</strong>
-                                Purchase OpenERP Enterprise
-                            </span>
-                        </a>
-                    </p>
                 </td>
             </tr>
             <tr>
