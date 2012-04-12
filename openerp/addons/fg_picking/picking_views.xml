@@ -148,23 +148,6 @@
         </record>
         
         
-        <record id="wizard_fgpick_create" model="ir.ui.view">
-            <field name="name">fuguang.pick.create.wizard.form</field>
-            <field name="model">fuguang.pick.create.wizard</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="创建仓库发货单">
-                    <field name="partner_id"/>
-                    <field name="date_order"/>
-                    <field name="text_order_lines" colspan="4" />
-                    <group colspan="4">
-                        <button string="取消" special="cancel" icon="gtk-cancel"/>
-                        <button string="创建" name="finish" type="object" icon="gtk-ok"/>
-                    </group>
-                </form>
-            </field>
-        </record>
-        
 	<record id="action_fuguang_order_form" model="ir.actions.act_window">
             <field name="name">全部订单列表</field>
             <field name="res_model">fuguang.order</field>

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
-import pooler
+import pooler, time
 from osv import fields, osv
-
+from tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 class res_partner(osv.osv):
     _inherit = 'res.partner'
@@ -15,19 +15,28 @@ class sale_order(osv.osv):
     _description = "富光业务部销售订单"
     
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
-        pass
+        res = {}
+        for order in self.browse(cr, uid, ids, context=context):
+            res[order.id] = { 'total_amount':0.0 }
+            amount = 0
+            for line in order.order_line:
+                amount = amount + line.price_discount
+            res[order.id]['total_amount'] = amount
+        return res
     
     _columns = {
-        'name': fields.char('单号', size=64, required=True, readonly=True, select=True),
-        'date_order': fields.date('开单日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
-        'date_confirm': fields.date('审核日期', readonly=True, select=True, ),
-        'user_id': fields.many2one('res.users', '制单人', states={'draft': [('readonly', False)]}, select=True),
+
+        'name': fields.char('单号', size=64, required=True, select=True, readonly=True, states={'draft': [('readonly', False)]}),
+        'date_order': fields.date('日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
+        'date_confirm': fields.date('审核日期', readonly=True, select=True),
+        'user_id': fields.many2one('res.users', '制单人', select=True, readonly=True),
+        'confirmer_id': fields.many2one('res.users', '审核人', select=True, readonly=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),        
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
-        'amount_total': fields.function(_amount_all, string='金额', store = True, multi='sums'),
+        'amount_total': fields.function(_amount_all, string='金额', store=True, multi='sums'),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '草稿'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
-        'minus': fields.boolean('红字'),
+        'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
         'note': fields.text('附注'),
     }
     
@@ -38,6 +47,13 @@ class sale_order(osv.osv):
         'user_id': lambda obj, cr, uid, context: uid,
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['default'])['default'],
     }
+    
+    def onchange_partner_id(self, cr, uid, ids, part):
+        if not part:
+            return {'value': {'partner_shipping_id': False}}
+        partner_obj = self.pool.get('res.partner')
+        addr = partner_obj.address_get(cr, uid, [part], ['default'])['default']
+        return {'value': {'partner_shipping_id':addr}}
     
     def _log_event(self, cr, uid, ids, factor=0.7, name='FG Sale Order'):
         invs = self.read(cr, uid, ids, ['date_order', 'partner_id', 'amount_untaxed'])
@@ -63,6 +79,12 @@ class sale_order(osv.osv):
             self.pool.get('res.partner.event').create(cr, uid, event)
     
     def review(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, { 
+            'state': 'done', 
+            'confirmer_id': uid, 
+            'date_confirmed': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            }
+        )
         return True
     
     _sql_constraints = [
