@@ -50,7 +50,6 @@ class picking_item(osv.osv):
     #      
     
     _columns = {
-        'category': fields.char('分类', size=20, required=True),
         'name': fields.char('名称', size=40, required=True),
         'code':fields.char('货号', size=20, required=True),
         'barcode':fields.char('条码', size=20),
