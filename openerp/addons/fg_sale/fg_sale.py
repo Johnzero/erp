@@ -35,7 +35,7 @@ class sale_order(osv.osv):
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
         'amount_total': fields.function(_amount_all, string='金额', store=True, multi='sums'),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
-        'state': fields.selection([('draft', '草稿'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
+        'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
         'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
         'note': fields.text('附注'),
     }
@@ -78,9 +78,18 @@ class sale_order(osv.osv):
             }
             self.pool.get('res.partner.event').create(cr, uid, event)
     
-    def review(self, cr, uid, ids, context=None):
+    def button_review(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, { 
             'state': 'done', 
+            'confirmer_id': uid, 
+            'date_confirmed': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            }
+        )
+        return True
+    
+    def button_cancel(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, { 
+            'state': 'cancel', 
             'confirmer_id': uid, 
             'date_confirmed': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             }
@@ -108,13 +117,51 @@ class sale_order_line(osv.osv):
         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
         'sequence': fields.integer('Sequence'),
         'product_id': fields.many2one('product.product', '产品', domain=[('sale_ok', '=', True)], change_default=True),
-        'product_uom_qty': fields.float('数量', required=True,),
-        'product_uom': fields.many2one('product.uom', ' 单位', required=True,),
-        'price_discount': fields.float('打折价格', digit=2),
+        'product_uom': fields.many2one('product.uom', ' 单位', required=True),
+        'product_uom_qty': fields.float('数量', required=True),
+        'price_discount': fields.float('打折价格'),
         'price_subtotal': fields.function(_amount_line, string='小计'),
         'notes': fields.char('附注', size=100),
     }
     
+    def product_id_change(self, cr, uid, ids, product_id, context=None):
+        if not product_id:
+            return {'domain': {}, 'value':{'product_uom':'', 'product_uom_qty':0, 'price_discount':0,'price_subtotal':0}}
+        result = {}
+        product_obj = self.pool.get('product.product')
+        
+        product = product_obj.browse(cr, uid, product_id, context=context)
+        result['product_uom'] = product.uom_id.id
+        
+        return {'value': result}
+    
+    def _get_amount(self,cr,uid, ids, product_id, uom_id, context=None):
+        if product_id and product_uom and qty:
+            product_obj = self.pool.get('product.product')
+            
+            product = product_obj.browse(cr, uid, product_id, context=context)
+            if product:
+                price = product.lst_price
+                
+                return {'value': {'price_subtotal':price, 'price_discount':price}}
+        return {'value':{}}
+    
+    
+    def product_uom_id_change(self, cr, uid, ids, product_id, uom_id, context=None):
+        return {'value': {'product_uom_qty':0, 'price_discount':0, 'price_subtotal':0}}
+    
+    
+    def product_uom_qty_change(self, cr, uid, ids, product_id, product_uom, qty, context=None):
+        if product_id and product_uom and qty:
+            product_obj = self.pool.get('product.product')
+            #product_uom_obj = self.pool.get('product.uom')
+            product = product_obj.browse(cr, uid, product_id, context=context)
+            if product:
+                price = product.lst_price * product.uom_id.factor * qty
+                
+                return {'value': {'price_subtotal':price, 'price_discount':price}}
+        return {'value':{}}
+        
     _order = 'sequence, id'
     
     

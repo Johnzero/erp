@@ -48,6 +48,12 @@ uom_xml = """<record id="pick_item_uom_%s" model="fuguang.picking.item.uom">
         </record>
 """
 
+uom_tao_xml = """<record id="pick_item_uom_tao_%s" model="fuguang.picking.item.uom">
+            <field name="name">件(%s套)</field>
+                <field name="factor">%s</field>
+        </record>
+"""
+
 def gen_xml_new():
     xml = ''
     
@@ -63,7 +69,7 @@ def gen_xml_new():
         if l and ',,,,' not in l:
             l_list = l.strip().split(',')
             if len(l_list) == 6:
-                code = l_list[1].strip().replace('型','')
+                code = l_list[1].strip().replace('型','') or '无货号'
                 uom = l_list[2].strip()
                 vol = l_list[3].strip()
                 price = l_list[4].strip()
@@ -74,14 +80,19 @@ def gen_xml_new():
     print 'got price_data', len(price_data)
     for u in uom_data_list:
             if '件' in u:
-                u = u.replace('件(','').replace('只)','')
-                xml = xml + (uom_xml % (u, u, u))
-    
+                if '套' in u:
+                    u = u.replace('件(','').replace('套)','')
+                    xml = xml + (uom_tao_xml % (u, u, u))
+                else:
+                    u = u.replace('件(','').replace('只)','')
+                
+                    xml = xml + (uom_xml % (u, u, u))
+            
     csv = open('20120414.csv', 'r')
     lines = csv.readlines()
     csv.close()
     
-    item_count = 1
+    item_count = 0
     color_count = 1
     
     last_item_name = ''
@@ -93,25 +104,35 @@ def gen_xml_new():
         name = data[0].strip()
         color = data[2].strip()
         
-        if last_item_name == name:
-            #是个颜色。添加颜色。item_count
-            if color:
-                xml = xml + (color_xml % (color_count, item_count,color.replace(' ', ''), color_count*10))
-            else:
-                xml = xml + (color_none_xml % (color_count, item_count, color_count*10))
-
-        else:
-            #是个新产品。把之前的加上。然后记录本次。
+        
+        if last_item_name != name:
             uoms = ""
+            
             us = price_data.get(code)
             s_s = "(6, 0, [ref('base_pick_item_uom'),ref('pick_item_uom_%s')])"
+            s_t_s = "(6, 0, [ref('base_pick_item_uom_tao'),ref('pick_item_uom_tao_%s')])"
             if us and us.get('uom'):
                 uom_s = us.get('uom')
-                uoms = s_s % uom_s.replace('件(','').replace('只)','')
+                if '套' in uom_s:
+                    uoms = s_t_s % uom_s.replace('件(','').replace('套)','')
+                else:
+                    uoms = s_s % uom_s.replace('件(','').replace('只)','')
+                item_count = item_count + 1
                 xml = xml + (item_xml % (item_count, name, code, item_count*100, uoms, us.get('price','0'),us.get('vol','')))
+                
 
             last_item_name = name
-            item_count = item_count + 1
+
+        if color:
+            xml = xml + (color_xml % (color_count, item_count,color.replace(' ', ''), color_count*10))
+        else:
+            xml = xml + (color_none_xml % (color_count, item_count, color_count*10))
+        
+        color_count = color_count + 1
+    xml_file.write(xml_temp % xml)
+    xml_file.close()
+
+gen_xml_new()
 
 
 def gen_xml():
@@ -195,4 +216,4 @@ def gen_xml():
     xml_file.close()
         
         
-gen_xml()
+#gen_xml()

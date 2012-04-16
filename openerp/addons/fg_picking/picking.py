@@ -219,7 +219,6 @@ class fg_order_line(osv.osv):
         #                 '测试一下 !\n'
         #                 '本产品即将停售.'
         #             }
-        
         # get uom
         item_obj = self.pool.get('fuguang.picking.item')
         item = item_obj.browse(cr, uid, product_id)

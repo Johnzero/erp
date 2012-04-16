@@ -21,7 +21,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="销售订单">
-                    <field name="name"/>                 
+                    <field name="name"/>
                     <field name="date_order"/>
                     <field name="date_confirm"/>
                     <field name="user_id"/>
@@ -44,8 +44,9 @@
                         <field name="user_id"/>
                         <field name="date_order"/>
                         <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" required="1"/>
-                        <field domain="[('partner_id','=',partner_id)]" name="partner_shipping_id" options='{"quick_create": false}'/>
+                        <field domain="[('partner_id','=',partner_id)]" name="partner_shipping_id" options='{"quick_create": false}' colspan="4"/>
                         <field name="date_confirm"/>
+                        <field name="confirmer_id"/>
                     </group>
                     <notebook colspan="5">
                         <page string="销售明细">
@@ -60,9 +61,9 @@
                                     <field name="notes"/>
                                 </form>
                                 <tree string="销售明细" editable="top">
-                                    <field name="product_id"/>
-                                    <field name="product_uom"/>
-                                    <field name="product_uom_qty"/>
+                                    <field name="product_id" on_change="product_id_change(product_id)" options='{"quick_create": false}'/>
+                                    <field name="product_uom" on_change="product_uom_id_change(product_id, product_uom)"/>
+                                    <field name="product_uom_qty" on_change="product_uom_qty_change(product_id, product_uom, product_uom_qty)"/>
                                     <field name="price_subtotal" sum="原价共计"/>
                                     <field name="price_discount" sum="折后共计"/>
                                     <field name="notes"/>
