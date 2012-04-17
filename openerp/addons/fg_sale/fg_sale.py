@@ -106,12 +106,6 @@ class sale_order_line(osv.osv):
     _description = "富光业务部销售订单明细"
     
     
-    def _amount_line(self, cr, uid, ids, field_name, arg, context=None):
-        res = {}
-        for line in self.browse(cr, uid, ids, context=context):
-            res[line.id] = 0.0
-        
-        return res
     
     _columns = {
         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
@@ -120,7 +114,7 @@ class sale_order_line(osv.osv):
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
         'product_uom_qty': fields.float('数量', required=True),
         'price_discount': fields.float('打折价格'),
-        'price_subtotal': fields.function(_amount_line, string='小计'),
+        'price_subtotal': fields.float('小计'),
         'notes': fields.char('附注', size=100),
     }
     
