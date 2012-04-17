@@ -1,14 +1,13 @@
 # -*- encoding: utf-8 -*-
 import pooler, time
 from osv import fields, osv
-from tools import DEFAULT_SERVER_DATETIME_FORMAT
+from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
 
 class res_partner(osv.osv):
     _inherit = 'res.partner'
     _columns = {
         'ratio': fields.float('比率', digit=2)
     }
-
 
 class sale_order(osv.osv):
     _name = "fg_sale.order"
@@ -17,16 +16,17 @@ class sale_order(osv.osv):
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
-            res[order.id] = { 'total_amount':0.0 }
+            res[order.id] = { 'amount_total':0.0 }
             amount = 0
             for line in order.order_line:
                 amount = amount + line.price_discount
-            res[order.id]['total_amount'] = amount
+            res[order.id]['amount_total'] = amount
         return res
     
     _columns = {
 
-        'name': fields.char('单号', size=64, required=True, select=True, readonly=True, states={'draft': [('readonly', False)]}),
+        'name': fields.char('单号', size=64, select=True, readonly=True),
+        'sub_name': fields.char('副单号', size=64, select=True, readonly=True),
         'date_order': fields.date('日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
         'date_confirm': fields.date('审核日期', readonly=True, select=True),
         'user_id': fields.many2one('res.users', '制单人', select=True, readonly=True),
@@ -48,41 +48,40 @@ class sale_order(osv.osv):
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['default'])['default'],
     }
     
+    def copy(self, cr, uid, id, default={}, context=None):
+        pass
+    
+    def create(self, cr, uid, vals, context=None):
+        if not vals.has_key('name'):
+            obj_sequence = self.pool.get('ir.sequence')
+            vals['name'] = obj_sequence.get(cr, uid, 'fg_sale.order')
+        
+        id = super(sale_order, self).create(cr, uid, vals, context)
+        return id
+    
+    def _default_order_name(self, cr, uid, part):
+        partner_obj = self.pool.get('res.partner')
+        p = partner_obj.name_get(cr, uid, [part])[0][1]
+        
+        
+        
+        print get_initial(p)
+    
     def onchange_partner_id(self, cr, uid, ids, part):
         if not part:
             return {'value': {'partner_shipping_id': False}}
         partner_obj = self.pool.get('res.partner')
         addr = partner_obj.address_get(cr, uid, [part], ['default'])['default']
+        
+        self._default_order_name(cr, uid, part)
+        
         return {'value': {'partner_shipping_id':addr}}
-    
-    def _log_event(self, cr, uid, ids, factor=0.7, name='FG Sale Order'):
-        invs = self.read(cr, uid, ids, ['date_order', 'partner_id', 'amount_untaxed'])
-        for inv in invs:
-            part = inv['partner_id'] and inv['partner_id'][0]
-            pr = inv['amount_untaxed'] or 0.0
-            partnertype = 'customer'
-            eventtype = 'sale'
-            event = {
-                'name': 'Order: '+name,
-                'som': False,
-                'description': 'Order '+str(inv['id']),
-                'document': '',
-                'partner_id': part,
-                'date': time.strftime(DEFAULT_SERVER_DATE_FORMAT),
-                'user_id': uid,
-                'partner_type': partnertype,
-                'probability': 1.0,
-                'planned_revenue': pr,
-                'planned_cost': 0.0,
-                'type': eventtype
-            }
-            self.pool.get('res.partner.event').create(cr, uid, event)
     
     def button_review(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, { 
             'state': 'done', 
             'confirmer_id': uid, 
-            'date_confirmed': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            'date_confirm': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             }
         )
         return True
@@ -104,7 +103,6 @@ class sale_order(osv.osv):
 class sale_order_line(osv.osv):
     _name = "fg_sale.order.line"
     _description = "富光业务部销售订单明细"
-    
     
     
     _columns = {
@@ -136,7 +134,6 @@ class sale_order_line(osv.osv):
             product = product_obj.browse(cr, uid, product_id, context=context)
             if product:
                 price = product.lst_price
-                
                 return {'value': {'price_subtotal':price, 'price_discount':price}}
         return {'value':{}}
     
@@ -158,4 +155,20 @@ class sale_order_line(osv.osv):
         
     _order = 'sequence, id'
     
+
+class sale_print_log(osv.osv):
+    _name = "fg_sale.print.log"
     
+    _columns = {
+        'user_id': fields.many2one('res.users', '打印人'),
+        'date_print': fields.date('打印日期'),
+        'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
+    }
+    
+    _order = 'date_print, id'
+    
+    
+    _defaults = {
+        'date_print': fields.date.context_today,
+        'user_id': lambda obj, cr, uid, context: uid,
+    }

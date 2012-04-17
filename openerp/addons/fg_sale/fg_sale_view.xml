@@ -20,10 +20,10 @@
             <field name="model">fg_sale.order</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="销售订单">
+                <tree string="销售订单" colors="red:minus == True;blue:state in ('cancel','draft')">
                     <field name="name"/>
+                    <field name="sub_name"/>
                     <field name="date_order"/>
-                    <field name="date_confirm"/>
                     <field name="user_id"/>
                     <field name="partner_id"/>
                     <field name="amount_total"/>
@@ -41,16 +41,18 @@
                 <form string="销售订单">
                     <group col="6" colspan="4">
                         <field name="name"/>
+                        <field name="sub_name"/>
                         <field name="user_id"/>
                         <field name="date_order"/>
-                        <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" required="1"/>
-                        <field domain="[('partner_id','=',partner_id)]" name="partner_shipping_id" options='{"quick_create": false}' colspan="4"/>
                         <field name="date_confirm"/>
                         <field name="confirmer_id"/>
+                        <field name="minus"/>
                     </group>
+                    <newline/>
                     <notebook colspan="5">
-                        <page string="销售明细">
-                            <newline/>
+                        <page string="销售订单">
+                            <field name="partner_id" options='{"quick_create": false}' on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" required="1"/>
+                            <field domain="[('partner_id','=',partner_id)]" name="partner_shipping_id" options='{"quick_create": false}'/>
                             <field colspan="4" name="order_line" nolabel="1" widget="one2many_list">
                                 <form string="销售明细">
                                     <field name="product_id"/>
@@ -60,8 +62,8 @@
                                     <field name="price_discount"/>
                                     <field name="notes"/>
                                 </form>
-                                <tree string="销售明细" editable="top">
-                                    <field name="product_id" on_change="product_id_change(product_id)" options='{"quick_create": false}'/>
+                                <tree string="销售明细" editable="bottom">
+                                    <field name="product_id" on_change="product_id_change(product_id)"/>
                                     <field name="product_uom" on_change="product_uom_id_change(product_id, product_uom)"/>
                                     <field name="product_uom_qty" on_change="product_uom_qty_change(product_id, product_uom, product_uom_qty)"/>
                                     <field name="price_subtotal" sum="原价共计"/>
@@ -76,10 +78,9 @@
                     </notebook>
                     <newline/>
                     <group col="6" colspan="4">
-                        <field name="minus"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
                         <field name="amount_total"/>
-                        <field name="state" string="状态" icon="gtk-ok"/>
-                        <button name="review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                        <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
                     </group>
                 </form>
             </field>
@@ -115,7 +116,7 @@
         </record>
         
         <record id="action_fg_sale_order_all" model="ir.actions.act_window">
-            <field name="name">所有销售订单</field>
+            <field name="name">所有销售单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_sale.order</field>
             <field name="view_type">form</field>
@@ -125,7 +126,7 @@
         </record>
         
         <record id="action_fg_sale_order_my" model="ir.actions.act_window">
-            <field name="name">我创建的销售订单</field>
+            <field name="name">我的销售单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_sale.order</field>
             <field name="view_type">form</field>
@@ -135,6 +136,10 @@
             <field name="search_view_id" ref="view_fg_sales_order_filter"/>
         </record>
         
+        
+        <report auto="False" id="report_fg_sale_order_html" model="fg_sale.order"
+                name="report.fg_sale.order.html" rml="fg_sale/report/order.html"
+            string="打印" report_type="mako2html" />
         <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my"/>

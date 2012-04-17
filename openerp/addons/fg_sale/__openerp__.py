@@ -10,9 +10,11 @@
     'depends': ['base', 'board', 'product', 'fg_data'],
     'init_xml': [],
     'update_xml': [
-	'fg_sale_view.xml',
-	'security/group.xml',
-	'security/ir.model.access.csv',
+        'security/group.xml',
+        'security/ir.model.access.csv',
+        'fg_sale_view.xml',
+        'fg_sale_sequence.xml',
+
     ],
     'demo_xml': [],
     'installable': True,
