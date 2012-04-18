@@ -1,69 +1,79 @@
-# -*- encoding: utf-8 -*-
-
-def is_cn_char(i):
-    if len(i)>1:return True
-    return 0x4e00<=ord(i)<0x9fa6
+# -*- coding: UTF-8 -*-
 
 
-def get_cn_first_letter(str,codec="UTF8"):
-    if codec!="GBK":
-        if codec!="unicode":
-            str=str.decode(codec)
-        str=str.encode("GBK")
-    if not str: return ''
-    if not is_cn_char(str): return str
-    
-    if str<"\xb0\xa1" or str>"\xd7\xf9":
-        return ""
-    if str<"\xb0\xc4":
-        return "a"
-    if str<"\xb2\xc0":
-        return "b"
-    if str<"\xb4\xed":
-        return "c"
-    if str<"\xb6\xe9":
-        return "d"
-    if str<"\xb7\xa1":
-        return "e"
-    if str<"\xb8\xc0":
-        return "f"
-    if str<"\xb9\xfd":
-        return "g"
-    if str<"\xbb\xf6":
-        return "h"
-    if str<"\xbf\xa5":
-        return "j"
-    if str<"\xc0\xab":
-        return "k"
-    if str<"\xc2\xe7":
-        return "l"
-    if str<"\xc4\xc2":
-        return "m"
-    if str<"\xc5\xb5":
-        return "n"
-    if str<"\xc5\xbd":
-        return "o"
-    if str<"\xc6\xd9":
-        return "p"
-    if str<"\xc8\xba":
-        return "q"
-    if str<"\xc8\xf5":
-        return "r"
-    if str<"\xcb\xf9":
-        return "s"
-    if str<"\xcd\xd9":
-        return "t"
-    if str<"\xce\xf3":
-        return "w"
-    if str<"\xd1\x88":
-        return "x"
-    if str<"\xd4\xd0":
-        return "y"
-    if str<"\xd7\xf9":
-        return "z"
+import re
+from maps import *
+
+western_maps = [ latin_map, latin_symbol_map, greek_map, turkish_map, \
+                russian_map, ukrainian_map, czech_map, polish_map, latvian_map ]
+
+pinyin_map = dict([(ord(k), v[0])for k, v in pinyin_map.items()])
+
+for i in xrange(len(western_maps)):
+    western_maps[i] = dict([(ord(k), v) for k, v in western_maps[i].items()])
+
+stop_words = [u'a', u'an', u'as', u'at', u'before', u'but', u'by', u'for',
+              u'from', u'is', u'in', u'into', u'like', u'of', u'off', u'on',
+              u'onto', u'per', u'since', u'than', u'the', u'this', u'that',
+              u'to', u'up', u'via', u'with']
+
+reserved_words = [u'blog', u'edit', u'delete', u'new', u'popular', u'wiki']
+
+
+def urlify(urlstring, default='default', max_length=50,
+           stop_words=stop_words, reserved_words=reserved_words):
+    """
+    Urlify is a simple function that generates the slug of a urlstring
+    automatically using python.
+
+    Urlify has support for language maps. Language maps work by replacing
+    kanji with pinyin and characters in other western languages with similar
+    ones in English. The replacement is done in the generated slug only.
+    For example, a urlstring "派森是好物" will create a slug of 
+    "pai-sen-shi-hao-wu" and a urlstring "Это простое испытание название" 
+    will create a slug of "eto-prostoe-ispytanie-nazvanie".
+
+    There is support for PinYin, Latin, Greek, Turkish, Russian, Ukranian, 
+    Czech and Polish maps. These maps are acquired from pyzh project
+    <http://code.google.com/p/pyzh/> and Django project
+    <http://www.djangoproject.com/>. So these maps are not under the tems of 
+    GPLv3 license.
+        
+    Urlify also has support for stop words and reserved words.
+
+    """
+
+    slug = ''
+
+    re_alnum = re.compile(r'[\w\s\-]+')
+    re_stop = re.compile('|'.join([r'\b%s\b' % word for word in stop_words]))
+    re_reserved = re.compile('|'.join([r'\b%s\b' % word for word in reserved_words]))
+    re_space = re.compile(r'[\s_\-]+')
+
+    for char in urlstring:
+        if len(slug) >= max_length:
+            break
+        if re_alnum.match(char):
+            slug += char
+            continue
+        char_ord = ord(char)
+        if char_ord in pinyin_map:
+            slug += u' ' + pinyin_map[char_ord] + u' '
+            continue
+        for dict in western_maps:
+            if char_ord in dict:
+                slug += dict[char_ord]
+                break
+
+    slug = re_stop.sub(u'', slug.lower())
+    slug = re_space.sub(u'-', slug.strip())
+    if slug is '' or re_reserved.match(slug):
+        slug = default
+
+    return slug
 
 def get_initial(name):
-    s_list = [ get_cn_first_letter(s.strip()) for s in name]
-    r_list = [ s.upper() for s in s_list]
+    l_list = [n.upper()[0] for n in urlify(name).split('-')]
+    return ''.join(l_list)
     
-    return ''.join(r_list)
+    
