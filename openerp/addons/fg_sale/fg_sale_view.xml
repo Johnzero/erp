@@ -138,7 +138,7 @@
         
         
         <report auto="False" id="report_fg_sale_order_html" model="fg_sale.order"
-                name="report.fg_sale.order.html" rml="fg_sale/report/order.html"
+                name="fg_sale.order.html" rml="fg_sale/report/order.html"
             string="打印" report_type="mako2html" />
         <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>

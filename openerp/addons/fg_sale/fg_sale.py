@@ -49,23 +49,27 @@ class sale_order(osv.osv):
     }
     
     def copy(self, cr, uid, id, default={}, context=None):
-        pass
+        raise osv.except_osv(_('Invalid action !'), '不允许复制.')
     
     def create(self, cr, uid, vals, context=None):
         if not vals.has_key('name'):
             obj_sequence = self.pool.get('ir.sequence')
             vals['name'] = obj_sequence.get(cr, uid, 'fg_sale.order')
-        
+            
+        if not vals.has_key('sub_name'):
+            partner_obj = self.pool.get('res.partner')
+            partner_name = partner_obj.name_get(cr, uid, [vals['partner_id']])[0][1]
+            initial = get_initial(partner_name)
+            
+            cr.execute("select count(*) from fg_sale_order where partner_id = %s;" % vals['partner_id'] )
+            res = cr.fetchone()
+            count = res and res[0] or 0
+            
+            vals['sub_name'] = "FGSO-%s-%s" % ( initial, count+1 )
+            
         id = super(sale_order, self).create(cr, uid, vals, context)
         return id
     
-    def _default_order_name(self, cr, uid, part):
-        partner_obj = self.pool.get('res.partner')
-        p = partner_obj.name_get(cr, uid, [part])[0][1]
-        
-        
-        
-        print get_initial(p)
     
     def onchange_partner_id(self, cr, uid, ids, part):
         if not part:
@@ -73,7 +77,6 @@ class sale_order(osv.osv):
         partner_obj = self.pool.get('res.partner')
         addr = partner_obj.address_get(cr, uid, [part], ['default'])['default']
         
-        self._default_order_name(cr, uid, part)
         
         return {'value': {'partner_shipping_id':addr}}
     
