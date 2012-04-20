@@ -41,7 +41,7 @@ cates = ['一级经销商', '订制杯客户', '二级经销商', 'FGA客户', '
 
 
 def main():
-	file_input = open('20120410.txt', 'r')
+	file_input = open('20120420.txt', 'r')
 	lines = file_input.readlines()
 	file_input.close()
 	i = 1

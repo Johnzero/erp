@@ -139,11 +139,23 @@
 	            <field name="factor" eval="1"/>
 				<field name="uom_type">smaller</field>
 		</record>
+		<record id="product_uom_cup_set_4" model="product.uom">
+	            <field name="category_id" ref="product_uom_categ_fg_set"/>
+	            <field name="name">件(4套)</field>
+				<field name="rounding" eval="1"/>
+	            <field name="factor" eval="4"/>
+		</record>
 		<record id="product_uom_cup_set_6" model="product.uom">
 	            <field name="category_id" ref="product_uom_categ_fg_set"/>
 	            <field name="name">件(6套)</field>
 				<field name="rounding" eval="1"/>
 	            <field name="factor" eval="6"/>
+		</record>
+		<record id="product_uom_cup_set_8" model="product.uom">
+	            <field name="category_id" ref="product_uom_categ_fg_set"/>
+	            <field name="name">件(8套)</field>
+				<field name="rounding" eval="1"/>
+	            <field name="factor" eval="8"/>
 		</record>
 		<record id="product_uom_cup_set_10" model="product.uom">
 	            <field name="category_id" ref="product_uom_categ_fg_set"/>

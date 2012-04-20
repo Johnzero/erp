@@ -10,7 +10,8 @@
               <form string="说明">
                     <group colspan="4" col="6">
                         <button  icon="gtk-close" special="cancel" string="关闭"/>
-                        <button icon="gtk-ok" name="import_order" string="导入" type="object"/>
+                        <button icon="gtk-ok" name="import_order" string="导入订单" type="object"/>
+                        <button icon="gtk-ok" name="import_order_line" string="导入明细" type="object"/>
                     </group>
             </form>
             </field>

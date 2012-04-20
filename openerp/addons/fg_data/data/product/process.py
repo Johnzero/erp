@@ -17,9 +17,9 @@ if sys.getdefaultencoding() != 'utf-8':
 xml = """<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-		%s
-		</data>
-	</openerp>
+                %s
+                </data>
+        </openerp>
 """
 
 cate_xml = """
@@ -30,7 +30,7 @@ cate_xml = """
 """
 attr_xml = """<record id="product_color_%s" model="product.attribute">
         <field name="name">颜色</field>
-		<field name="value">%s</field>
+                <field name="value">%s</field>
 </record>
 """
 
@@ -115,37 +115,37 @@ def get_uom(s):
 
 
 def process_all(lines):
-	cs = {'塑胶事业部':'cat_pc','玻璃事业部':'cat_glass', '真空事业部':'cat_vacuum', 
+        cs = {'塑胶事业部':'cat_pc','玻璃事业部':'cat_glass', '真空事业部':'cat_vacuum', 
         '安全帽事业部':'cat_helmet', '塑胶制品': 'cat_plastic', '财务部':'cat_finance', '*':'cat_other'}
         
-	need_add_source = False
-	file_output = open('category_ex.xml', 'w')
-	file_product = open('product.xml', 'w')
-	file_package = open('package.xml', 'w')
-	pid = 1
-	cid = 1
-	c_doc = ""
-	p_doc = ""
-	ean_count = 0
-	current_category = ''
-	for line in lines:
+        need_add_source = False
+        file_output = open('category_ex.xml', 'w')
+        file_product = open('product.xml', 'w')
+        file_package = open('package.xml', 'w')
+        pid = 1
+        cid = 1
+        c_doc = ""
+        p_doc = ""
+        ean_count = 0
+        current_category = ''
+        for line in lines:
 
-	    data = line.split(',') #got 11 elm.
-	    if data[1].strip()=='False':
-	        #category, hold it.
-	        current_category = data[0].strip()
-	        #print 'getting category', current_category, cid
-	        need_add_source = True
-	        
-	    else:
-	        if current_category and need_add_source:
-	            c = cs[data[5]]
-	            c_doc = c_doc + cate_xml % (cid, c, current_category)
-	            cate = 'product_category_%s' % (cid)
-	            cid = cid + 1
-	            need_add_source = False
-	            current_category = ''
-	            
+            data = line.split(',') #got 11 elm.
+            if data[1].strip()=='False':
+                #category, hold it.
+                current_category = data[0].strip()
+                #print 'getting category', current_category, cid
+                need_add_source = True
+                
+            else:
+                if current_category and need_add_source:
+                    c = cs[data[5]]
+                    c_doc = c_doc + cate_xml % (cid, c, current_category)
+                    cate = 'product_category_%s' % (cid)
+                    cid = cid + 1
+                    need_add_source = False
+                    current_category = ''
+                    
                 #product
                 name = data[0].strip()
                 #print 'getting ', name
@@ -187,14 +187,14 @@ def process_all(lines):
                     t = product_xml_without_attr % (pid, code, ean, price, price, package, package, name, cate)
                 p_doc =  p_doc+ t
                 pid = pid + 1
-	            
-	file_output.write(xml % c_doc)
-	file_product.write(xml % p_doc)
-	file_output.close()
-	file_product.close()
-	file_package.close()
-	print 'done'
-	print 'get eans', ean_count
+                    
+        file_output.write(xml % c_doc)
+        file_product.write(xml % p_doc)
+        file_output.close()
+        file_product.close()
+        file_package.close()
+        print 'done'
+        print 'get eans', ean_count
 
 def process_ul(lines):
     i = 1
@@ -202,6 +202,7 @@ def process_ul(lines):
     file_output = open('ul.xml', 'w')
     for line in lines:
         data = line.split(',')
+        print data[0]
         if data[6]!='':
             t = ul_xml % (i, data[6].strip())
             ULS[data[6].strip()] = ('product_ul_box_%s' % i)
@@ -243,44 +244,44 @@ def join_ean13():
     print 'get ean13 codes ', len(EANS)
     
 def process_color():
-	file_input = open('color.csv', 'r')
-	lines = file_input.readlines()
-	file_input.close()
-	i = 1
-	
-	for line in lines:
-	    line = line.strip()
-	    data = line.split(',')
-	    
-	    if len(data)==5 and data[2]:
-	        #for write in colors
-	        if not COLORS.has_key(data[2]):
-	            COLORS[data[2]] = i
+        file_input = open('color.csv', 'r')
+        lines = file_input.readlines()
+        file_input.close()
+        i = 1
+        
+        for line in lines:
+            line = line.strip()
+            data = line.split(',')
+            
+            if len(data)==5 and data[2]:
+                #for write in colors
+                if not COLORS.has_key(data[2]):
+                    COLORS[data[2]] = i
 
-	        #for product colors
-	        l = PRODUCT_COLORS.get(data[0], [])
-	        if data[2] not in l:
-	            l.append(data[2])
-	        PRODUCT_COLORS[data[0]] = l
-	        i = i + 1
-	        
-	color_xml = ""
-	file_output = open('color.xml', 'w')
-	for c in COLORS:
-	    color_xml = color_xml + (attr_xml % (COLORS[c], c))
-	file_output.write((xml % color_xml))
-	file_output.close()
+                #for product colors
+                l = PRODUCT_COLORS.get(data[0], [])
+                if data[2] not in l:
+                    l.append(data[2])
+                PRODUCT_COLORS[data[0]] = l
+                i = i + 1
+                
+        color_xml = ""
+        file_output = open('color.xml', 'w')
+        for c in COLORS:
+            color_xml = color_xml + (attr_xml % (COLORS[c], c))
+        file_output.write((xml % color_xml))
+        file_output.close()
             
 def main():
-	process_color()
-	file_input = open('product-20111003.txt', 'r')
-	lines = file_input.readlines()
-	file_input.close()
-	join_ean13()
-	process_ul(lines)
-	process_all(lines)
-	
+        process_color()
+        file_input = open('product-20120420.txt', 'r')
+        lines = file_input.readlines()
+        file_input.close()
+        join_ean13()
+        process_ul(lines)
+        process_all(lines)
+        
 
 if __name__ == '__main__':
-	main()
+        main()
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-		
+                
 <record id="product_category_1" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
     <field name="name">1代</field>
@@ -174,35 +174,60 @@
 
 <record id="product_category_401" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
-    <field name="name">炫耀</field>
+    <field name="name">悠然太空杯</field>
 </record>
 
 <record id="product_category_402" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
-    <field name="name">优优</field>
+    <field name="name">炫动太空杯</field>
 </record>
 
 <record id="product_category_403" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
-    <field name="name">学生壶</field>
+    <field name="name">明尚系列</field>
 </record>
 
 <record id="product_category_404" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
-    <field name="name">燕尾</field>
+    <field name="name">逸致口杯</field>
 </record>
 
 <record id="product_category_405" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
-    <field name="name">E动</field>
+    <field name="name">炫丽口杯</field>
 </record>
 
 <record id="product_category_406" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
-    <field name="name">塑紫</field>
+    <field name="name">炫耀</field>
 </record>
 
 <record id="product_category_407" model="product.category">
+    <field name="parent_id" ref="cat_pc"/>
+    <field name="name">优优</field>
+</record>
+
+<record id="product_category_408" model="product.category">
+    <field name="parent_id" ref="cat_pc"/>
+    <field name="name">学生壶</field>
+</record>
+
+<record id="product_category_409" model="product.category">
+    <field name="parent_id" ref="cat_pc"/>
+    <field name="name">燕尾</field>
+</record>
+
+<record id="product_category_410" model="product.category">
+    <field name="parent_id" ref="cat_pc"/>
+    <field name="name">E动</field>
+</record>
+
+<record id="product_category_411" model="product.category">
+    <field name="parent_id" ref="cat_pc"/>
+    <field name="name">塑紫</field>
+</record>
+
+<record id="product_category_412" model="product.category">
     <field name="parent_id" ref="cat_pc"/>
     <field name="name">11代</field>
 </record>
@@ -402,7 +427,7 @@
     <field name="name">顺风</field>
 </record>
 
-<record id="product_category_217" model="product.category">
+<record id="product_category_918" model="product.category">
     <field name="parent_id" ref="cat_vacuum"/>
     <field name="name">乘风</field>
 </record>
@@ -462,7 +487,7 @@
     <field name="name">经典</field>
 </record>
 
-<record id="product_category_613" model="product.category">
+<record id="product_category_217" model="product.category">
     <field name="parent_id" ref="cat_vacuum"/>
     <field name="name">天行</field>
 </record>
@@ -662,5 +687,5 @@
     <field name="name">欣艺</field>
 </record>
 
-		</data>
-	</openerp>
+                </data>
+        </openerp>

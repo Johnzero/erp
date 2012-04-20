@@ -609,6 +609,7 @@ class module(osv.osv):
                     _logger.warning('module %s: no translation for language %s', mod.name, iso_lang)
 
     def check(self, cr, uid, ids, context=None):
+        return
         for mod in self.browse(cr, uid, ids, context=context):
             if not mod.description:
                 _logger.warning('module %s: description is empty !', mod.name)
