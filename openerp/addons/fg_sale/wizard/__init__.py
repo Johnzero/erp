@@ -21,12 +21,18 @@ class order_import(osv.osv_memory):
         
         product_obj = self.pool.get('product.product')
         for row in rows:
-            key = row[1] and row[1] or row[0]
+            if row[1]:
+                product = product_obj.name_search(cr, uid, row[1].decode('GB2312').encode('utf-8'), operator='=')
             
-            product = product_obj.name_search(cr, uid, key.decode('GB2312').encode('utf-8'))
-            
-            if not product:
-                print 'did not find', key
+                if not product:
+                    print '----search with name', row[0]
+                    
+                    product = product_obj.name_search(cr, uid, row[0].decode('GB2312').encode('utf-8'), operator='=')
+                    
+                    if not product: print '=======still no result by name:', row[0]
+                    print product
+                        
+                
         
         """
         SELECT
