@@ -136,10 +136,17 @@
             <field name="search_view_id" ref="view_fg_sales_order_filter"/>
         </record>
         
-        
         <report auto="False" id="report_fg_sale_order_html" model="fg_sale.order"
                 name="fg_sale.order.html" rml="fg_sale/report/order.html"
-            string="打印" report_type="mako2html" />
+                string="打印产品清单" report_type="mako2html" />
+        <report auto="False" id="report_fg_sale_order_notice_html" model="fg_sale.order"
+                name="fg_sale.order.notice.html" rml="fg_sale/report/notice.html"
+            string="打印发货通知单" report_type="mako2html" />
+        
+        <report auto="False" id="report_fg_sale_order_ship_html" model="fg_sale.order"
+                name="fg_sale.order.ship.html" rml="fg_sale/report/ship.html"
+            string="打印配载单" report_type="mako2html" />
+        
         <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my"/>
