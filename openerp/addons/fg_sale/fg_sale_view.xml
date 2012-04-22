@@ -58,17 +58,17 @@
                                     <field name="product_id"/>
                                     <field name="product_uom"/>
                                     <field name="product_uom_qty"/>
-                                    <field name="price_subtotal"/>
-                                    <field name="price_discount"/>
-                                    <field name="notes"/>
+                                    <field name="discount_amount"/>
+                                    <field name="subtotal_amount"/>
+                                    <field name="note"/>
                                 </form>
                                 <tree string="销售明细" editable="bottom">
                                     <field name="product_id" on_change="product_id_change(product_id)"/>
                                     <field name="product_uom" on_change="product_uom_id_change(product_id, product_uom)"/>
                                     <field name="product_uom_qty" on_change="product_uom_qty_change(product_id, product_uom, product_uom_qty)"/>
-                                    <field name="price_subtotal" sum="原价共计"/>
-                                    <field name="price_discount" sum="折后共计"/>
-                                    <field name="notes"/>
+                                    <field name="discount_amount" sum="折后共计"/>
+                                    <field name="subtotal_amount" sum="原价共计"/>
+                                    <field name="note"/>
                                 </tree>
                             </field>
                         </page>

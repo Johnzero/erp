@@ -13,66 +13,103 @@ class order_import(osv.osv_memory):
     }
     
     def import_order_line(self, cr, uid, ids, context=None):
-        #test code
+        
+        #take uoms out.
+        uom_dict = dict()
+        cr.execute("""
+                   SELECT
+                    "public".product_uom."id",
+                    "public".product_uom."name"
+                    FROM
+                    "public".product_uom
+                   """)
+        for u in cr.fetchall():
+            uom_dict[u[1].encode('utf-8')] = u[0]
+        
+        #take product.
+        product_dict = dict()
         conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
+        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=218.22.58.154;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         cursor = conn.cursor()
-        cursor.execute("select FName, FModel from t_ICItem;")
+        cursor.execute("select FName, FModel, FItemID from t_ICItem;")
         rows = cursor.fetchall()
+        
         
         product_obj = self.pool.get('product.product')
         for row in rows:
-            if row[1]:
-                product = product_obj.name_search(cr, uid, row[1].decode('GB2312').encode('utf-8'), operator='=')
+            product = product_obj.name_search(cr, uid, row[1].decode('GB2312').encode('utf-8'), operator='=')
+            if not product:
+                product = product_obj.name_search(cr, uid, row[0].decode('GB2312').encode('utf-8'), operator='=')
             
-                if not product:
-                    print '----search with name', row[0]
-                    
-                    product = product_obj.name_search(cr, uid, row[0].decode('GB2312').encode('utf-8'), operator='=')
-                    
-                    if not product: print '=======still no result by name:', row[0]
-                    print product
-                        
-                
-        
-        """
-        SELECT
-                FEntryID,
-                ics.FItemID,
-                item.FName,
-        item.FModel,
-                FQty,
-          FAuxQty,
-                t007.FName,
-                FPrice,
-                FAllAmount,
-                ics.FNote,
-                FAmtDiscount,
-                FEntrySelfI0441
-        FROM
-                ICSaleEntry ics
-        JOIN t_ICItem item ON item.FItemID = ics.FItemID
-        JOIN t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID
+            if product and len(product)==1:
+                product_dict[row[2]] = product[0]
+            else:
+                print '404, or duplicated items on:', row[1],row[0]
 
-        """
+        order_list = {}
+        #get order id.
+        cr.execute("""
+                  SELECT
+                           ID,
+                           NAME
+                   FROM
+                           fg_sale_order;
+                  """)
+        for u in cr.fetchall():
+           order_list[u[1].encode('utf-8')] = u[0]
         
         
-        
-        #order_list = {}
-        ##get order id.
-        #cr.execute("""
-        #           SELECT
-        #                    ID,
-        #                    NAME
-        #            FROM
-        #                    fg_sale_order;
-        #           """)
-        #for u in cr.fetchall():
-        #    order_list[u[1].encode('utf-8')] = u[0]
-        
-        #get product id
-        
-        
-        
+        #get all sell entry.
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT 
+                ic.FBillNo, 
+                ics.FEntryID, 
+                ics.FItemID, 
+                t007.FName, 
+                ics.FAuxQty, 
+                ics.FQty, 
+                ics.FEntrySelfI0441,
+                ics.FPrice, 
+                ics.FAllAmount, 
+                ics.FNote, 
+                
+            FROM ICSaleEntry ics INNER JOIN
+                  t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID INNER JOIN
+                  ICSale ic ON ic.FInterID = ics.FInterID
+            WHERE (ics.FInterID = 1070)
+        """}
+        rows = cursor.fetchall()
+        l = len(rows)
+        for row in rows:
+            line = {}
+            line['order_id'] = order_list.get(("%s" % row[0]).decode('GB2312').encode('utf-8'))
+            if not line['order_id']:
+                print 'no order for ', row[0]
+                break
+            
+            line['sequence'] = int(row[1])
+            
+            line['product_id'] = product_dict.get(row[2])
+            if not line['product_id']:
+                print 'no product for ', row[2]
+                break
+            
+            line['product_uom'] = uom_dict.get(("%s" % row[3]).decode('GB2312').encode('utf-8'))
+            if not line['product_uom']:
+                print 'no product_uom for ', row[3]
+                break
+            
+            line['product_uom_qty'] = int(row[4])
+            line['aux_qty'] = int(row[5])
+            line['unit_price'] = float(row[6])
+            line['subtotal_amount'] = float[row[8]]
+            line['note'] = ("%s" % row[9]).decode('GB2312').encode('utf-8')
+            print '%s to go' % l
+            l = l - 1
+            self.pool.get('fg_sale.order.line').create(cr, uid, line)
+            
         return {'type': 'ir.actions.act_window_close'}
     
     def import_order(self, cr, uid, ids, context=None):

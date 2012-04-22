@@ -19,7 +19,8 @@ class sale_order(osv.osv):
             res[order.id] = { 'amount_total':0.0 }
             amount = 0
             for line in order.order_line:
-                amount = amount + line.price_discount
+                #todo: got to decide which one to add. subtotal_amount or, discount_amount
+                amount = amount + line.subtotal_amount
             res[order.id]['amount_total'] = amount
         return res
     
@@ -113,10 +114,12 @@ class sale_order_line(osv.osv):
         'sequence': fields.integer('Sequence'),
         'product_id': fields.many2one('product.product', '产品', domain=[('sale_ok', '=', True)], change_default=True),
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
-        'product_uom_qty': fields.float('数量', required=True),
-        'price_discount': fields.float('打折价格'),
-        'price_subtotal': fields.float('小计'),
-        'notes': fields.char('附注', size=100),
+        'product_uom_qty': fields.float('单位数量', required=True),
+        'aux_qty': fields.float('总只数', required=True),
+        'unit_price': fields.float('单位价格', required=True),
+        'discount_amount': fields.float(''),
+        'subtotal_amount': fields.float('小计'),
+        'note': fields.char('附注', size=100),
     }
     
     def product_id_change(self, cr, uid, ids, product_id, context=None):
@@ -157,7 +160,6 @@ class sale_order_line(osv.osv):
         return {'value':{}}
         
     _order = 'sequence, id asc'
-    
 
 class sale_print_log(osv.osv):
     _name = "fg_sale.print.log"
