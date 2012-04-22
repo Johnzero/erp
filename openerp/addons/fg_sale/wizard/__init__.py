@@ -79,7 +79,7 @@ class order_import(osv.osv_memory):
                   t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID INNER JOIN
                   ICSale ic ON ic.FInterID = ics.FInterID
             WHERE (ics.FInterID = 1070)
-        """}
+        """)
         rows = cursor.fetchall()
         l = len(rows)
         for row in rows:
