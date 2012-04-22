@@ -28,7 +28,7 @@ class order_import(osv.osv_memory):
         
         #take product.
         product_dict = dict()
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
+        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
         #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=218.22.58.154;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         cursor = conn.cursor()
         cursor.execute("select FName, FModel, FItemID from t_ICItem;")
@@ -140,47 +140,52 @@ class order_import(osv.osv_memory):
         for u in cr.fetchall():
             parnter_dict[u[1].encode('utf-8')] = u[0]
 
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
+        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
+        sql_1 = """
+           SELECT
+               FBillNo,
+               FDate,
+               t_Item.FName AS FPartnerName,
+               FNote,
+               tu_1.FName AS FBillerName,
+               FInvoiceAmount,
+               FROB,
+               tu_2.FName AS FCheckerName,
+               FCheckDate,
+               FCancellation
+           FROM ICSale
+               JOIN t_Item ON FCustID = t_Item.FItemID
+               JOIN t_User tu_1 ON FBillerID = tu_1.FUserID
+               JOIN t_User tu_2 ON FCheckerID = tu_2.FUserID
+               JOIN t_Organization t_o ON FCustID = t_o.FItemID
+               
+               """
+        sql_2 = """
+                           SELECT
+                                   FBillNo,
+                                   FDate,
+                                   t_Item.FName AS FPartnerName,
+                                   FNote,
+                                   tu_1.FName AS FBillerName,
+                                   FInvoiceAmount,
+                                   FROB,
+                                   FCheckerID,
+                                   FCheckDate,
+                                   FCancellation
+                           FROM
+                                   ICSale
+                           JOIN t_Item ON FCustID = t_Item.FItemID
+                           JOIN t_User tu_1 ON FBillerID = tu_1.FUserID
+                           JOIN t_Organization t_o ON FCustID = t_o.FItemID
+                           WHERE
+                                   dbo.ICSale.FCheckerID IS NULL
+                       """
+        
         cursor = conn.cursor()
-        #cursor.execute("""
-        #    SELECT
-        #        FBillNo,
-        #        FDate,
-        #        t_Item.FName AS FPartnerName,
-        #        FNote,
-        #        tu_1.FName AS FBillerName,
-        #        FInvoiceAmount,
-        #        FROB,
-        #        tu_2.FName AS FCheckerName,
-        #        FCheckDate,
-        #        FCancellation
-        #    FROM ICSale
-        #        JOIN t_Item ON FCustID = t_Item.FItemID
-        #        JOIN t_User tu_1 ON FBillerID = tu_1.FUserID
-        #        JOIN t_User tu_2 ON FCheckerID = tu_2.FUserID
-        #        JOIN t_Organization t_o ON FCustID = t_o.FItemID
-        #        
-        #        """)
-        cursor.execute("""
-                    SELECT
-                            FBillNo,
-                            FDate,
-                            t_Item.FName AS FPartnerName,
-                            FNote,
-                            tu_1.FName AS FBillerName,
-                            FInvoiceAmount,
-                            FROB,
-                            FCheckerID,
-                            FCheckDate,
-                            FCancellation
-                    FROM
-                            ICSale
-                    JOIN t_Item ON FCustID = t_Item.FItemID
-                    JOIN t_User tu_1 ON FBillerID = tu_1.FUserID
-                    JOIN t_Organization t_o ON FCustID = t_o.FItemID
-                    WHERE
-                            dbo.ICSale.FCheckerID IS NULL
-                """)
+        
+        #sql_1 for checked record. sql_2 for non-checked.
+        cursor.execute(sql_1)
+
         rows = cursor.fetchall()
         
         missed = []
