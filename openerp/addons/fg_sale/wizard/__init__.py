@@ -29,7 +29,7 @@ class order_import(osv.osv_memory):
         #take product.
         product_dict = dict()
         conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
-        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=218.22.58.154;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
+        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         cursor = conn.cursor()
         cursor.execute("select FName, FModel, FItemID from t_ICItem;")
         rows = cursor.fetchall()
@@ -37,7 +37,9 @@ class order_import(osv.osv_memory):
         
         product_obj = self.pool.get('product.product')
         for row in rows:
-            product = product_obj.name_search(cr, uid, row[1].decode('GB2312').encode('utf-8'), operator='=')
+            product = None
+            if row[1]:
+                product = product_obj.name_search(cr, uid, row[1].decode('GB2312').encode('utf-8'), operator='=')
             if not product:
                 product = product_obj.name_search(cr, uid, row[0].decode('GB2312').encode('utf-8'), operator='=')
             
@@ -140,7 +142,8 @@ class order_import(osv.osv_memory):
         for u in cr.fetchall():
             parnter_dict[u[1].encode('utf-8')] = u[0]
 
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
+        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
+        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         sql_1 = """
            SELECT
                FBillNo,
