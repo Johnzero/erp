@@ -51,6 +51,7 @@ class picking_item(osv.osv):
     
     _columns = {
         'name': fields.char('名称', size=40, required=True),
+        'category': fields.char('事业部', size=40, required=True),
         'code':fields.char('货号', size=20, required=True),
         'barcode':fields.char('条码', size=20),
         'price':fields.float('单品价格', digits=(8, 2)),
@@ -143,7 +144,8 @@ class fg_order(osv.osv):
         
         """ % uid)
         res = cr.fetchone()
-        partner = res[0]
+        partner = res and res[0] or False
+        if not partner: return False;
         
         partner_obj = self.pool.get('res.partner')
         addr = partner_obj.address_get(cr, uid, [partner], ['default'])['default']

@@ -33,7 +33,8 @@ color_none_xml = """
 
 item_xml = """
 <record id="pick_item_%s" model="fuguang.picking.item">
-    <field name="name">%s</field>
+        <field name="category">%s</field>
+        <field name="name">%s</field>
         <field name="code">%s</field>
         <field name="sequence">%s</field>
         <field name="uoms" eval="[%s]"/>
@@ -58,7 +59,7 @@ def gen_xml_new():
     xml = ''
     
     xml_file = open('items.xml','w')
-    price_file = open('prices.csv', 'r')
+    price_file = open('price_20120423.csv', 'r')
     price_data = {}
 
     p_list = price_file.readlines()
@@ -88,7 +89,7 @@ def gen_xml_new():
                 
                     xml = xml + (uom_xml % (u, u, u))
             
-    csv = open('20120414.csv', 'r')
+    csv = open('20120423.csv', 'r')
     lines = csv.readlines()
     csv.close()
     
@@ -99,11 +100,10 @@ def gen_xml_new():
     
     for line in lines:
         data = line.strip().split(',')
-
-        code = data[1].strip().replace('型','')
-        name = data[0].strip()
-        color = data[2].strip()
-        
+        category = data[0]
+        code = data[2].strip().replace('型','')
+        name = data[1].strip()
+        color = data[3].strip()
         
         if last_item_name != name:
             uoms = ""
@@ -118,7 +118,7 @@ def gen_xml_new():
                 else:
                     uoms = s_s % uom_s.replace('件(','').replace('只)','')
                 item_count = item_count + 1
-                xml = xml + (item_xml % (item_count, name, code, item_count*100, uoms, us.get('price','0'),us.get('vol','')))
+                xml = xml + (item_xml % (item_count, category, name, code, item_count*100, uoms, us.get('price','0'),us.get('vol','')))
                 
 
             last_item_name = name

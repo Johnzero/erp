@@ -32,6 +32,7 @@
                         <field name="arch" type="xml">
                                 <form string="产品">
                                         <field name="name" />
+                                        <field name="category"/>
                                         <field name="code" />
                                         <field name="barcode"/>
                                         <field name="price"/>
@@ -68,6 +69,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="产品列表">
+                    <field name="category" select="1"/>
                     <field name="name" select="1"/>
                                         <field name="code" select="1"/>
                                         <field name="sequence"/>
