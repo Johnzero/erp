@@ -249,3 +249,13 @@ class fg_order_line(osv.osv):
 
 
 fg_order_line()
+
+#
+#mail_message = self.pool.get('mail.message')
+#
+
+class fg_order_mail_notify(osv.osv):
+    _name = 'fuguang.order.mail.notify'
+    _description = '富光客户订单明细'
+    
+    
