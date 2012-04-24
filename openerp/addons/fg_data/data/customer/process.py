@@ -52,12 +52,10 @@ def main():
 	    if len(data) == 3:
 		data.extend(',,,,,,,'.split(','))
 	    c = 0
-	    
+	    cate = data[2].strip()
+	    c = cates.index(cate)
 	    name = data[1]
-	    
 	    print name
-	    
-	    
 	    cus = template % (i, data[1], c, i, data[6], data[1], data[7], data[4], data[5], data[3], i)
 	    i = i + 1
 	    doc = doc + cus

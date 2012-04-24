@@ -39,12 +39,14 @@ class sale_order(osv.osv):
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
         'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
         'note': fields.text('附注'),
+        'sync':fields.boolean('备用'),
     }
     
     _defaults = {
         'date_order': fields.date.context_today,
         'state': 'draft',
         'minus': False, 
+        'sync':False,
         'user_id': lambda obj, cr, uid, context: uid,
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['default'])['default'],
     }
