@@ -15,6 +15,7 @@
         'picking_sequence.xml',
         'picking_views.xml',
 		'data/items.xml',
+		'data/1st_cus_20120424.xml',
 		#'data/category.xml',
 		#'data/customer.xml',
     ],
