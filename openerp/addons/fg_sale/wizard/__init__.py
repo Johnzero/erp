@@ -28,26 +28,38 @@ class order_import(osv.osv_memory):
         
         #take product.
         product_dict = dict()
-        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
+        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
+        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         cursor = conn.cursor()
         cursor.execute("select FName, FModel, FItemID from t_ICItem;")
         rows = cursor.fetchall()
         
         
         product_obj = self.pool.get('product.product')
+        
+        id_to_check = []
+        
         for row in rows:
             product = None
-            if row[1]:
-                product = product_obj.name_search(cr, uid, row[1].decode('GB2312').encode('utf-8'), operator='=')
+            if row[0] and row[1]:
+                name = row[0].decode('GB2312').encode('utf-8')
+                code = row[1].decode('GB2312').encode('utf-8')
+                product = product_obj.search(cr, uid, [('name', '=', name), ('default_code','=',code)], context=context )
             if not product:
+                
                 product = product_obj.name_search(cr, uid, row[0].decode('GB2312').encode('utf-8'), operator='=')
+            
             
             if product and len(product)==1:
                 product_dict[row[2]] = product[0]
             else:
-                print '404, or duplicated items on:', row[1],row[0]
-
+                id_to_check.append(row[0])
+        
+        print ','.join(id_to_check)
+        
+        return True
+    
+        
         order_list = {}
         #get order id.
         cr.execute("""
@@ -75,7 +87,7 @@ class order_import(osv.osv_memory):
                 ics.FEntrySelfI0441,
                 ics.FPrice, 
                 ics.FAllAmount, 
-                ics.FNote, 
+                ics.FNote
                 
             FROM ICSaleEntry ics INNER JOIN
                   t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID INNER JOIN
