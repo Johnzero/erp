@@ -800,6 +800,7 @@ class expression(object):
         joins = ' AND '.join(self.__joins)
         if joins:
             query = '(%s) AND %s' % (joins, query)
+
         return (query, flatten(params))
 
     def get_tables(self):

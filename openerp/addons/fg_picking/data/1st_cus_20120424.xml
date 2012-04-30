@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        
+        <record id="res_partner_category_0" model="res.partner.category">
+            <field name="name">一级经销商</field>
+        </record>
 <record id="res_partner_1" model="res.partner">
     <field name="name">吴秀屏</field>
     <field eval="[(6, 0, [ref('res_partner_category_0')])]" name="category_id"/>

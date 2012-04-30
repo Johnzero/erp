@@ -8,6 +8,7 @@ class res_partner(osv.osv):
 	_inherit = 'res.partner'
 	_columns = {
 	'client_id': fields.many2one('res.users', '登录账号', help='客户登录系统的账号'),
+    'sales_ids': fields.many2many('res.users', 'rel_partner_user','partner_id','user_id', '负责业务员', help='内部负责业务员. 设置邮件地址,以备通知使用.'),
 	}
 	
 res_partner()
@@ -121,6 +122,7 @@ class fg_order(osv.osv):
         'partner_address_id': fields.many2one('res.partner.address', '送货地址', required=True, readonly=True), 
         'total_amount': fields.function(_amount_all, method=True, string='总价', multi='sums'),
         'order_line': fields.one2many('fuguang.order.line', 'order_id', '订单明细'),
+        'notifier_ids': fields.many2many('res.users', 'rel_order_user','order_id','user_id', '可见客户'),
         'note':fields.text('附注'),
     }
     
@@ -163,12 +165,50 @@ class fg_order(osv.osv):
         'partner_address_id': _default_partner_address,
     }
     
+    
     def create(self, cr, uid, vals, context=None):
         if not vals.has_key('name'):
             obj_sequence = self.pool.get('ir.sequence')
             vals['name'] = obj_sequence.get(cr, uid, 'fuguang.order')
         
         id = super(fg_order, self).create(cr, uid, vals, context)
+        
+        #notify:
+        cr.execute("""
+        SELECT id, client_id
+          FROM res_partner
+          where client_id = %s;
+        
+        """ % uid)
+        res = cr.fetchone()
+        
+        if res:
+            body = """
+            %s 您好! 
+            这是一封提醒邮件. 
+            客户 %s 已经与 %s 在订单系统里创建了一个编号为 %s 的订单.
+            请及时处理.
+            """
+            
+            partner_id = res[0]
+            mail_message = self.pool.get('mail.message')
+            partner_obj = self.pool.get('res.partner')
+        
+            partner = partner_obj.browse(cr, uid, [partner_id], context=context)
+            print 'get', partner
+            for p in partner:
+                mail_to = [ user.user_email for user in p.sales_ids ]
+                user_names = [ user.name for user in p.sales_ids ]
+
+                mail_message.schedule_with_attach(cr, uid,
+                    '22626632@qq.com',
+                    mail_to,
+                    '[订单提醒]编号:%s' % vals['name'],
+                    body % (','.join(user_names), p.name, time.strftime('%Y-%m-%d %H-%m'),vals['name']),
+                    reply_to='22626632@qq.com',
+                    context=context
+                )
+
         return id
 
     def copy(self, cr, uid, id, default={}, context=None):
@@ -225,7 +265,7 @@ class fg_order_line(osv.osv):
         item_obj = self.pool.get('fuguang.picking.item')
         item = item_obj.browse(cr, uid, product_id)
         uom_list = [u.id for u in item.uoms]
-        value = {'product_uom':uom_list[-1]}
+        value = {'product_uom':uom_list[0]}
 
         domain = {'color':[('item_id','=',product_id)], 'product_uom':[('id','in',uom_list)]}
         return {'domain': domain, 'value':value} # 'warning': warning}
@@ -250,12 +290,4 @@ class fg_order_line(osv.osv):
 
 fg_order_line()
 
-#
-#mail_message = self.pool.get('mail.message')
-#
-
-class fg_order_mail_notify(osv.osv):
-    _name = 'fuguang.order.mail.notify'
-    _description = '富光客户订单明细'
-    
     

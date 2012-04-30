@@ -87,6 +87,8 @@
                         <field name="arch" type="xml">
                                 <field name="parent_id" position="after">
                                         <field name="client_id"/>
+                                        <separator string="负责业务员" colspan="4" col="4"/>
+                                        <field name="sales_ids" colspan="4" mode="tree" nolabel="1" widget="many2many_list"/>
                                 </field>
                         </field>
                 </record>
@@ -161,6 +163,13 @@
             <field name="domain">[('user_id','=',uid)]</field>
             <field name="view_mode">tree,form</field>
         </record>
+        <record id="action_fuguang_order_user_form" model="ir.actions.act_window">
+            <field name="name">我负责的订单</field>
+            <field name="res_model">fuguang.order</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('partner_id.sales_ids','in',[uid])]</field>
+            <field name="view_mode">tree,form</field>
+        </record>
         
                 <record id="action_fuguang_picking_item_form" model="ir.actions.act_window">
             <field name="name">产品列表</field>
@@ -177,8 +186,6 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="picking_uom_tree_view"/>
         </record>
-        
-        
                 
                 <report auto="False" id="report_fuguang_order_html" model="fuguang.order" name="fuguang.order.html" rml="fg_picking/report/order.html" string="导出订单" report_type="mako2html" />
                 
@@ -187,9 +194,12 @@
                 <menuitem id="fg_picking_config_menu" name="配置" parent="menu_fg_picking" sequence="3" groups="fg_picking.group_fgp_admin"/>
                 
                 <menuitem action="action_fuguang_order_form" id="menu_action_fuguang_picking_order_form"
-            parent="fg_order_menu" sequence="1" groups="fg_picking.group_fgp_user,fg_picking.group_fgp_admin"/>
-        <menuitem action="action_fuguang_order_client_form" id="menu_action_fuguang_picking_order_client_form"
-            parent="fg_order_menu" sequence="2" groups="fg_picking.group_fgp_client"/>
+                    parent="fg_order_menu" sequence="1" groups="fg_picking.group_fgp_admin"/>
+            <menuitem action="action_fuguang_order_client_form" id="menu_action_fuguang_picking_order_client_form"
+                parent="fg_order_menu" sequence="2" groups="fg_picking.group_fgp_client"/>
+            <menuitem action="action_fuguang_order_user_form" id="menu_action_fuguang_picking_order_user_form"
+                parent="fg_order_menu" sequence="3" groups="fg_picking.group_fgp_user"/>
+            
 
                 <menuitem id="menu_fg_picking_item_manage" name="产品管理" parent="fg_picking_config_menu" sequence="1" action="action_fuguang_picking_item_form"/>
                 <menuitem id="menu_fg_picking_uom_manage" name="计量单位管理" parent="fg_picking_config_menu" sequence="2" action="action_picking_uom_tree_view"/>
