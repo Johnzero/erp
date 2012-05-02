@@ -18,9 +18,8 @@ class fg_sync_scheduler(osv.osv):
         'password': fields.char('Password',size=64,required=True),
         'model_id': fields.many2one('ir.model', 'Object to synchronize',required=True),
         'domain':fields.char('Domain', size=64, select=1, required=1),
-        'action':fields.selection([('d', 'Download'), ('u', 'Upload')], 'Action'),
         'div': fields.boolean('Div'),
-        'synchronize_date':fields.datetime('Latest', readonly=True),
+        'sync_date':fields.datetime('Latest', readonly=True),
     }
     _defaults = {
         'server_port': lambda *args: 8069

@@ -70,6 +70,10 @@ class sale_order(osv.osv):
             vals['sub_name'] = "FGSO-%s-%s" % ( initial, count+1 )
             
         id = super(sale_order, self).create(cr, uid, vals, context)
+        
+        #sync.
+        
+        
         return id
     
     

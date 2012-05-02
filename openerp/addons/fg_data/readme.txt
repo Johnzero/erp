@@ -1,5 +1,5 @@
 
-1. È¡µÃËùÓĞ¿Í»§£º
+1. å–å¾—æ‰€æœ‰å®¢æˆ·ï¼š
 SELECT
 	org.FNumber,
 	org.FName,
@@ -17,7 +17,7 @@ FROM
 JOIN t_Item item ON item.FItemID = org.FParentID
 
 
-2.µÃµ½ÓÃ»§£º
+2.å¾—åˆ°ç”¨æˆ·ï¼š
 SELECT
 	FUserID,
 	FName,
@@ -27,7 +27,7 @@ FROM
 WHERE
 	FSID IS NOT NULL
 
-3. »ñÈ¡ÊÂÒµ²¿£º
+3. è·å–äº‹ä¸šéƒ¨ï¼š
 SELECT
 	FNumber,
 	FName
@@ -35,7 +35,7 @@ FROM
 	t_Department;
 
         
-4. »ñÈ¡²úÆ·µ¥Î»£º
+4. è·å–äº§å“å•ä½ï¼š
 SELECT
 	tmu.FNumber,
 	tmu.FName,
@@ -43,7 +43,7 @@ SELECT
 FROM
 	t_MeasureUnit tmu;
         
-5.»ñÈ¡²úÆ·:
+5.è·å–äº§å“:
 SELECT
 	icitem.FName,
 	icitem.FNumber,
@@ -61,6 +61,5 @@ FROM
 JOIN t_Item item ON item.FItemID = icitem.FParentID
 JOIN t_MeasureUnit unit ON unit.FItemID = icitem.FSaleUnitID
 JOIN t_Department dep ON dep.FItemID = icitem.FSource;
-
 
 

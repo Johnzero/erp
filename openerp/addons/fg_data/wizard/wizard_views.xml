@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        
-        <record id="view_fg_sale_customer_wizard_import" model="ir.ui.view">
-            <field name="name">导入客户</field>
-            <field name="model">fg_sale.customer.wizard.import</field>
+
+        <record id="view_fg_data_customer_import" model="ir.ui.view">
+            <field name="name">Customer Import</field>
+            <field name="model">fg_data.customer.wizard.import</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
               <form string="说明">
@@ -16,13 +16,13 @@
             </field>
         </record>
 
-        <record id="action_fg_sale_customer_wizard_import" model="ir.actions.act_window">
+        <record id="action_fg_sale_order_wizard_import" model="ir.actions.act_window">
             <field name="name">导入订单</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_sale.customer.wizard.import</field>
+            <field name="res_model">fg_sale.order.wizard_import</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_fg_sale_customer_wizard_import"/>
+            <field name="view_id" ref="view_fg_sale_order_wizard_import"/>
             <field name="target">new</field>
         </record>
 

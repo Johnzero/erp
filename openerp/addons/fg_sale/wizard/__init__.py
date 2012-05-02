@@ -2,9 +2,24 @@
 
 from osv import osv
 import pyodbc
+
+
+class customer_import(osv.osv_memory):
+    _name = "fg_sale.customer.wizard.import"
+    _description = "customer importing."
+    
+    _columns = {
+        
+    }
+    
+    def import_customer(self, cr, uid, ids, context=None):
+        
+        return {'type': 'ir.actions.act_window_close'}
+
+
         
 class order_import(osv.osv_memory):
-    _name = "fg_sale.order.wizard_import"
+    _name = "fg_sale.order.wizard.import"
     _description = "order importing."
     
     _columns = {

@@ -6,14 +6,13 @@
 	    <field name="name">res.partner.client.form</field>
             <field name="model">res.partner</field>
             <field name="type">form</field>
-                <field name="inherit_id" ref="base.view_partner_form"/>
-                <field name="arch" type="xml">
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
                 <field name="parent_id" position="after">
-                <field name="ratio"/>
+                    <field name="ratio"/>
                 </field>
             </field>
         </record>
-        
         
         <record model="ir.ui.view" id="fg_sale_order_tree_view">
             <field name="name">fg_sale.order.tree</field>
@@ -152,7 +151,7 @@
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my"/>
         <menuitem id="menu_fg_sale_admin" name="管理" parent="menu_fg_sale"/>
-        <menuitem id="menu_fg_sale_order_wizard_order_import" parent="menu_fg_sale_admin" action="action_fg_sale_order_wizard_import"/>
+        <menuitem id="menu_fg_sale_order_wizard_order_import" parent="menu_fg_sale_admin" action="action_fg_sale_customer_wizard_import"/>
         
     </data>
 </openerp>
