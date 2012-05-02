@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="base_pick_item_uom" model="fuguang.picking.item.uom">
+    <record id="base_pick_item_uom" model="fuguang.picking.item.uom">
             <field name="name">只</field>
         	<field name="factor">1</field>
         </record>
@@ -93,7 +93,6 @@
             <field name="name">件(8套)</field>
                 <field name="factor">8</field>
         </record>
-
 
 <record id="pick_item_1" model="fuguang.picking.item">
         <field name="category">塑胶</field>

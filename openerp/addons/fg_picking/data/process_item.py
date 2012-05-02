@@ -104,11 +104,13 @@ def gen_xml_new():
         code = data[2].strip().replace('型','')
         name = data[1].strip()
         color = data[3].strip()
-        
+
         if last_item_name != name:
             uoms = ""
             
             us = price_data.get(code)
+            if name == '健牌磁化口杯240ml':
+                print us
             s_s = "(6, 0, [ref('base_pick_item_uom'),ref('pick_item_uom_%s')])"
             s_t_s = "(6, 0, [ref('base_pick_item_uom_tao'),ref('pick_item_uom_tao_%s')])"
             if us and us.get('uom'):
@@ -118,6 +120,7 @@ def gen_xml_new():
                 else:
                     uoms = s_s % uom_s.replace('件(','').replace('只)','')
                 item_count = item_count + 1
+                
                 xml = xml + (item_xml % (item_count, category, name, code, item_count*100, uoms, us.get('price','0'),us.get('vol','')))
                 
 

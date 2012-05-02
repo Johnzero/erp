@@ -31,33 +31,20 @@ class order_import(osv.osv_memory):
         conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
         #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         cursor = conn.cursor()
-        cursor.execute("select FName, FModel, FItemID from t_ICItem;")
+        cursor.execute("select FNumber,FItemID from t_ICItem;")
         rows = cursor.fetchall()
         
         
         product_obj = self.pool.get('product.product')
         
-        id_to_check = []
+
         
         for row in rows:
             product = None
             if row[0] and row[1]:
-                name = row[0].decode('GB2312').encode('utf-8')
-                code = row[1].decode('GB2312').encode('utf-8')
-                product = product_obj.search(cr, uid, [('name', '=', name), ('default_code','=',code)], context=context )
-            if not product:
-                
-                product = product_obj.name_search(cr, uid, row[0].decode('GB2312').encode('utf-8'), operator='=')
-            
-            
-            if product and len(product)==1:
-                product_dict[row[2]] = product[0]
-            else:
-                id_to_check.append(row[0])
-        
-        print ','.join(id_to_check)
-        
-        return True
+                num = ("%s" % row[0]).decode('GB2312').encode('utf-8')
+                product = product_obj.search(cr, uid, [('fullnum', '=', num)], context=context )
+                product_dict[num] = product[0]
     
         
         order_list = {}
@@ -77,22 +64,22 @@ class order_import(osv.osv_memory):
         cursor = conn.cursor()
         cursor.execute(
             """
-            SELECT 
-                ic.FBillNo, 
-                ics.FEntryID, 
-                ics.FItemID, 
-                t007.FName, 
-                ics.FAuxQty, 
-                ics.FQty, 
-                ics.FEntrySelfI0441,
-                ics.FPrice, 
-                ics.FAllAmount, 
-                ics.FNote
-                
-            FROM ICSaleEntry ics INNER JOIN
-                  t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID INNER JOIN
-                  ICSale ic ON ic.FInterID = ics.FInterID
-            WHERE (ics.FInterID = 1070)
+            SELECT
+                    ic.FBillNo,
+                    ics.FEntryID,
+                    item.FNumber,
+                    t007.FName,
+                    ics.FAuxQty,
+                    ics.FQty,
+                    ics.FEntrySelfI0441,
+                    ics.FPrice,
+                    ics.FAllAmount,
+                    ics.FNote
+            FROM
+                    ICSaleEntry ics
+            INNER JOIN t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID
+            INNER JOIN ICSale ic ON ic.FInterID = ics.FInterID
+            INNER JOIN t_IcItem item ON item.FItemID = ics.FItemID
         """)
         rows = cursor.fetchall()
         l = len(rows)
@@ -110,7 +97,7 @@ class order_import(osv.osv_memory):
                 print 'no product for ', row[2]
                 break
             
-            line['product_uom'] = uom_dict.get(("%s" % row[3]).decode('GB2312').encode('utf-8'))
+            line['product_uom'] = uom_dict.get(("%s" % row[3]).decode('GB2312').encode('utf-8').replace('（','(').replace('）',')'))
             if not line['product_uom']:
                 print 'no product_uom for ', row[3]
                 break
@@ -118,8 +105,12 @@ class order_import(osv.osv_memory):
             line['product_uom_qty'] = int(row[4])
             line['aux_qty'] = int(row[5])
             line['unit_price'] = float(row[6])
-            line['subtotal_amount'] = float[row[8]]
-            line['note'] = ("%s" % row[9]).decode('GB2312').encode('utf-8')
+            line['subtotal_amount'] = float(row[8])
+            if row[9]:
+                try:
+                    line['note'] = ("%s" % row[9]).decode('GB2312').encode('utf-8')
+                except:
+                    line['note'] = ("%s" % row[9])
             print '%s to go' % l
             l = l - 1
             self.pool.get('fg_sale.order.line').create(cr, uid, line)
@@ -146,21 +137,23 @@ class order_import(osv.osv_memory):
         
         cr.execute("""
                    SELECT
-                    "public".res_partner."id",
-                    "public".res_partner."name"
+                            "public".res_partner."id",
+                            "public".res_partner."fullnum"
                     FROM
-                    "public".res_partner
+                            "public".res_partner
+                    WHERE
+                            fullnum IS NOT NULL
                    """)
         for u in cr.fetchall():
             parnter_dict[u[1].encode('utf-8')] = u[0]
 
-        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp')
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
+        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
+        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
         sql_1 = """
            SELECT
                FBillNo,
                FDate,
-               t_Item.FName AS FPartnerName,
+               t_Item.FNumber,
                FNote,
                tu_1.FName AS FBillerName,
                FInvoiceAmount,
@@ -179,7 +172,7 @@ class order_import(osv.osv_memory):
                            SELECT
                                    FBillNo,
                                    FDate,
-                                   t_Item.FName AS FPartnerName,
+                                   t_Item.FNumber AS FPartnerName,
                                    FNote,
                                    tu_1.FName AS FBillerName,
                                    FInvoiceAmount,
@@ -202,18 +195,17 @@ class order_import(osv.osv_memory):
         cursor.execute(sql_1)
 
         rows = cursor.fetchall()
-        
-        missed = []
-        
+                
         for row in rows:
             order = {}
             order['name'] = ("%s" % row[0]).decode('GB2312').encode('utf-8')
             order['date_order'] = row[1]
             
-            try:
-                part = ("%s" % row[2]).decode('GB2312').encode('utf-8')
-            except:
-                part = ("%s" % row[2])
+            
+            #try:
+            #    part = ("%s" % row[2]).decode('GB2312').encode('utf-8')
+            #except:
+            #    part = ("%s" % row[2])
             
             order['note'] = "%s" % row[3].decode('GB2312').encode('utf-8')
             
@@ -224,7 +216,7 @@ class order_import(osv.osv_memory):
             order['user_id'] = user_dict.get(user_name)
             
             order['amount_total'] = float(row[5])
-            minus = (row[6]==-1)
+            minus = (row[6]<0)
             
             if row[7]:
                 try:
@@ -242,63 +234,21 @@ class order_import(osv.osv_memory):
             if row[9] == 1:
                 order['state'] = 'cancel'
             
+            num = ("%s" % row[2]).decode('GB2312').encode('utf-8')
             
-            if parnter_dict.get(part):
-                order['partner_id'] = parnter_dict.get(part)
+            if parnter_dict.get(num):
+                order['partner_id'] = parnter_dict.get(num)
                 
                 partner_obj = self.pool.get('res.partner')
-                addr = partner_obj.address_get(cr, uid, [part], ['default'])['default']
+                addr = partner_obj.address_get(cr, uid, [order['partner_id']], ['default'])['default']
                 order['partner_shipping_id'] = addr
-            elif parnter_dict.get(row[2]):
-                order['partner_id'] = parnter_dict.get(row[2])
-                
-                partner_obj = self.pool.get('res.partner')
-                addr = partner_obj.address_get(cr, uid, [row[2]], ['default'])['default']
-                order['partner_shipping_id'] = addr
-            
             else:
-                fix_dict = {}
-                fix_dict['FGXS3780'] = u'阿弥陀佛,和爱'
-                fix_dict['FGXS5211'] = u'福州小糸大億'
-                fix_dict['FGXS5482'] = u'中投证劵'
-                fix_dict['FGXS5716'] = u'名邦· 西城国际'
-                fix_dict['FGXS5717'] = u'名邦· 西城国际'
-                fix_dict['FGXS5789'] = u'御景·前城'
-                fix_dict['FGXS5790'] = u'御景·前城'
-                fix_dict['FGXS6234'] = u'优秀共产党员·建党九十周年'
-                fix_dict['FGXS8221'] = u'倪贇同学'
-                fix_dict['FGXS8678'] = u'祝倪贇同学'
-                fix_dict['FGXS8585'] = u'祝倪贇同学'
-                fix_dict['FGXS16236'] = u'德泰·和顺丽景'
-                fix_dict['FGXS16695'] = u'御景·前城'
-                fix_dict['FGXS17356'] = u'囍'
-                if fix_dict.has_key(order['name']):
-                    order['partner_id'] = parnter_dict.get(fix_dict.get(order['name']))
-                    partner_obj = self.pool.get('res.partner')
-                    if order['partner_id']:
-                        addr = partner_obj.address_get(cr, uid, [order['partner_id']], ['default'])['default']
-                        order['partner_shipping_id'] = addr
-                    else:
-                        parts = partner_obj.name_search(cr, uid, fix_dict.get(order['name']))
-                        if parts:
-                            order['partner_id'] = parts[0][0]
-                            print 'order_id', order['partner_id']
-                            addr = partner_obj.address_get(cr, uid, [order['partner_id']], ['default'])['default']
-                            order['partner_shipping_id'] = addr
-                        else:
-                            order['partner_id'] = 1
-                            order['partner_shipping_id'] = 1
-                            missed.append(row[0])
-                else:
-                    order['partner_id'] = 1
-                    order['partner_shipping_id'] = 1
-                    missed.append(row[0])
-            
+                print 'missed', num
+                break
             print row[0]
+                
             self.pool.get('fg_sale.order').create(cr, uid, order)
             
-        
-        print missed, 'missed'
         
         return {'type': 'ir.actions.act_window_close'}
         

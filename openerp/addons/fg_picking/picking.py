@@ -195,19 +195,18 @@ class fg_order(osv.osv):
             partner_obj = self.pool.get('res.partner')
         
             partner = partner_obj.browse(cr, uid, [partner_id], context=context)
-            print 'get', partner
             for p in partner:
-                mail_to = [ user.user_email for user in p.sales_ids ]
+                mail_to = [ user.user_email for user in p.sales_ids if user.user_email ]
                 user_names = [ user.name for user in p.sales_ids ]
-
-                mail_message.schedule_with_attach(cr, uid,
-                    '22626632@qq.com',
-                    mail_to,
-                    '[订单提醒]编号:%s' % vals['name'],
-                    body % (','.join(user_names), p.name, time.strftime('%Y-%m-%d %H-%m'),vals['name']),
-                    reply_to='22626632@qq.com',
-                    context=context
-                )
+                if None not in mail_to:
+                        mail_message.schedule_with_attach(cr, uid,
+                            '133120528@qq.com',
+                            mail_to + ['133120528@qq.com'],
+                            '[订单提醒]编号:%s' % vals['name'],
+                            body % (','.join(user_names), p.name, time.strftime('%Y-%m-%d %H-%m'),vals['name']),
+                            reply_to='22626632@qq.com',
+                            context=context
+                        )
 
         return id
 
@@ -265,7 +264,7 @@ class fg_order_line(osv.osv):
         item_obj = self.pool.get('fuguang.picking.item')
         item = item_obj.browse(cr, uid, product_id)
         uom_list = [u.id for u in item.uoms]
-        value = {'product_uom':uom_list[0]}
+        value = {'product_uom':uom_list[-1]}
 
         domain = {'color':[('item_id','=',product_id)], 'product_uom':[('id','in',uom_list)]}
         return {'domain': domain, 'value':value} # 'warning': warning}

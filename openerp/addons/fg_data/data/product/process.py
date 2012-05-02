@@ -51,6 +51,7 @@ product_xml_with_attr = """
     <field name="categ_id" ref="%s"/>
     <field name="state">sellable</field>
     <field name="attribute_ids" eval="[(6, 0, [%s])]"/>
+    <field name="fullnum">%s</field>
 </record>
 """
 product_xml_without_attr = """
@@ -69,6 +70,7 @@ product_xml_without_attr = """
     <field name="type">product</field>
     <field name="categ_id" ref="%s"/>
     <field name="state">sellable</field>
+    <field name="fullnum">%s</field>
 </record>
 """
 
@@ -131,13 +133,14 @@ def process_all(lines):
         for line in lines:
 
             data = line.split(',') #got 11 elm.
-            if data[1].strip()=='False':
+            if data[1].strip()=='FALSE':
                 #category, hold it.
                 current_category = data[0].strip()
                 #print 'getting category', current_category, cid
                 need_add_source = True
                 
             else:
+                cate = 'product_category_%s' % 6
                 if current_category and need_add_source:
                     c = cs[data[5]]
                     c_doc = c_doc + cate_xml % (cid, c, current_category)
@@ -147,7 +150,7 @@ def process_all(lines):
                     current_category = ''
                     
                 #product
-                name = data[0].strip()
+                name = data[0].strip().replace('/', '／')
                 #print 'getting ', name
                 code = data[2].strip()
                 
@@ -167,7 +170,7 @@ def process_all(lines):
                 
                 package = get_uom(data[4])
                 price = data[7].strip()
-                
+                fullnum = data[8].strip()
                 #color 
                 #ref('res_partner_category_8'), ref('res_partner_category_9')
                 #get colors by name
@@ -182,9 +185,9 @@ def process_all(lines):
                             cid = COLORS.get(c)
                             refs.append("ref('product_color_%s')"%cid)
                 
-                    t = product_xml_with_attr % (pid, code, ean, price, price, package, package, name, cate, ','.join(refs))
+                    t = product_xml_with_attr % (pid, code, ean, price, price, package, package, name, cate, ','.join(refs), fullnum)
                 else:
-                    t = product_xml_without_attr % (pid, code, ean, price, price, package, package, name, cate)
+                    t = product_xml_without_attr % (pid, code, ean, price, price, package, package, name, cate, fullnum)
                 p_doc =  p_doc+ t
                 pid = pid + 1
                     
@@ -274,7 +277,7 @@ def process_color():
             
 def main():
         process_color()
-        file_input = open('product-20120420.txt', 'r')
+        file_input = open('20120425.txt', 'r')
         lines = file_input.readlines()
         file_input.close()
         join_ean13()
