@@ -12,3 +12,15 @@ class res_partner(osv.osv):
     _columns = {
         'fullnum': fields.char('num', size=40)
     }
+
+class res_user(osv.osv):
+    _inherit = 'res.partner'
+    _columns = {
+        'fullnum': fields.char('num', size=40)
+    }
+
+class product_uom(osv.osv):
+    _inherit = 'product.uom'
+    _columns = {
+        'fullnum': fields.char('num', size=40)
+    }

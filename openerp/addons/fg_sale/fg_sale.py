@@ -25,7 +25,6 @@ class sale_order(osv.osv):
         return res
     
     _columns = {
-
         'name': fields.char('单号', size=64, select=True, readonly=True),
         'sub_name': fields.char('副单号', size=64, select=True, readonly=True),
         'date_order': fields.date('日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
@@ -82,6 +81,9 @@ class sale_order(osv.osv):
         
         
         return {'value': {'partner_shipping_id':addr}}
+    
+    def button_dummy(self, cr, uid, ids, context=None):
+        return True
     
     def button_review(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, { 

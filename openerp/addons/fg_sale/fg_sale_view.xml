@@ -80,6 +80,7 @@
                     <group col="6" colspan="4">
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
                         <field name="amount_total"/>
+                        <button name="button_dummy" states="draft" string="计算价格" type="object" icon="gtk-execute"/>
                         <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
                     </group>
                 </form>
