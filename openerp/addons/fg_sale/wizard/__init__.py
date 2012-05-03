@@ -3,6 +3,7 @@
 from osv import osv
 import pyodbc
 
+CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp'
 
 class customer_import(osv.osv_memory):
     _name = "fg_sale.customer.wizard.import"
@@ -14,8 +15,76 @@ class customer_import(osv.osv_memory):
     
     def import_customer(self, cr, uid, ids, context=None):
         
+        sql = """
+        SELECT
+        	org.FNumber,
+        	org.FName,
+        	org.FContact,
+        	org.FPhone,
+        	org.FFax,
+        	org.FAddress,
+        	org.FCity,
+        	org.FProvince,
+        	org.FCountry,
+        	item.FName AS Category,
+        	item.FNumber AS Category_Number
+        FROM
+        	t_Organization org
+        JOIN t_Item item ON item.FItemID = org.FParentID
+        """
+        conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        
+        #save category first
+        cate_dict = dict()
+        for row in rows:
+            number = ("%s" % row[10]).decode('GB2312').encode('utf-8')
+            name = ("%s" % row[9]).decode('GB2312').encode('utf-8')
+            if not cate_dict.has_key(number):
+                cate_dict[number] = name
+            
+        
+        partner_cate_obj = self.pool.get('res.partner.category')
+        
+        
+        
+        
+        
         return {'type': 'ir.actions.act_window_close'}
 
+
+class user_import(osv.osv_memory):
+    _name = "fg_sale.user.wizard.import"
+    _description = "user importing."
+
+    _columns = {
+
+    }
+
+    def import_user(self, cr, uid, ids, context=None):
+        conn_str = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp'
+
+
+
+        return {'type': 'ir.actions.act_window_close'}
+
+
+class product_import(osv.osv_memory):
+    _name = "fg_sale.product.wizard.import"
+    _description = "product importing."
+
+    _columns = {
+        
+    }
+
+    def import_product(self, cr, uid, ids, context=None):
+        conn_str = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp'
+
+
+
+        return {'type': 'ir.actions.act_window_close'}
 
         
 class order_import(osv.osv_memory):

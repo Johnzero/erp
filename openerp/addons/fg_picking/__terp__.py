@@ -7,7 +7,7 @@
     'description': """富光出库单""",
     'author': 'Daniel',
     'website': 'http://www.ide.fm',
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'fg_data'],
     'init_xml': [],
     'update_xml': [
 		'security/user.xml',
@@ -15,7 +15,7 @@
         'picking_sequence.xml',
         'picking_views.xml',
 		'data/items.xml',
-		'data/1st_cus_20120424.xml',
+		#'data/1st_cus_20120424.xml',
 		#'data/category.xml',
 		#'data/customer.xml',
     ],

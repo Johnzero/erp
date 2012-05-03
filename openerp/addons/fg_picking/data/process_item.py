@@ -70,7 +70,7 @@ def gen_xml_new():
         if l and ',,,,' not in l:
             l_list = l.strip().split(',')
             if len(l_list) == 6:
-                code = l_list[1].strip().replace('型','') or '无货号'
+                code = l_list[1].strip().replace('型','').replace('--', '-').replace('-', '-') or '无货号'
                 uom = l_list[2].strip()
                 vol = l_list[3].strip()
                 price = l_list[4].strip()
@@ -101,7 +101,7 @@ def gen_xml_new():
     for line in lines:
         data = line.strip().split(',')
         category = data[0]
-        code = data[2].strip().replace('型','')
+        code = data[2].strip().replace('型','').replace('--', '-').replace('-', '-')
         name = data[1].strip()
         color = data[3].strip()
 
@@ -109,8 +109,7 @@ def gen_xml_new():
             uoms = ""
             
             us = price_data.get(code)
-            if name == '健牌磁化口杯240ml':
-                print us
+
             s_s = "(6, 0, [ref('base_pick_item_uom'),ref('pick_item_uom_%s')])"
             s_t_s = "(6, 0, [ref('base_pick_item_uom_tao'),ref('pick_item_uom_tao_%s')])"
             if us and us.get('uom'):

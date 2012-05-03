@@ -71,9 +71,7 @@ class sale_order(osv.osv):
             
         id = super(sale_order, self).create(cr, uid, vals, context)
         
-        #sync.
-        
-        
+        # todo: sync here.
         return id
     
     

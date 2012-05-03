@@ -7,5 +7,16 @@
 	    <record id="group_fg_sale_manager" model="res.groups">
 	        <field name="name">富光 / 业务部经理</field>
 	    </record>
+	    <record id="fg_sale_user_strict" model="ir.rule">
+			<field name="name">user fg_order</field>
+			<field name="model_id" ref="model_fg_sale_order"/>
+			<field name="prem_read" eval="True"/>
+			<field name="perm_write" eval="True"/>
+			<field name="perm_create" eval="True"/>
+			<field name="perm_unlink" eval="False"/>
+			<field eval="0" name="global"/>
+			<field eval="[(6,0,[ref('fg_sale.group_fg_sale_user')])]" name="groups"/>
+			<field name="domain_force">[('partner_id.sales_ids','in',[uid])]</field>
+		</record>
 	</data>
 </openerp>
