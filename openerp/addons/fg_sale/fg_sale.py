@@ -123,7 +123,7 @@ class sale_order_line(osv.osv):
         'product_uom_qty': fields.float('单位数量', required=True),
         'aux_qty': fields.float('总只数', required=True),
         'unit_price': fields.float('单位价格', required=True),
-        'discount_amount': fields.float('折扣价'),
+        'unit_price_discount': fields.float('单位折扣价格', required=True),
         'subtotal_amount': fields.float('小计'),
         'note': fields.char('附注', size=100),
     }
