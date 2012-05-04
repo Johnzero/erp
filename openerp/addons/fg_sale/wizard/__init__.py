@@ -205,8 +205,25 @@ class product_import(osv.osv_memory):
             t_icitem icitem
         JOIN t_Item item ON item.FItemID = icitem.FParentID
         JOIN t_MeasureUnit unit ON unit.FItemID = icitem.FSaleUnitID
-        JOIN t_Department dep ON dep.FItemID = icitem.FSource;
+        JOIN t_Department dep ON dep.FItemID = icitem.FSource
+        where icitem.FSource > 0;
         """
+        product_sql_no_srouce = """
+        SELECT
+            icitem.FModel,
+            icitem.FName,
+            icitem.FNumber,
+            icitem.FSalePrice,
+            icitem.FNote,
+            item.FName AS Category_Name,
+            item.FNumber AS Category_Num,
+            unit.FNumber AS Unit_Num,
+            unit.FName AS Unit_Name
+        FROM
+            t_icitem icitem
+        JOIN t_Item item ON item.FItemID = icitem.FParentID
+        JOIN t_MeasureUnit unit ON unit.FItemID = icitem.FSaleUnitID
+        where icitem.FSource = 0"""
         product_cate_obj = self.pool.get('product.category')
         product_uom_obj = self.pool.get('product.uom')
         product_obj = self.pool.get('product.product')
@@ -267,9 +284,37 @@ class product_import(osv.osv_memory):
                 'description':clear_field(row[4]) or ''
             }
             product_obj.create(cr, uid, product)
-
+        #no source.
+        cursor = conn.cursor()
+        cursor.execute(product_sql_no_srouce)
+        rows = cursor.fetchall()
+        for row in rows:
+            if not uom_dict.has_key(clear_field(row[7])):
+                print row[2], 'uom not found'
+                break
+            if not cate_dict.has_key(clear_field(row[6])):
+                print row[2], 'category not found'
+                break
+            product = {
+                'sale_ok':True,
+                'purchase_ok':True,
+                'supply_method':'produce',
+                'default_code':clear_field(row[0]) or '',
+                'list_price':row[3],
+                'standard_price':row[3],
+                'uom_id':uom_dict.get(clear_field(row[7])),
+                'uom_po_id':uom_dict.get(clear_field(row[7])),
+                'sale_delay':1,
+                'name':clear_field(row[1]),
+                'type':'product',
+                'categ_id':cate_dict.get(clear_field(row[6])),
+                'state':'sellable',
+                'fullnum':clear_field(row[2]),
+                'source':u'其他',
+                'description':clear_field(row[4]) or ''
+            }
+            product_obj.create(cr, uid, product)
         return {'type': 'ir.actions.act_window_close'}
-
         
 class order_import(osv.osv_memory):
     _name = "fg_sale.order.wizard.import"
@@ -281,49 +326,99 @@ class order_import(osv.osv_memory):
     }
 
     def import_fg_order(self, cr, uid, ids, context=None):
-        pass
-        
-    def import_fg_order_line(self, cr, uid, ids, context=None):
-        pass
-
-    
-    def import_order_line(self, cr, uid, ids, context=None):
-        
-        #take uoms out.
-        uom_dict = dict()
-        cr.execute("""
-                   SELECT
-                    "public".product_uom."id",
-                    "public".product_uom."name"
-                    FROM
-                    "public".product_uom
-                   """)
+        user_dict = dict()
+        cr.execute('SELECT id, jid from res_users;')
         for u in cr.fetchall():
-            uom_dict[u[1].encode('utf-8')] = u[0]
-        
-        #take product.
-        product_dict = dict()
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
-        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
+            user_dict[u[1]] = u[0]
+            
+        partner_dict = dict()
+        cr.execute('SELECT id, fullnum from res_partner;')
+        for p in cr.fetchall():
+            partner_dict[p[1]] = p[0]
+        order_obj = self.pool.get('fg_sale.order')
+        partner_obj = self.pool.get('res.partner')
+        order_sql = """
+        SELECT
+            FBillNo,
+            FDate,
+            t_Item.FNumber,
+            FNote,
+            FBillerID,
+            FInvoiceAmount,
+            FROB,
+            FCheckerID,
+            FCheckDate,
+            FCancellation
+        FROM
+            ICSale
+        JOIN t_Item ON FCustID = t_Item.FItemID
+        """
+        #get orders
+        conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
-        cursor.execute("select FNumber,FItemID from t_ICItem;")
+        cursor.execute(order_sql)
         rows = cursor.fetchall()
-        
-        
-        product_obj = self.pool.get('product.product')
-        
-
+        l = len(rows)
         
         for row in rows:
-            product = None
-            if row[0] and row[1]:
-                num = ("%s" % row[0]).decode('GB2312').encode('utf-8')
-                product = product_obj.search(cr, uid, [('fullnum', '=', num)], context=context )
-                product_dict[num] = product[0]
-    
+            if not partner_dict.has_key(clear_field(row[2])):
+                print row[0], row[2], 'partner not found.'
+                break
+            if not user_dict.has_key(str(row[4])):
+                print 'user', row[4], 'not found in order', row[0]
+                break
+            if row[7]:
+                if not user_dict.has_key(str(row[7])):
+                    print 'user', row[7], 'not found in order', row[0]
+                    break
+
+
+            order = {
+                'name':clear_field(row[0]),
+                'date_order': row[1],
+                'partner_id': partner_dict.get(clear_field(row[2])),
+                'note':clear_field(row[3]),
+                'user_id':user_dict.get(str(row[4])),
+                'amount_total': float(row[5]),
+                'minus':(row[6]<0),
+            }
+            addr = partner_obj.address_get(cr, uid, [order['partner_id']], ['default'])['default']
+            order['partner_shipping_id'] = addr
+
+            if row[7]:
+                #checked.
+                order['date_confirm'] = row[8]
+                order['confirmer_id'] = user_dict.get(str(row[7]))
+                order['state'] = 'done'
+            else:
+                order['state'] = 'draft'
+            if row[9] == 1:
+                order['state'] = 'cancel'
+
+            order_obj.create(cr, uid, order)
+            l = l - 1
+            print l
+
+
+        return {'type': 'ir.actions.act_window_close'}
         
-        order_list = {}
-        #get order id.
+    def import_fg_order_line(self, cr, uid, ids, context=None):
+        #uom
+        uom_dict = dict()
+        uom_sql = "SELECT id, fullnum from product_uom where fullnum is not null;"
+        cr.execute(uom_sql)
+        for u in cr.fetchall():
+            uom_dict[u[1]] = u[0]
+
+        #product
+        product_dict = dict()
+        product_sql = "SELECT id, fullnum from product_product;"
+        cr.execute(product_sql)
+        for p in cr.fetchall():
+            product_dict[p[1]] = p[0]
+
+        #order
+        order_list = dict()
         cr.execute("""
                   SELECT
                            ID,
@@ -333,197 +428,55 @@ class order_import(osv.osv_memory):
                   """)
         for u in cr.fetchall():
            order_list[u[1].encode('utf-8')] = u[0]
-        
-        
-        #get all sell entry.
-        cursor = conn.cursor()
-        cursor.execute(
-            """
+           
+        order_line_sql = """
             SELECT
-                    ic.FBillNo,
-                    ics.FEntryID,
-                    item.FNumber,
-                    t007.FName,
-                    ics.FAuxQty,
-                    ics.FQty,
-                    ics.FEntrySelfI0441,
-                    ics.FPrice,
-                    ics.FAllAmount,
-                    ics.FNote
+                ic.FBillNo,
+                ics.FEntryID,
+                item.FNumber,
+                t007.FNumber,
+                ics.FAuxQty,
+                ics.FQty,
+                ics.FEntrySelfI0441,
+                ics.FPrice,
+                ics.FAllAmount,
+                ics.FNote
             FROM
-                    ICSaleEntry ics
+                ICSaleEntry ics
             INNER JOIN t_MeasureUnit t007 ON t007.FItemID = ics.FUnitID
             INNER JOIN ICSale ic ON ic.FInterID = ics.FInterID
             INNER JOIN t_IcItem item ON item.FItemID = ics.FItemID
-        """)
+        """
+        order_line_obj = self.pool.get('fg_sale.order.line')
+        conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        cursor.execute(order_line_sql)
         rows = cursor.fetchall()
         l = len(rows)
         for row in rows:
+            if not order_list.has_key(clear_field(row[0])):
+                print 'order % not found' % row[0]
+                break
+            if not product_dict.has_key(clear_field(row[2])):
+                print 'product % not found in order %s' % (row[2], row[0])
+                break
+            if not uom_dict.has_key(clear_field(row[3])):
+                print 'product uom % not found in order' % row[3]
+                break
+
             line = {}
-            line['order_id'] = order_list.get(("%s" % row[0]).decode('GB2312').encode('utf-8'))
-            if not line['order_id']:
-                print 'no order for ', row[0]
-                break
-            
+            line['order_id'] = order_list.get(clear_field(row[0]))
             line['sequence'] = int(row[1])
-            
-            line['product_id'] = product_dict.get(row[2])
-            if not line['product_id']:
-                print 'no product for ', row[2]
-                break
-            
-            line['product_uom'] = uom_dict.get(("%s" % row[3]).decode('GB2312').encode('utf-8').replace('（','(').replace('）',')'))
-            if not line['product_uom']:
-                print 'no product_uom for ', row[3]
-                break
-            
+            line['product_id'] = product_dict.get(clear_field(row[2]))
+            line['product_uom'] = uom_dict.get(clear_field(row[3]))
             line['product_uom_qty'] = int(row[4])
             line['aux_qty'] = int(row[5])
             line['unit_price'] = float(row[6])
             line['subtotal_amount'] = float(row[8])
-            if row[9]:
-                try:
-                    line['note'] = ("%s" % row[9]).decode('GB2312').encode('utf-8')
-                except:
-                    line['note'] = ("%s" % row[9])
-            print '%s to go' % l
+            line['note'] = clear_field(row[9]) or ''
+            order_line_obj.create(cr, uid, line)
             l = l - 1
-            self.pool.get('fg_sale.order.line').create(cr, uid, line)
-            
+            print l
         return {'type': 'ir.actions.act_window_close'}
+
     
-    def import_order(self, cr, uid, ids, context=None):
-        
-        user_dict = {}
-        parnter_dict = {}
-        
-        #cache local dict first.
-        # user name->id.
-        # partner name->id-.
-        cr.execute("""
-                   SELECT
-                    "public".res_users."id",
-                    "public".res_users."name"
-                    FROM
-                    "public".res_users
-                   """)
-        for u in cr.fetchall():
-            user_dict[u[1].encode('utf-8')] = u[0]
-        
-        cr.execute("""
-                   SELECT
-                            "public".res_partner."id",
-                            "public".res_partner."fullnum"
-                    FROM
-                            "public".res_partner
-                    WHERE
-                            fullnum IS NOT NULL
-                   """)
-        for u in cr.fetchall():
-            parnter_dict[u[1].encode('utf-8')] = u[0]
-
-        conn = pyodbc.connect('DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp')
-        #conn = pyodbc.connect('DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha')
-        sql_1 = """
-           SELECT
-               FBillNo,
-               FDate,
-               t_Item.FNumber,
-               FNote,
-               tu_1.FName AS FBillerName,
-               FInvoiceAmount,
-               FROB,
-               tu_2.FName AS FCheckerName,
-               FCheckDate,
-               FCancellation
-           FROM ICSale
-               JOIN t_Item ON FCustID = t_Item.FItemID
-               JOIN t_User tu_1 ON FBillerID = tu_1.FUserID
-               JOIN t_User tu_2 ON FCheckerID = tu_2.FUserID
-               JOIN t_Organization t_o ON FCustID = t_o.FItemID
-               
-               """
-        sql_2 = """
-                           SELECT
-                                   FBillNo,
-                                   FDate,
-                                   t_Item.FNumber AS FPartnerName,
-                                   FNote,
-                                   tu_1.FName AS FBillerName,
-                                   FInvoiceAmount,
-                                   FROB,
-                                   FCheckerID,
-                                   FCheckDate,
-                                   FCancellation
-                           FROM
-                                   ICSale
-                           JOIN t_Item ON FCustID = t_Item.FItemID
-                           JOIN t_User tu_1 ON FBillerID = tu_1.FUserID
-                           JOIN t_Organization t_o ON FCustID = t_o.FItemID
-                           WHERE
-                                   dbo.ICSale.FCheckerID IS NULL
-                       """
-        
-        cursor = conn.cursor()
-        
-        #sql_1 for checked record. sql_2 for non-checked.
-        cursor.execute(sql_1)
-
-        rows = cursor.fetchall()
-                
-        for row in rows:
-            order = {}
-            order['name'] = ("%s" % row[0]).decode('GB2312').encode('utf-8')
-            order['date_order'] = row[1]
-            
-            
-            #try:
-            #    part = ("%s" % row[2]).decode('GB2312').encode('utf-8')
-            #except:
-            #    part = ("%s" % row[2])
-            
-            order['note'] = "%s" % row[3].decode('GB2312').encode('utf-8')
-            
-            try:
-                user_name = ("%s" % row[4]).decode('GB2312').encode('utf-8')
-            except:
-                user_name = '董玥'
-            order['user_id'] = user_dict.get(user_name)
-            
-            order['amount_total'] = float(row[5])
-            minus = (row[6]<0)
-            
-            if row[7]:
-                try:
-                    c_user_name = ("%s" % row[7]).decode('GB2312').encode('utf-8')
-                    
-                except:
-                    c_user_name = '董玥'
-                
-                order['date_confirm'] = row[8]
-                order['confirmer_id'] = user_dict.get(c_user_name)
-                order['state'] = 'done'
-            else:
-                order['state'] = 'draft'
-
-            if row[9] == 1:
-                order['state'] = 'cancel'
-            
-            num = ("%s" % row[2]).decode('GB2312').encode('utf-8')
-            
-            if parnter_dict.get(num):
-                order['partner_id'] = parnter_dict.get(num)
-                
-                partner_obj = self.pool.get('res.partner')
-                addr = partner_obj.address_get(cr, uid, [order['partner_id']], ['default'])['default']
-                order['partner_shipping_id'] = addr
-            else:
-                print 'missed', num
-                break
-            print row[0]
-                
-            self.pool.get('fg_sale.order').create(cr, uid, order)
-            
-        
-        return {'type': 'ir.actions.act_window_close'}
-        
