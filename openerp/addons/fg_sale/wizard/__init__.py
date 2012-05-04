@@ -2,8 +2,29 @@
 
 from osv import osv
 import pyodbc
+from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
 
-CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp'
+CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=fg;UID=bi;PWD=xixihaha'
+
+def clear_field(i, r=None):
+    if not i:
+        return ''
+    e_list = {
+        'FGC002.1573':'囍',
+        'FGC002.575':'福州小糸大億',
+        'FGC002.601':'中投证劵',
+        'FGC002.945':'倪贇同学',
+        'FGC002.977':'祝倪贇同学',
+        '16401':'董玥',
+    }
+    if r:
+        if e_list.has_key(r):
+            return e_list.get(r) 
+    try:
+        s = ("%s" % i).decode('GB2312').encode('utf-8')
+    except:
+        s = ("%s" % i)
+    return s
 
 class customer_import(osv.osv_memory):
     _name = "fg_sale.customer.wizard.import"
@@ -32,26 +53,71 @@ class customer_import(osv.osv_memory):
         	t_Organization org
         JOIN t_Item item ON item.FItemID = org.FParentID
         """
+        state_sql = """
+            select DISTINCT(FProvince) from t_Organization
+        """
+        # save state
         conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        cursor.execute(state_sql)
+        rows = cursor.fetchall()
+        state_dict = {}
+        state_obj = self.pool.get('res.country.state')
+        for row in rows:
+            if row:
+                name = clear_field(row[0])
+                id = state_obj.create(cr, uid, {'name':name, 'code':get_initial(name), 'country_id':49,})
+                state_dict[clear_field(row[0])] = id
+        
         cursor = conn.cursor()
         cursor.execute(sql)
         rows = cursor.fetchall()
-        
+
         #save category first
         cate_dict = dict()
-        for row in rows:
-            number = ("%s" % row[10]).decode('GB2312').encode('utf-8')
-            name = ("%s" % row[9]).decode('GB2312').encode('utf-8')
-            if not cate_dict.has_key(number):
-                cate_dict[number] = name
-            
-        
         partner_cate_obj = self.pool.get('res.partner.category')
+        partner_obj = self.pool.get('res.partner')
+        address_obj = self.pool.get('res.partner.address')
         
-        
-        
-        
-        
+        for row in rows:
+            number = clear_field(row[10])
+            name = clear_field(row[9])
+            if not cate_dict.has_key(number):
+                id = partner_cate_obj.create(cr, uid, {'name':name})
+                cate_dict[number] = id
+            
+            cate_id = cate_dict.get(number)
+
+            partner = {
+                'fullnum':clear_field(row[0]),
+                'name':clear_field(row[1], clear_field(row[0])),
+                'customer':True,
+                'category_id':[(6, 0, [cate_id])],
+            }
+            partner_id = partner_obj.create(cr, uid, partner)
+            
+            address = {
+                'partner_id': partner_id,
+                'type':'default',
+                'country_id':49,
+                
+                }
+            if row[2]:
+                address['name'] = clear_field(row[2])
+            else:
+                address['name'] = partner['name']
+            if row[7]:
+                address['state_id'] = state_dict.get(clear_field(row[7]))
+            if row[6]:
+                address['city'] = clear_field(row[6])
+            if row[3]:
+                address['mobile'] = clear_field(row[3])
+            if row[4]:
+                address['phone'] = clear_field(row[4])
+            if row[5]:
+                address['street'] = clear_field(row[5])
+            address_obj.create(cr, uid, address)
+
         return {'type': 'ir.actions.act_window_close'}
 
 
@@ -64,9 +130,34 @@ class user_import(osv.osv_memory):
     }
 
     def import_user(self, cr, uid, ids, context=None):
-        conn_str = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp'
-
-
+        # save user
+        user_sql = """
+        SELECT
+            FUserID,
+            FName,
+            FForbidden
+        FROM
+            t_User
+        WHERE
+            FSID IS NOT NULL
+        """
+        conn = pyodbc.connect(CONN_STR)
+        cursor = conn.cursor()
+        cursor.execute(user_sql)
+        rows = cursor.fetchall()
+        user_obj = self.pool.get('res.users')
+        for row in rows:
+            name = clear_field(row[1], clear_field(row[0]))
+            user_obj.create(cr, uid, {
+                'login': name,
+                'name': name,
+                'jid':row[0],
+                'password':'8751888',
+                'signature': name,
+                'company_id':1,
+                'groups_id':[(6,0,[7])],
+                'active':row[2]==0,
+            })
 
         return {'type': 'ir.actions.act_window_close'}
 
@@ -80,9 +171,102 @@ class product_import(osv.osv_memory):
     }
 
     def import_product(self, cr, uid, ids, context=None):
-        conn_str = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=jt;UID=erp;PWD=erp'
+        cate_sql = """
+        SELECT
+            FNumber,
+            FName
+        FROM
+            t_Item
+        WHERE
+            FItemClassID = 4
+        AND FLevel = 1
+        """
+        uom_sql = """
+        SELECT
+            tmu.FNumber,
+            tmu.FName,
+            tmu.FCoefficient
+        FROM
+            t_MeasureUnit tmu;
+        """
+        product_sql = """
+        SELECT
+            icitem.FModel,
+            icitem.FName,
+            icitem.FNumber,
+            icitem.FSalePrice,
+            icitem.FNote,
+            item.FName AS Category_Name,
+            item.FNumber AS Category_Num,
+            unit.FNumber AS Unit_Num,
+            unit.FName AS Unit_Name,
+            dep.FName AS Dep_Name
+        FROM
+            t_icitem icitem
+        JOIN t_Item item ON item.FItemID = icitem.FParentID
+        JOIN t_MeasureUnit unit ON unit.FItemID = icitem.FSaleUnitID
+        JOIN t_Department dep ON dep.FItemID = icitem.FSource;
+        """
+        product_cate_obj = self.pool.get('product.category')
+        product_uom_obj = self.pool.get('product.uom')
+        product_obj = self.pool.get('product.product')
+        cate_dict = dict()
+        uom_dict = dict()
+        conn = pyodbc.connect(CONN_STR)
+        #category
+        cursor = conn.cursor()
+        cursor.execute(cate_sql)
+        rows = cursor.fetchall()
+        for row in rows:
+            id = product_cate_obj.create(cr, uid, {'name': clear_field(row[1]), 'fullnum':clear_field(row[0])})
+            cate_dict[clear_field(row[0])] = id
 
+        #uom
+        cursor = conn.cursor()
+        cursor.execute(uom_sql)
+        rows = cursor.fetchall()
+        for row in rows:
+            uom = {
+                'fullnum':clear_field(row[0]),
+                'name':clear_field(row[1]),
+                'rounding':1,
+                'factor':row[2],
+                'category_id':1,
+                'uom_type': (row[2] > 1) and 'bigger' or 'smaller'
+            }
+            id = product_uom_obj.create(cr, uid, uom)
+            uom_dict[clear_field(row[0])] = id
 
+        #product
+        cursor = conn.cursor()
+        cursor.execute(product_sql)
+        rows = cursor.fetchall()
+        for row in rows:
+            if not uom_dict.has_key(clear_field(row[7])):
+                print row[2], 'uom not found'
+                break
+            if not cate_dict.has_key(clear_field(row[6])):
+                print row[2], 'category not found'
+                break
+            product = {
+                'sale_ok':True,
+                'purchase_ok':True,
+                'supply_method':'produce',
+                'default_code':clear_field(row[0]) or '',
+                'list_price':row[3],
+                'standard_price':row[3],
+                'uom_id':uom_dict.get(clear_field(row[7])),
+                'uom_po_id':uom_dict.get(clear_field(row[7])),
+                'sale_delay':1,
+                'name':clear_field(row[1]),
+                'type':'product',
+                'categ_id':cate_dict.get(clear_field(row[6])),
+                'state':'sellable',
+                'fullnum':clear_field(row[2]),
+                'source':clear_field(row[9]),
+                'description':clear_field(row[4]) or ''
+            }
+            product_obj.create(cr, uid, product)
 
         return {'type': 'ir.actions.act_window_close'}
 
@@ -95,6 +279,10 @@ class order_import(osv.osv_memory):
         
         
     }
+
+    def import_fg_order(self, cr, uid, ids, context=None):
+        pass
+
     
     def import_order_line(self, cr, uid, ids, context=None):
         

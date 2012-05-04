@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
         <menuitem id="menu_fg_sale" name="业务开单" sequence="2" web_icon="icon/fg_sale.png" web_icon_hover="icon/fg_sale_hover.png"/>
@@ -150,7 +150,7 @@
         <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my"/>
-        <menuitem id="menu_fg_sale_admin" name="管理" parent="menu_fg_sale"/>
+        <menuitem id="menu_fg_sale_admin" name="管理" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager"/>
         
         <menuitem id="menu_fg_sale_customer_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_customer_wizard_import"/>
         <menuitem id="menu_fg_sale_user_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_user_wizard_import"/>
