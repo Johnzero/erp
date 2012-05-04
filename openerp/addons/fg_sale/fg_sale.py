@@ -34,13 +34,14 @@ class sale_order(osv.osv):
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),        
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
         'amount_total': fields.function(_amount_all, string='金额', store=True, multi='sums'),
+        #'amount_total': fields.float('金额', digits=(16,4)),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
         'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
         'note': fields.text('附注'),
         'sync':fields.boolean('备用'),
     }
-    
+        
     _defaults = {
         'date_order': fields.date.context_today,
         'state': 'draft',
@@ -122,9 +123,9 @@ class sale_order_line(osv.osv):
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
         'product_uom_qty': fields.float('单位数量', required=True),
         'aux_qty': fields.float('总只数', required=True),
-        'unit_price': fields.float('单位价格', required=True),
-        'unit_price_discount': fields.float('单位折扣价格', required=True),
-        'subtotal_amount': fields.float('小计'),
+        'unit_price': fields.float('单位价格', required=True, digits=(16,4)),
+        'unit_price_discount': fields.float('单位折扣价格', required=True, digits=(16,4)),
+        'subtotal_amount': fields.float('小计', digits=(16,4)),
         'note': fields.char('附注', size=100),
     }
     

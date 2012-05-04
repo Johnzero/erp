@@ -269,7 +269,7 @@ class product_import(osv.osv_memory):
                 'sale_ok':True,
                 'purchase_ok':True,
                 'supply_method':'produce',
-                'default_code':clear_field(row[0]) or '',
+                'default_code':clear_field(row[0].replace('--', '-').replace('-', '-').replace('--', '-')) or '',
                 'list_price':row[3],
                 'standard_price':row[3],
                 'uom_id':uom_dict.get(clear_field(row[7])),
@@ -430,7 +430,7 @@ class order_import(osv.osv_memory):
            order_list[u[1].encode('utf-8')] = u[0]
            
         order_line_sql = """
-            SELECT
+            SELECT top 10 
                 ic.FBillNo,
                 ics.FEntryID,
                 item.FNumber,
@@ -472,10 +472,12 @@ class order_import(osv.osv_memory):
             line['product_uom_qty'] = int(row[4])
             line['aux_qty'] = int(row[5])
             line['unit_price'] = float(row[6])
+            line['unit_price_discount'] = float(row[7])
             line['subtotal_amount'] = float(row[8])
             line['note'] = clear_field(row[9]) or ''
             order_line_obj.create(cr, uid, line)
             l = l - 1
+            print line['unit_price'], line['unit_price_discount']
             print l
         return {'type': 'ir.actions.act_window_close'}
 
