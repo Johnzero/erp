@@ -7,7 +7,7 @@
     'description': """富光数据导入""",
     'author': 'Daniel',
     'website': 'http://www.ide.fm',
-    'depends': ['base', 'fg_product_attr'],
+    'depends': ['base','product'],
     'init_xml': [],
     'update_xml': [
         'views.xml',
