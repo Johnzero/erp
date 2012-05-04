@@ -282,6 +282,9 @@ class order_import(osv.osv_memory):
 
     def import_fg_order(self, cr, uid, ids, context=None):
         pass
+        
+    def import_fg_order_line(self, cr, uid, ids, context=None):
+        pass
 
     
     def import_order_line(self, cr, uid, ids, context=None):

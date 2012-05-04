@@ -155,6 +155,7 @@
         <menuitem id="menu_fg_sale_customer_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_customer_wizard_import"/>
         <menuitem id="menu_fg_sale_user_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_user_wizard_import"/>
         <menuitem id="menu_fg_sale_product_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_product_wizard_import"/>
+        <menuitem id="menu_fg_sale_order_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_order_wizard_import"/>
         
     </data>
 </openerp>
