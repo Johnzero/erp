@@ -4,8 +4,8 @@ from osv import osv
 import pyodbc
 from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
 
-CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=fg;UID=bi;PWD=xixihaha'
-
+#CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=fg;UID=bi;PWD=xixihaha'
+CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha'
 def clear_field(i, r=None):
     if not i:
         return ''
@@ -35,7 +35,7 @@ class customer_import(osv.osv_memory):
     }
     
     def import_customer(self, cr, uid, ids, context=None):
-        
+        #todo!!!! this is for importing FGC001 clients.
         sql = """
         SELECT
         	org.FNumber,
@@ -52,6 +52,7 @@ class customer_import(osv.osv_memory):
         FROM
         	t_Organization org
         JOIN t_Item item ON item.FItemID = org.FParentID
+        where item.FNumber = 'FGC001'
         """
         state_sql = """
             select DISTINCT(FProvince) from t_Organization
