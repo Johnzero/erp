@@ -39,6 +39,7 @@ class sale_order(osv.osv):
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
         'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
         'note': fields.text('附注'),
+        'sales_ids': fields.related('partner_id','sales_ids', type='many2many', relation='res.users', string='负责人',store=False),
         'sync':fields.boolean('备用'),
     }
         

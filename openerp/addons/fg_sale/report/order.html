@@ -20,7 +20,10 @@
 		</object>
 	</head>
 	<body>
-            
+            % for o in objects:
+             ${ o.sales_ids }
+             <br/>
+            % endfor
             
             <script language="javascript" type="text/javascript">
 		    var LODOP; //声明为全局变量

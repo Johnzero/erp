@@ -148,13 +148,15 @@
         </record>
         
         <record id="action_fuguang_order_form" model="ir.actions.act_window">
-            <field name="name">全部订单列表</field>
+            <field name="name">订单列表</field>
+            <!-- 内部用户使用,规则控制只能看到自己负责客户的,没有设置负责人的单子大家都能看到 -->
             <field name="res_model">fuguang.order</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
         
         <record id="action_fuguang_order_client_form" model="ir.actions.act_window">
+            <!-- 外部用户使用,规则控制, 只能看到自己创建的. -->
             <field name="name">订单列表</field>
             <field name="res_model">fuguang.order</field>
             <field name="view_type">form</field>

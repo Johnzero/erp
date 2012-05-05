@@ -122,6 +122,7 @@ class fg_order(osv.osv):
         'total_amount': fields.function(_amount_all, method=True, string='总价', multi='sums'),
         'order_line': fields.one2many('fuguang.order.line', 'order_id', '订单明细'),
         'notifier_ids': fields.many2many('res.users', 'rel_order_user','order_id','user_id', '可见客户'),
+        'sales_ids': fields.related('partner_id','sales_ids', type='many2many', relation='res.users', string='负责人',store=False),
         'note':fields.text('附注'),
     }
     

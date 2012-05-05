@@ -4568,6 +4568,7 @@ class BaseModel(object):
             args = expression.AND(([('create_uid', '=', user)], args or []))
 
         query = self._where_calc(cr, user, args, context=context)
+
         self._apply_ir_rules(cr, user, query, 'read', context=context)
         order_by = self._generate_order_by(order, query)
         from_clause, where_clause, where_clause_params = query.get_sql()

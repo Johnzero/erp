@@ -9,9 +9,9 @@ class res_partner(osv.osv):
     }
 
 class res_user(osv.osv):
-    _inherit = 'res.partner'
+    _inherit = 'res.users'
     _columns = {
-        'fullnum': fields.char('num', size=40)
+        'jid': fields.char('num', size=40)
     }
 
 class product_uom(osv.osv):

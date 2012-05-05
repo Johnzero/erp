@@ -136,7 +136,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar</field>
             <field name="context">{}</field>
-            <field name="domain">[('user_id','=',uid)]</field>
+            <!-- <field name="domain">['|',('sales_ids','in',[uid]), ('sales_ids','=',False)]</field> -->
             <field name="search_view_id" ref="view_fg_sales_order_filter"/>
         </record>
         
@@ -152,7 +152,7 @@
             string="打印配载单" report_type="mako2html" />
         
         <menuitem id="menu_fg_sale_order" name="订单" parent="menu_fg_sale"/>
-        <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all"/>
+        <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all" groups="fg_sale.group_fg_sale_manager"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my"/>
         <menuitem id="menu_fg_sale_admin" name="管理" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager"/>
         

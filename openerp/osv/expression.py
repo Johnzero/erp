@@ -774,6 +774,7 @@ class expression(object):
 
         if isinstance(params, basestring):
             params = [params]
+
         return (query, params)
 
 
