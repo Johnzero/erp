@@ -228,7 +228,7 @@ class WebClient(openerpweb.Controller):
                 data,
             )
             return data
-
+        
         content, checksum = concat_files((f[0] for f in files), reader)
 
         return self.make_conditional(

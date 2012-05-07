@@ -8,7 +8,7 @@
     "version": "6.0.5.6",
     "depends": [],
     "js": ["static/src/js/*.js"],
-    "css": ['static/src/js/*.exe'],
+    "css": ['static/src/css/*.css'],
     'auto_install': True,
     'active':True,
 }
