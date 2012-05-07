@@ -1,2 +1,1 @@
 import extra
-import wizard

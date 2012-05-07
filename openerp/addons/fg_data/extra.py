@@ -26,3 +26,9 @@ class product_product(osv.osv):
         'fullnum': fields.char('num', size=40),
         'source':fields.char('来源', size=40),
     }
+    
+class product_category(osv.osv):
+    _inherit = 'product.category'
+    _columns = {
+        'fullnum': fields.char('num', size=40),
+    }
