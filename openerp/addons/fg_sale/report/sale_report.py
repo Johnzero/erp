@@ -17,6 +17,7 @@ class sale_report_by_month(osv.osv):
         'amount': fields.float('金额'),
         'source':fields.char('事业部', size=10),
     }
+    _order = 'year desc, month desc'
     
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'fg_sale_order_report_monthly')
@@ -33,7 +34,7 @@ class sale_report_by_month(osv.osv):
             left join product_product p on (l.product_id=p.id) 
             left join fg_sale_order s on (l.order_id=s.id) 
              group by p.source,month, year
-            order by year desc, month asc
+            order by year desc, month desc
             )""")
 
 

@@ -1819,7 +1819,6 @@ class BaseModel(object):
         :returns: a form view as an lxml document
         :rtype: etree._Element
         """
-        print self._all_columns
         view = etree.Element('form', string=self._description)
         # TODO it seems fields_get can be replaced by _all_columns (no need for translation)
         for field, descriptor in self.fields_get(cr, user, context=context).iteritems():

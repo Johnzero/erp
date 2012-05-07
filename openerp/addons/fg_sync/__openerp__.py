@@ -1,16 +1,16 @@
 # -*- encoding: utf-8 -*-
 
 {
-    'name': '数据业务数据同步',
+    'name': 'db view',
     'version': '1.0',
-    'category' : '富光',
-    'description': """数据业务数据同步""",
-    'author': 'Daniel',
-    'website': 'http://www.ide.fm',
+    'category' : 'utils',
+    'description': """db view""",
+    'author': 'openerp',
+    'website': 'http://www.openerp.org',
     'depends': ['base'],
     'init_xml': [],
     'update_xml': [
-        
+        'fg_sync.xml',
     ],
     'demo_xml': [],
     'installable': True,

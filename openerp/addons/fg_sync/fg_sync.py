@@ -26,13 +26,12 @@ class fg_sync_scheduler(osv.osv):
     }
     
     
-    def do_run_scheduler(self, cr, uid, automatic=False, use_new_cursor=False, context=None):
+    def do_run_scheduler(self, cr, uid, ids=None, context=None):
         """Scheduler for event reminder
         @param self: The object pointer
         @param cr: the current row, from the database cursor,
         @param uid: the current user’s ID for security checks,
-        @param ids: List of calendar alarm’s IDs.
-        @param use_new_cursor: False or the dbname
+        @param ids: List of whatever’s IDs.
         @param context: A standard dictionary for contextual values
         """
         if context is None:

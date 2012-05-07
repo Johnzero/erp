@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
+        <!--阉割-->
 		<record id="ir_cron_ping_scheduler" model="ir.cron">
 			<field name="name">Update System Logs</field>
 			<field eval="True" name="active" />

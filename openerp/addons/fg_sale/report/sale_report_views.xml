@@ -23,8 +23,8 @@
          <field name="type">graph</field>
          <field name="arch" type="xml">
              <graph string="Sales Analysis" type="bar">
-                 <field name="amount"/>
                  <field name="source"/>
+                 <field name="amount"/>
              </graph>
          </field>
     </record>
