@@ -11,7 +11,8 @@ class res_partner(osv.osv):
 class res_user(osv.osv):
     _inherit = 'res.users'
     _columns = {
-        'jid': fields.char('num', size=40)
+        'jid': fields.char('num', size=40),
+        'partner_ids':fields.many2many('res.partner', 'rel_partner_user', 'user_id', 'partner_id', '负责客户', help='负责客户'),
     }
 
 class product_uom(osv.osv):

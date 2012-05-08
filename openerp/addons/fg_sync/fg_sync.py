@@ -36,5 +36,6 @@ class fg_sync_scheduler(osv.osv):
         """
         if context is None:
             context = {}
-            
+        
+        
         return True
