@@ -14,6 +14,7 @@ class sale_order(osv.osv):
     _description = "富光业务部销售订单"
     
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
+        print '_amount_all_amount_all_amount_all_amount_all_amount_all'
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
             res[order.id] = { 'amount_total':0.0 }
@@ -53,7 +54,7 @@ class sale_order(osv.osv):
     }
     
     def copy(self, cr, uid, id, default={}, context=None):
-        raise osv.except_osv(_('Invalid action !'), '不允许复制.')
+        raise osv.except_osv('不允许复制', '订单不允许复制.')
     
     def create(self, cr, uid, vals, context=None):
         if not vals.has_key('name'):
@@ -73,7 +74,6 @@ class sale_order(osv.osv):
             
         id = super(sale_order, self).create(cr, uid, vals, context)
         
-        # todo: sync here.
         return id
     
     
@@ -90,6 +90,44 @@ class sale_order(osv.osv):
         return True
     
     def button_review(self, cr, uid, ids, context=None):
+        #1.see if this is discount...
+        #2.deal with minus
+        
+        product_obj = self.pool.get('product.product')
+        order_line_obj = self.pool.get('fg_sale.order.line')
+        orders = self.browse(cr, uid, ids)
+        order_list = []
+        for order in orders:
+            for line in order.order_line:
+                if order.minus:
+                    update = {
+                        'product_uom_qty':(0-line.product_uom_qty),
+                        'aux_qty':(0-line.aux_qty),
+                        'subtotal_amount':(0-line.subtotal_amount),
+                    }
+                    order_line_obj.write(cr, uid, [line.id], update)
+                product = product_obj.browse(cr, uid, line.product_id, context=context)
+                if product.lst_price > line.unit_price:
+                    #notify 
+                    order_list.append(order.name)
+                    break
+        if order_list:
+            body = """
+            您好, ! 
+            这是一封提醒邮件. 
+            单据 %s 存在折扣的明细, 请及时查看.
+            %s
+            """
+            mail_message = self.pool.get('mail.message')
+            mail_message.schedule_with_attach(cr, uid,
+                '富光ERP系统 <fuguang_fg@163.com>',
+                ['133120528@qq.com'],
+                '[折扣订单提醒]编号:%s' % ','.join(order_list),
+                body % (''.join(order_list),  time.strftime('%Y-%m-%d %H:%m')),
+                reply_to='fuguang_fg@163.com',
+                context=context
+            )
+        
         self.write(cr, uid, ids, { 
             'state': 'done', 
             'confirmer_id': uid, 
@@ -122,66 +160,68 @@ class sale_order_line(osv.osv):
         'sequence': fields.integer('Sequence'),
         'product_id': fields.many2one('product.product', '产品', domain=[('sale_ok', '=', True)], change_default=True),
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
-        'product_uom_qty': fields.float('单位数量', required=True),
-        'aux_qty': fields.float('总只数', required=True),
-        'unit_price': fields.float('单位价格', required=True, digits=(16,4)),
-        'unit_price_discount': fields.float('单位折扣价格', required=True, digits=(16,4)),
+        'product_uom_qty': fields.float('数量', required=True),
+        'aux_qty': fields.float('只数', required=True),
+        'unit_price': fields.float('单价', required=True, digits=(16,4)),
         'subtotal_amount': fields.float('小计', digits=(16,4)),
         'note': fields.char('附注', size=100),
     }
     
     def product_id_change(self, cr, uid, ids, product_id, context=None):
         if not product_id:
-            return {'domain': {}, 'value':{'product_uom':'', 'product_uom_qty':0, 'price_discount':0,'price_subtotal':0}}
+            return {'domain': {}, 'value':{'product_uom':'', 'product_uom_qty':0, 
+                'aux_qty':0, 'unit_price':0, 'subtotal_amount':0}}
         result = {}
         product_obj = self.pool.get('product.product')
         
         product = product_obj.browse(cr, uid, product_id, context=context)
         result['product_uom'] = product.uom_id.id
-        
+        result['unit_price'] = product.lst_price
         return {'value': result}
     
-    def _get_amount(self,cr,uid, ids, product_id, uom_id, context=None):
-        if product_id and product_uom and qty:
-            product_obj = self.pool.get('product.product')
-            
-            product = product_obj.browse(cr, uid, product_id, context=context)
-            if product:
-                price = product.lst_price
-                return {'value': {'price_subtotal':price, 'price_discount':price}}
-        return {'value':{}}
+    # def _get_amount(self,cr,uid, ids, product_id, uom_id, context=None):
+    #     if product_id and product_uom and qty:
+    #         product_obj = self.pool.get('product.product')
+    #         
+    #         product = product_obj.browse(cr, uid, product_id, context=context)
+    #         if product:
+    #             price = product.lst_price
+    #             return {'value': {'price_subtotal':price, 'price_discount':price}}
+    #     return {'value':{}}
     
     
     def product_uom_id_change(self, cr, uid, ids, product_id, uom_id, context=None):
-        return {'value': {'product_uom_qty':0, 'price_discount':0, 'price_subtotal':0}}
+        return {'domain': {}, 'value':{'product_uom_qty':0, 
+            'aux_qty':0, 'subtotal_amount':0}}
     
     
-    def product_uom_qty_change(self, cr, uid, ids, product_id, product_uom, qty, context=None):
-        if product_id and product_uom and qty:
+    def product_uom_qty_change(self, cr, uid, ids, product_id, product_uom, qty, unit_price_new, context=None):
+        if product_id and product_uom and qty and unit_price_new:
             product_obj = self.pool.get('product.product')
             #product_uom_obj = self.pool.get('product.uom')
             product = product_obj.browse(cr, uid, product_id, context=context)
             if product:
-                price = product.lst_price * product.uom_id.factor * qty
+                price = unit_price_new * product.uom_id.factor * qty
                 
-                return {'value': {'price_subtotal':price, 'price_discount':price}}
+                return {'value': {'subtotal_amount':price, 'aux_qty':product.uom_id.factor * qty}}
         return {'value':{}}
-        
+
+
     _order = 'sequence, id asc'
 
-class sale_print_log(osv.osv):
-    _name = "fg_sale.print.log"
-    
-    _columns = {
-        'user_id': fields.many2one('res.users', '打印人'),
-        'date_print': fields.date('打印日期'),
-        'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
-    }
-    
-    _order = 'date_print, id'
-    
-    
-    _defaults = {
-        'date_print': fields.date.context_today,
-        'user_id': lambda obj, cr, uid, context: uid,
-    }
+# class sale_print_log(osv.osv):
+#     _name = "fg_sale.print.log"
+#     
+#     _columns = {
+#         'user_id': fields.many2one('res.users', '打印人'),
+#         'date_print': fields.date('打印日期'),
+#         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
+#     }
+#     
+#     _order = 'date_print, id'
+#     
+#     
+#     _defaults = {
+#         'date_print': fields.date.context_today,
+#         'user_id': lambda obj, cr, uid, context: uid,
+#     }

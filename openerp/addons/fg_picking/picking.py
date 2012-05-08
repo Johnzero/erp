@@ -135,7 +135,6 @@ class fg_order(osv.osv):
         
         """ % uid)
         res = cr.fetchone()
-        print uid
                 
         return res and res[0] or False
     
@@ -201,7 +200,7 @@ class fg_order(osv.osv):
                 user_names = [ user.name for user in p.sales_ids if user.active ]
                 if None not in mail_to:
                         mail_message.schedule_with_attach(cr, uid,
-                            '富光ERP系统 <fuguang_fg@qq.com>',
+                            '富光ERP系统 <fuguang_fg@163.com>',
                             mail_to + ['133120528@qq.com'],
                             '[订单提醒]编号:%s' % vals['name'],
                             body % (','.join(user_names), p.name, time.strftime('%Y-%m-%d %H:%m'),vals['name']),

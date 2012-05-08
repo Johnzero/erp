@@ -479,7 +479,7 @@ class order_import(osv.osv_memory):
             line['product_uom_qty'] = int(row[4])
             line['aux_qty'] = int(row[5])
             line['unit_price'] = float(row[6])
-            line['unit_price_discount'] = float(row[7])
+            #line['unit_price_discount'] = float(row[7])
             line['subtotal_amount'] = float(row[8])
             line['note'] = clear_field(row[9]) or ''
             order_line_obj.create(cr, uid, line)
