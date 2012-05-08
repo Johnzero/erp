@@ -884,6 +884,7 @@ label.error {
 .openerp .oe_search-view-buttons {
     padding: 2px 0 10px 0;
     vertical-align:middle;
+    font-size:90%;
 }
 .openerp .oe_search-view-filters-management {
     float: right;
@@ -975,7 +976,7 @@ label.error {
 }
 .openerp .oe-listview th.oe-sortable {
     cursor: pointer;
-    font-size: 75%;
+    font-size: 95%;
     text-transform: uppercase;
     padding: 0;
     margin: 0;

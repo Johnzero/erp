@@ -187,7 +187,7 @@ class fg_order(osv.osv):
             body = """
             %s 您好! 
             这是一封提醒邮件. 
-            客户 %s 已经与 %s 在订单系统里创建了一个编号为 %s 的订单.
+            客户 %s 已经于 %s 在订单系统里创建了一个编号为 %s 的订单.
             请及时处理.
             """
             
@@ -204,7 +204,7 @@ class fg_order(osv.osv):
                             '富光ERP系统 <fuguang_fg@qq.com>',
                             mail_to + ['133120528@qq.com'],
                             '[订单提醒]编号:%s' % vals['name'],
-                            body % (','.join(user_names), p.name, time.strftime('%Y-%m-%d %H-%m'),vals['name']),
+                            body % (','.join(user_names), p.name, time.strftime('%Y-%m-%d %H:%m'),vals['name']),
                             reply_to='fuguang_fg@163.com',
                             context=context
                         )
