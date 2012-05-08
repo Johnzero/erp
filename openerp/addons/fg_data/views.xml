@@ -32,7 +32,7 @@
             <field name="arch" type="xml">
                     <notebook position="inside">
                         <page string="负责客户" position="inside">
-                            <field name="partner_ids"/>
+                            <field name="partner_ids" nolabel="1"/>
                         </page>
                     </notebook>
             </field>
