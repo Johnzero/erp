@@ -26,74 +26,71 @@
 		% else:
     		% for o in objects:
     		    % if o['state'] == 'done':
-    		    <div id="x">
-    		        <div id="header">
-    		            <table border="0" cellspacing="2" width="100%">
-        					<tr>
-        						<td colspan="3"></td>
-        						<td colspan="3">
-        							<p align="center" style="font-size:18px;"><b>产品清单</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
-        						</td>
-        						<td colspan="2">
-        							<div style="text-align:right;font-size:12px;">
-        								单号: ${ o['name'] } <br/>
-        								副单号: ${ o.sub_name }
-        							</div>
-        						</td>
-        					</tr>
-        					<tr style="font-size:14px;">
-                                <td colspan="3">部门名称: <span style="text-decoration:underline;">${ o.partner_id.name }</span> 经理</td>
-                                <td colspan="3">备注: <span style="text-decoration:underline;">${ o.note or '' }</span></td>
-                                <td colspan="2" align="right">日期: <span style="text-decoration:underline;">${ o.date_order }</span></td>
-        					</tr>
-        				</table>
-    		        </div>
-    		        <div id="table">
-    		          <table border="1" cellspace="2" width="100%" style="border-collapse:collapse" bordercolor="#333">
-    		              <thead>
-      						<tr>
-      							<td align="center" width="30">行号</td>
-      							<td align="center" width="60">品名</td>
-      							<td align="center" width="60">型号</td>
-      							<td align="center">单位</td>
-      							<td align="center">数量</td>
-      							<td align="center">单价</td>
-      							<td align="center" width="80" >金额</td>
-      							<td align="center" width="50" >备注</td>
-      						</tr>
-      					</thead>
-      					<tbody>
-    						<%
-    							i = 0
-    						%>
-    						% for line in o.order_line:
-                              <% i = i + 1 %>
-                              <tr>
-                                  <td width="5%" height="16" style="font-size:13px;">${ i }</td>
-                                  <td width="20%" height="16" style="font-size:13px;">${ line.product_id.name }</td>
-                                  <td width="10%" height="16" style="font-size:13px;">${ line.product_id.default_code or '' }</td>
-                                  <td width="10%" height="16" style="font-size:13px;">${ line.product_uom.name }</td>
-                                  <td width="10%" height="16" style="font-size:13px;">${ line.product_uom_qty }</td>
-                                  <td width="10%" height="16" style="font-size:13px;">${ line.unit_price }</td>
-                                  <td width="10%" height="16" style="font-size:13px;">${ line.subtotal_amount }</td>
-                                  <td width="25%" height="16" style="font-size:13px;">${ line.note or '' }</td>
-                                </tr>
-                              % endfor
-						</tbody>
-    		          </table>
-    		        </div>
-    		        
-    		        <div id="footer">
-        				<table border="0" cellspacing="2" width="100%">
-        					<tr>
-        						<td colspan="2" style="font-size:13px;">开票人: ${ o['user_id']['name'] }</td>
-						        <td colspan="2" style="font-size:13px;">审核人: ${ o['confirmer_id']['name'] }</td>
-        						<td colspan="2" style="font-size:13px;">客户签收: </td>
-        					</tr>
-        				</table>
-        			</div>
-                    
-                </div>
+                    <div id="div2">
+                    <table border="0" cellspacing="0" cellpadding="0" bordercolor="#000000" style="font-size:14px;">
+                      <thead>
+                          <tr>
+                            <td width="100%" colspan="8">
+                              <p align="center" style="font-size:16px;"><b>产品清单</b></p></td>
+                          </tr>
+                          <tr>
+                            <td colspan="2"  height="18">单位名称: ${ o.partner_id.name }</td>
+                            <td colspan="2"  height="18">备注: ${ o.note or '' }</td>
+                            <td colspan="2" height="18">时间: ${ o.date_order }</td>
+                            <td colspan="2" height="18" style="font-size:12px;">
+                                单号: ${ o['name'] } ( ${ o.sub_name } )
+    						</td>
+                          </tr>
+                          <tr height="18">
+                            <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">No.</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">品名</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">型号</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">单位</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">数量</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">单价</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">金额</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">备注</td>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <%
+              				i = 0
+              			    %>
+                  			% for line in o.order_line:
+                                <% i = i + 1 %>
+                                <tr>
+                                    <td width="2%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ i }</td>
+                                    <td width="25%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_id.name }</td>
+                                    <td width="15%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_id.default_code or '' }</td>
+                                    <td width="8%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_uom.name }</td>
+                                    <td width="10%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_uom_qty }</td>
+                                    <td width="10%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.unit_price }</td>
+                                    <td width="10%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.subtotal_amount }</td>
+                                    <td width="20%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.note or '' }</td>
+                                  </tr>
+                                % endfor
+                      </tbody>
+                      <tfoot>
+                          <tr>
+                            <td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;text-align:right;" tdata="allSum" format="#,##0.00" tindex="7">
+                                共计: #
+                            </td>
+                            <td colspan="4" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;text-align:right;" tdata="allSum" format="UpperMoney" tindex="7">
+                                大写: #
+                            </td>
+                            <td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" tdata="subSum" format="#,##0.00">
+                                本页小计: #
+                            </td>
+                          </tr>
+                          <tr>
+                              <td colspan="2" style="font-size:13px;">开票人: ${ o['user_id']['name'] }</td>
+                              <td colspan="2" style="font-size:13px;">审核人: ${ o['confirmer_id']['name'] }</td>
+                              <td colspan="2" style="font-size:13px;">客户签收: </td>
+                              <td colspan="2" style="font-size:13px;text-align:right;">第<span tdata="pageNO" format="#">#</span>页 - 共<span tdata="pageCount" format="UpperMoney">#</span>页</td>
+                          </tr>
+                      </tfoot>
+                    </table>
+                    </div>
                     <script language="javascript" type="text/javascript">
             		    var LODOP; //声明为全局变量
             		    function print_all(){
@@ -101,31 +98,17 @@
                         		LODOP.SET_LICENSES("","292881049110510152101109126561","","");
                         		LODOP.PRINT_INIT("FG ERP Order");
                         		LODOP.SET_PRINT_PAGESIZE(1, 2300, 1300, 'fg_sale_order_order');
-                        		LODOP.ADD_PRINT_HTM("0mm", "0mm", "220mm", "20mm",document.getElementById("header").innerHTML);
-                                LODOP.SET_PRINT_STYLEA(0,"ItemType",1);
-                				LODOP.SET_PRINT_STYLEA(0,"LinkedItem",1);
-                				LODOP.SET_PRINT_STYLEA(0,"Horient",2);
-
-                				LODOP.ADD_PRINT_HTM("120mm","0mm","160mm","16mm",document.getElementById("footer").innerHTML);
-                				LODOP.SET_PRINT_STYLEA(0,"ItemType",1);
-                				LODOP.SET_PRINT_STYLEA(0,"LinkedItem",1);
-                				
-                				LODOP.ADD_PRINT_TABLE("18.5mm", "5.8mm", "220mm", "88mm",document.getElementById("table").innerHTML);
-                				LODOP.SET_PRINT_STYLEA(0,"Horient",2);
-                				
-                				
-                				
-                				LODOP.ADD_PRINT_TEXT("117mm","184mm","15mm","5mm","第#页/共&页");
-                				LODOP.SET_PRINT_STYLEA(0,"ItemType",2);
-
-                				LODOP.NewPageA();
-                        		//LODOP.PREVIEW();
-                        		LODOP.PRINT_DESIGN();
+                        		LODOP.ADD_PRINT_TABLE("5mm","5mm","220mm", "98mm", document.getElementById("div2").innerHTML);
+                                
+                        		LODOP.PREVIEW();
+                        		
+                        		//LODOP.PRINT_DESIGN();
                         		window.close();
                         }
-                        
                         print_all();
         		    </script>
+        		% else:
+        		    本单据还没有审核,不能打印.
         		% endif
         	% endfor
 		% endif 

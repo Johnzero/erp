@@ -40,26 +40,16 @@
         %>
 		
 		% for item in picking_items:
-		        <% 
-		            count = len(item['colors'])
-		        %>
-		        <tr>
-	                <td rowspan="${ count }">${ item['category'] }</td>
-    	            <td rowspan="${ count }">${ item['name'] }</td>
-    	            <td rowspan="${ count }">${ item['code'] }</td>
-    	            <td>${ item['colors'][0] }</td>
-    	            <td>${ get_data(item['code'], item['colors'][0])[0] }</td>
-    	            <td>${ get_data(item['code'], item['colors'][0])[1] }</td>
-	            </tr>
-	            % if count > 1:
-	                % for i in range(1, count):
-	                <tr>
-	                    <td>${ item['colors'][i] }</td>
-        	            <td>${ get_data(item['code'], item['colors'][i])[0] }</td>
-        	            <td>${ get_data(item['code'], item['colors'][i])[1] }</td>
-                    </tr>
-	                % endfor 
-	            % endif 
+		   % for color in item['colors']:
+               <tr>
+                   <td>${ item['category'] }</td>
+                   <td>${ item['name'] }</td>
+                   <td>${ item['code'] }</td>
+                   <td>${ color }</td>
+                   <td>${ get_data(item['code'], color)[0] }</td>
+                   <td>${ get_data(item['code'], color)[1] }</td>
+               </tr>
+           % endfor
 		% endfor
 
         </table>
