@@ -14,7 +14,6 @@ class sale_order(osv.osv):
     _description = "富光业务部销售订单"
     
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
-        print '_amount_all_amount_all_amount_all_amount_all_amount_all'
         res = {}
         for order in self.browse(cr, uid, ids, context=context):
             res[order.id] = { 'amount_total':0.0 }
@@ -34,7 +33,7 @@ class sale_order(osv.osv):
         'confirmer_id': fields.many2one('res.users', '审核人', select=True, readonly=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),        
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
-        'amount_total': fields.function(_amount_all, string='金额', store=True, multi='sums'),
+        'amount_total': fields.function(_amount_all, string='金额', store=False, multi='sums'),
         #'amount_total': fields.float('金额', digits=(16,4)),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
@@ -179,16 +178,6 @@ class sale_order_line(osv.osv):
         result['unit_price'] = product.lst_price
         return {'value': result}
     
-    # def _get_amount(self,cr,uid, ids, product_id, uom_id, context=None):
-    #     if product_id and product_uom and qty:
-    #         product_obj = self.pool.get('product.product')
-    #         
-    #         product = product_obj.browse(cr, uid, product_id, context=context)
-    #         if product:
-    #             price = product.lst_price
-    #             return {'value': {'price_subtotal':price, 'price_discount':price}}
-    #     return {'value':{}}
-    
     
     def product_uom_id_change(self, cr, uid, ids, product_id, uom_id, context=None):
         return {'domain': {}, 'value':{'product_uom_qty':0, 
@@ -208,20 +197,3 @@ class sale_order_line(osv.osv):
 
 
     _order = 'sequence, id asc'
-
-# class sale_print_log(osv.osv):
-#     _name = "fg_sale.print.log"
-#     
-#     _columns = {
-#         'user_id': fields.many2one('res.users', '打印人'),
-#         'date_print': fields.date('打印日期'),
-#         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
-#     }
-#     
-#     _order = 'date_print, id'
-#     
-#     
-#     _defaults = {
-#         'date_print': fields.date.context_today,
-#         'user_id': lambda obj, cr, uid, context: uid,
-#     }

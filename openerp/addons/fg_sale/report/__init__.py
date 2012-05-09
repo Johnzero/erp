@@ -3,7 +3,6 @@
 from report import report_sxw
 from osv import osv
 import tools
-import sale_report
 
 class fg_order_html(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
