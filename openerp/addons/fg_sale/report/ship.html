@@ -27,7 +27,7 @@
     		% for o in objects:
     		    % if o['state'] == 'done':
                     <div id="div2">
-                    <table border="0" cellspacing="0" cellpadding="0" bordercolor="#000000" style="font-size:14px;">
+                    <table border="0" cellspacing="2" cellpadding="2" bordercolor="#000000" style="font-size:14px;">
                       <thead>
                           <tr>
                             <td width="100%" colspan="8">
@@ -89,8 +89,8 @@
                         		LODOP=getLodop(document.getElementById('LODOP'),document.getElementById('LODOP_EM'));  
                         		LODOP.SET_LICENSES("","292881049110510152101109126561","","");
                         		LODOP.PRINT_INIT("FG ERP Order");
-                        		LODOP.SET_PRINT_PAGESIZE(1, 2300, 1300, 'fg_sale_order_order');
-                        		LODOP.ADD_PRINT_TABLE("5mm","5mm","220mm", "90mm", document.getElementById("div2").innerHTML);
+                        		LODOP.SET_PRINT_PAGESIZE(1, 2300, 1390, 'fg_sale_order_order');
+                        		LODOP.ADD_PRINT_TABLE("0mm","5mm","220mm", "90mm", document.getElementById("div2").innerHTML);
                                 
                         		LODOP.PREVIEW();
                         		

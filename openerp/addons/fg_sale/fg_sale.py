@@ -164,6 +164,11 @@ class sale_order_line(osv.osv):
         'unit_price': fields.float('单价', required=True, digits=(16,4)),
         'subtotal_amount': fields.float('小计', digits=(16,4)),
         'note': fields.char('附注', size=100),
+        'sync':fields.boolean('备用'),
+    }
+    
+    _defaults={
+        'sync':False,
     }
     
     def product_id_change(self, cr, uid, ids, product_id, context=None):
