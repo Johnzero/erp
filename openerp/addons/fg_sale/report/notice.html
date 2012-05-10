@@ -27,27 +27,25 @@
     		% for o in objects:
     		    % if o['state'] == 'done':
                     <div id="div2">
-                    <table border="0" cellspacing="0" cellpadding="0" bordercolor="#000000" style="font-size:14px;">
+                    <table border="0" cellspacing="2" cellpadding="2" bordercolor="#000000" style="font-size:14px;">
                       <thead>
                           <tr>
                             <td width="100%" colspan="8">
                               <p align="center" style="font-size:16px;"><b>发货通知单</b></p></td>
                           </tr>
                           <tr>
-                              <td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">下单时间: ${ o.date_order }</td>
-                              <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">到货地点:</td>
-                              <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" colspan="3"></td>
+                              <td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">到货地点:</td>
+                              <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">收货人:</td>
+                              <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" colspan="2"></td>
                           </tr>
                           <tr>
                             <td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">对方付费: 是 否</td>
-                            <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">收货人:</td>
-                            <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;"></td>
-                            <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">联系电话:</td>
-                            <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;"></td>
+                            <td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">联系电话:</td>
+                            <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;">下单时间: ${ o.date_order }</td>
                           </tr>
                           <tr height="18">
                             <td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">No.</td>
-            				<td colspan="2" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">品名</td>
+            				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">品名</td>
             				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">型号</td>
             				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">单位</td>
             				<td style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" align="center">数量</td>
@@ -60,17 +58,17 @@
                   			% for line in o.order_line:
                                 <% i = i + 1 %>
                                 <tr>
-                                    <td width="2%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ i }</td>
-                                    <td colspan="2" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_id.name }</td>
+                                    <td width="2%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;text-align:center;" >${ i }</td>
+                                    <td height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_id.name }</td>
                                     <td width="15%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_id.default_code or '' }</td>
-                                    <td width="8%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_uom.name }</td>
-                                    <td width="10%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_uom_qty }</td>
+                                    <td width="20%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_uom.name }</td>
+                                    <td width="20%" height="18" style="BORDER-COLLAPSE: collapse; BORDER:groove 1px;" >${ line.product_uom_qty }</td>
                                   </tr>
                                 % endfor
                       </tbody>
                       <tfoot>
                           <tr>
-                              <td colspan="8" style="font-size:14px;height:18px;text-align:right;">第<span tdata="pageNO" format="#">#</span>页 - 共<span tdata="pageCount" format="#">#</span>页</td>
+                              <td colspan="8" style="font-size:14px;height:18px;text-align:right;">第<span tdata="pageNO" format="#">#</span>页-共<span tdata="pageCount" format="#">#</span>页</td>
                           </tr>
                       </tfoot>
                     </table>
