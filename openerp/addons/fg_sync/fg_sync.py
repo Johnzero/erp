@@ -44,6 +44,11 @@ class fg_sync_scheduler(osv.osv):
         'server_port': lambda *args: 8069
     }
     
+    def do_push(self, cr, uid, ids, model):
+        pass
+
+    def do_pull(self, cr, uid, ids, model):
+        pass
     
     def do_run_scheduler(self, cr, uid, ids=None, context=None):
         """Scheduler for event reminder
@@ -57,12 +62,13 @@ class fg_sync_scheduler(osv.osv):
             context = {}
         
         #sequence:
-        # user, partner_address, partner, product_category, product_uom, product, fg_sale, fg_sale_line
+        # user, partner_address, partner_category, partner, product_category
+        # product_uom, product, fg_sale, fg_sale_line
+        #
         # for sync orders only.
         
         #pool = pooler.get_pool(cr.dbname)
         #pool1 = RPCProxy(server)
-        
         
         
         
