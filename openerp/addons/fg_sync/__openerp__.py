@@ -7,7 +7,7 @@
     'description': """db view""",
     'author': 'openerp',
     'website': 'http://www.openerp.org',
-    'depends': ['base'],
+    'depends': ['base', 'fg_sale'],
     'init_xml': [],
     'update_xml': [
         'fg_sync.xml',

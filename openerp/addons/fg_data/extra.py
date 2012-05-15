@@ -6,6 +6,11 @@ class res_partner(osv.osv):
     _columns = {
         'fullnum': fields.char('num', size=40),
         'sales_ids': fields.many2many('res.users', 'rel_partner_user','partner_id','user_id', '负责业务员', help='内部负责业务员. 设置邮件地址,以备通知使用.'),
+        'sync':fields.boolean('备用'),
+    }
+    
+    _defaults = {
+        'sync':False,
     }
 
 class res_user(osv.osv):
@@ -18,7 +23,11 @@ class res_user(osv.osv):
 class product_uom(osv.osv):
     _inherit = 'product.uom'
     _columns = {
-        'fullnum': fields.char('num', size=40)
+        'fullnum': fields.char('num', size=40),
+        'sync':fields.boolean('备用'),
+    }
+    _defaults = {
+        'sync':False,
     }
 
 class product_product(osv.osv):
