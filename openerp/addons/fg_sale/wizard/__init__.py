@@ -39,22 +39,26 @@ class customer_import(osv.osv_memory):
         #todo!!!! this is for importing FGC001 clients. where item.FNumber = 'FGC001'
         sql = """
         SELECT
-        	org.FNumber,
-        	org.FName,
-        	org.FContact,
-        	org.FPhone,
-        	org.FFax,
-        	org.FAddress,
-        	org.FCity,
-        	org.FProvince,
-        	org.FCountry,
-        	item.FName AS Category,
-        	item.FNumber AS Category_Number
+                org.FNumber,
+                org.FName,
+                org.FContact,
+                org.FPhone,
+                org.FFax,
+                org.FAddress,
+                org.FCity,
+                org.FProvince,
+                org.FCountry,
+                item.FName AS Category,
+                item.FNumber AS Category_Number
         FROM
-        	t_Organization org
+                t_Organization org
         JOIN t_Item item ON item.FItemID = org.FParentID
-        
+        WHERE
+                item.FNumber = 'FGC001'
+        ORDER BY
+                org.FItemID ASC
         """
+        ## todo: notice...
         ##where item.FNumber = 'FGC001'
         state_sql = """
             select DISTINCT(FProvince) from t_Organization
@@ -136,13 +140,15 @@ class user_import(osv.osv_memory):
         # save user
         user_sql = """
         SELECT
-            FUserID,
-            FName,
-            FForbidden
+                FUserID,
+                FName,
+                FForbidden
         FROM
-            t_User
+                t_User
         WHERE
-            FSID IS NOT NULL
+                FSID IS NOT NULL
+        ORDER BY
+                FUserID ASC
         """
         conn = pyodbc.connect(CONN_STR)
         cursor = conn.cursor()
@@ -176,57 +182,67 @@ class product_import(osv.osv_memory):
     def import_product(self, cr, uid, ids, context=None):
         cate_sql = """
         SELECT
-            FNumber,
-            FName
-        FROM
-            t_Item
-        WHERE
-            FItemClassID = 4
-        AND FLevel = 1
+                FNumber,
+                FName
+            FROM
+                t_Item
+            WHERE
+                FItemClassID = 4
+            AND FLevel = 1
+        ORDER BY FItemID ASC
         """
         uom_sql = """
         SELECT
-            tmu.FNumber,
-            tmu.FName,
-            tmu.FCoefficient
+                tmu.FNumber,
+                tmu.FName,
+                tmu.FCoefficient
         FROM
-            t_MeasureUnit tmu;
+                t_MeasureUnit tmu
+        ORDER BY
+                FItemID ASC
         """
         product_sql = """
         SELECT
-            icitem.FModel,
-            icitem.FName,
-            icitem.FNumber,
-            icitem.FSalePrice,
-            icitem.FNote,
-            item.FName AS Category_Name,
-            item.FNumber AS Category_Num,
-            unit.FNumber AS Unit_Num,
-            unit.FName AS Unit_Name,
-            dep.FName AS Dep_Name
+                icitem.FModel,
+                icitem.FName,
+                icitem.FNumber,
+                icitem.FSalePrice,
+                icitem.FNote,
+                item.FName AS Category_Name,
+                item.FNumber AS Category_Num,
+                unit.FNumber AS Unit_Num,
+                unit.FName AS Unit_Name,
+                dep.FName AS Dep_Name
         FROM
-            t_icitem icitem
+                t_icitem icitem
         JOIN t_Item item ON item.FItemID = icitem.FParentID
         JOIN t_MeasureUnit unit ON unit.FItemID = icitem.FSaleUnitID
         JOIN t_Department dep ON dep.FItemID = icitem.FSource
-        where icitem.FSource > 0;
+        WHERE
+                icitem.FSource > 0
+        ORDER BY
+                icitem.FItemID ASC
         """
         product_sql_no_srouce = """
         SELECT
-            icitem.FModel,
-            icitem.FName,
-            icitem.FNumber,
-            icitem.FSalePrice,
-            icitem.FNote,
-            item.FName AS Category_Name,
-            item.FNumber AS Category_Num,
-            unit.FNumber AS Unit_Num,
-            unit.FName AS Unit_Name
+                icitem.FModel,
+                icitem.FName,
+                icitem.FNumber,
+                icitem.FSalePrice,
+                icitem.FNote,
+                item.FName AS Category_Name,
+                item.FNumber AS Category_Num,
+                unit.FNumber AS Unit_Num,
+                unit.FName AS Unit_Name
         FROM
-            t_icitem icitem
+                t_icitem icitem
         JOIN t_Item item ON item.FItemID = icitem.FParentID
         JOIN t_MeasureUnit unit ON unit.FItemID = icitem.FSaleUnitID
-        where icitem.FSource = 0"""
+        WHERE
+                icitem.FSource = 0
+        ORDER BY
+                icitem.FItemID ASC
+        """
         product_cate_obj = self.pool.get('product.category')
         product_uom_obj = self.pool.get('product.uom')
         product_obj = self.pool.get('product.product')

@@ -236,6 +236,7 @@ if __name__ == "__main__":
 
     setup_signal_handlers()
 
+
     if config["test_file"]:
         run_test_file(config['db_name'], config['test_file'])
         sys.exit(0)

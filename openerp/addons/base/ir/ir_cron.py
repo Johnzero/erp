@@ -170,7 +170,6 @@ class ir_cron(osv.osv):
                 addsql = ', active=False'
             cr.execute("UPDATE ir_cron SET nextcall=%s, numbercall=%s"+addsql+" WHERE id=%s",
                        (nextcall.strftime(DEFAULT_SERVER_DATETIME_FORMAT), numbercall, job['id']))
-
             if numbercall:
                 # Reschedule our own main cron thread if necessary.
                 # This is really needed if this job runs longer than its rescheduling period.
@@ -199,13 +198,14 @@ class ir_cron(osv.osv):
         db_name = db.dbname
         try:
             jobs = {} # mapping job ids to jobs for all jobs being processed.
-            now = datetime.now() 
+            now = datetime.utcnow()
             # Careful to compare timestamps with 'UTC' - everything is UTC as of v6.1.
             cr.execute("""SELECT * FROM ir_cron
                           WHERE numbercall != 0
                               AND active AND nextcall <= (now() at time zone 'UTC')
                           ORDER BY priority""")
             for job in cr.dictfetchall():
+
                 if not openerp.cron.get_thread_slots():
                     break
                 jobs[job['id']] = job
