@@ -2,21 +2,16 @@
  * OpenERP web_graph
  *---------------------------------------------------------*/
 
-openerp.web_graph = function (openerp) {
-var COLOR_PALETTE = [
-    '#cc99ff', '#ccccff', '#48D1CC', '#CFD784', '#8B7B8B', '#75507b',
-    '#b0008c', '#ff0000', '#ff8e00', '#9000ff', '#0078ff', '#00ff00',
-    '#e6ff00', '#ffff00', '#905000', '#9b0000', '#840067', '#9abe00',
-    '#ffc900', '#510090', '#0000c9', '#009b00', '#75507b', '#3465a4',
-    '#73d216', '#c17d11', '#edd400', '#fcaf3e', '#ef2929', '#ff00c9',
-    '#ad7fa8', '#729fcf', '#8ae234', '#e9b96e', '#fce94f', '#f57900',
-    '#cc0000', '#d400a8'];
+openerp.web_graph = function (instance) {
 
-var QWeb = openerp.web.qweb,
-     _lt = openerp.web._lt;
-openerp.web.views.add('graph', 'openerp.web_graph.GraphView');
-openerp.web_graph.GraphView = openerp.web.View.extend({
+var QWeb = instance.web.qweb,
+     _lt = instance.web._lt;
+
+instance.web.views.add('graph', 'instance.web_graph.GraphView');
+instance.web_graph.GraphView = instance.web.View.extend({
+    template: "GraphView",
     display_name: _lt('Graph'),
+    view_type: "graph",
 
     init: function(parent, dataset, view_id, options) {
         this._super(parent);
@@ -24,425 +19,305 @@ openerp.web_graph.GraphView = openerp.web.View.extend({
         this.dataset = dataset;
         this.view_id = view_id;
 
-        this.first_field = null;
-        this.abscissa = null;
-        this.ordinate = null;
-        this.columns = [];
-        this.group_field = null;
+        this.mode="bar";          // line, bar, area, pie, radar
+        this.orientation=false;    // true: horizontal, false: vertical
+        this.stacked=true;
+
+        this.spreadsheet=false;   // Display data gris, allows copy to CSV
+        this.forcehtml=false;
+        this.legend_container;
+        this.legend="top";        // top, inside, no
+
+        this.domain = [];
+        this.context = {};
+        this.group_by = {};
+
+
         this.is_loaded = $.Deferred();
-
-        this.renderer = null;
+        this.graph = null;
     },
-    stop: function () {
-        if (this.renderer) {
-            clearTimeout(this.renderer);
-        }
+    destroy: function () {
+        if (this.graph)
+            this.graph.destroy();
         this._super();
     },
-    start: function() {
+
+    on_loaded: function(fields_view_get) {
+        // TODO: move  to load_view and document
+        var width, height;
         var self = this;
+        this.fields_view = fields_view_get;
+        this.container = this.$element.find("#editor-render-body");
+
+        this.mode = this.fields_view.arch.attrs.type || 'bar';
+        this.orientation = this.fields_view.arch.attrs.orientation == 'horizontal';
+
+        width = this.$element.parent().width();
+        this.container.css("width", width);
+        this.$element.css("width", width);
+        this.container.css("height", Math.min(500, width*0.8));
+        this.container = this.container[0];
+
+        this.$element.find("#graph_bar,#graph_bar_stacked").click(
+            {mode: 'bar', stacked: true, legend: 'top'}, $.proxy(this,"graph_render"))
+
+        this.$element.find("#graph_bar_not_stacked").click(
+            {mode: 'bar', stacked: false, legend: 'top'}, $.proxy(this,"graph_render"))
+
+        this.$element.find("#graph_area,#graph_area_stacked").click(
+            {mode: "area", stacked: true, legend: "top"}, $.proxy(this,"graph_render"));
+
+        this.$element.find("#graph_area_not_stacked").click(
+            {mode: "area", stacked: false, legend: "top"}, $.proxy(this,"graph_render"));
+
+        this.$element.find("#graph_radar").click(
+            {orientation: 0, mode: "radar", legend: "inside"}, $.proxy(this,"graph_render"));
+
+        this.$element.find("#graph_pie").click(
+            {mode: "pie", legend: "inside"}, $.proxy(this,"graph_render"));
+
+        this.$element.find("#graph_legend_top").click(
+            {legend: "top"}, $.proxy(self,"graph_render"));
+
+        this.$element.find("#graph_legend_inside").click(
+            {legend: "inside"}, $.proxy(self,"graph_render"));
+
+        this.$element.find("#graph_legend_no").click(
+            {legend: "no"}, $.proxy(self,"graph_render"));
+
+        this.$element.find("#graph_line").click(
+            {mode: "line"}, $.proxy(this,"graph_render"));
+
+        this.$element.find("#graph_show_data").click(
+            function() {
+                self.spreadsheet = ! self.spreadsheet;
+                self.graph_render();
+            }
+        );
+        this.$element.find("#graph_switch").click(
+            function() {
+                if (this.mode != 'radar')
+                    self.orientation = ! self.orientation;
+                self.graph_render();
+            }
+        );
+
+        this.$element.find("#graph_download").click(
+            function() {
+                if (Flotr.isIE && Flotr.isIE < 9) {
+                    alert(
+                        "Your browser doesn't allow you to get a bitmap image from the plot, " +
+                        "you can only get a VML image that you can use in Microsoft Office."
+                    );
+                }
+                if (self.legend=="top") self.legend="inside";
+                self.forcehtml = true;
+		return self.graph_get_data(
+		    function (result) {
+		    	var graph;
+			graph = self.graph_render_all(result)
+			graph.download.saveImage('png');
+			self.forcehtml = false;
+		    }
+		);
+            }
+        );
         this._super();
-        var loaded;
-        if (this.embedded_view) {
-            loaded = $.when([self.embedded_view]);
-        } else {
-            loaded = this.rpc('/web/view/load', {
-                    model: this.dataset.model,
-                    view_id: this.view_id,
-                    view_type: 'graph'
-            });
-        }
-        return $.when(
-            this.dataset.call_and_eval('fields_get', [false, {}], null, 1),
-            loaded)
-            .then(function (fields_result, view_result) {
-                self.fields = fields_result[0];
-                self.fields_view = view_result[0];
-                self.on_loaded(self.fields_view);
-            });
     },
-    /**
-     * Returns all object fields involved in the graph view
-     */
-    list_fields: function () {
-        var fs = [this.abscissa];
-        fs.push.apply(fs, _(this.columns).pluck('name'));
-        if (this.group_field) {
-            fs.push(this.group_field);
+
+    get_format: function get_format(options) {
+         var result = {
+            show: this.legend!='no',
         }
-        return fs;
+        if (this.legend=="top") {
+            result.noColumns = 4;
+            result.container = this.$element.find("div.graph_header_legend")[0];
+        } else if (this.legend=="inside") {
+            result.position = 'nw';
+            result.backgroundColor = '#D2E8FF';
+        }
+        return $.extend({
+            legend: result,
+            mouse: {
+                track: true,
+                relative: true
+            },
+            spreadsheet : {
+                show: this.spreadsheet,
+                initialTab: "data"
+            },
+            HtmlText : (options && options.xaxis && options.xaxis.labelsAngle)?false:!this.forcehtml,
+        }, options)
     },
-    on_loaded: function() {
-        this.chart = this.fields_view.arch.attrs.type || 'pie';
-        this.orientation = this.fields_view.arch.attrs.orientation || 'vertical';
 
-        _.each(this.fields_view.arch.children, function (field) {
-            var attrs = field.attrs;
-            if (attrs.group) {
-                this.group_field = attrs.name;
-            } else if(!this.abscissa) {
-                this.first_field = this.abscissa = attrs.name;
-            } else {
-                this.columns.push({
-                    name: attrs.name,
-                    operator: attrs.operator || '+'
-                });
-            }
-        }, this);
-        this.ordinate = this.columns[0].name;
-        this.is_loaded.resolve();
-    },
-    schedule_chart: function(results) {
-        var self = this;
-        this.$element.html(QWeb.render("GraphView", {
-            "fields_view": this.fields_view,
-            "chart": this.chart,
-            'element_id': this.widget_parent.element_id
-        }));
 
-        var fields = _(this.columns).pluck('name').concat([this.abscissa]);
-        if (this.group_field) { fields.push(this.group_field); }
-        // transform search result into usable records (convert from OpenERP
-        // value shapes to usable atomic types
-        var records = _(results).map(function (result) {
-            var point = {};
-            _(result).each(function (value, field) {
-                if (!_(fields).contains(field)) { return; }
-                if (value === false) { point[field] = false; return; }
-                switch (self.fields[field].type) {
-                case 'selection':
-                    point[field] = _(self.fields[field].selection).detect(function (choice) {
-                        return choice[0] === value;
-                    })[1];
-                    break;
-                case 'many2one':
-                    point[field] = value[1];
-                    break;
-                case 'integer': case 'float': case 'char':
-                case 'date': case 'datetime':
-                    point[field] = value;
-                    break;
-                default:
-                    throw new Error(
-                        "Unknown field type " + self.fields[field].type
-                        + "for field " + field + " (" + value + ")");
-                }
-            });
-            return point;
-        });
-        // aggregate data, because dhtmlx is crap. Aggregate on abscissa field,
-        // leave split on group field => max m*n records where m is the # of
-        // values for the abscissa and n is the # of values for the group field
-        var graph_data = [];
-        _(records).each(function (record) {
-            var abscissa = record[self.abscissa],
-                group = record[self.group_field];
-            var r = _(graph_data).detect(function (potential) {
-                return potential[self.abscissa] === abscissa
-                        && (!self.group_field
-                            || potential[self.group_field] === group);
-            });
-            var datapoint = r || {};
-
-            datapoint[self.abscissa] = abscissa;
-            if (self.group_field) { datapoint[self.group_field] = group; }
-            _(self.columns).each(function (column) {
-                var val = record[column.name],
-                    aggregate = datapoint[column.name];
-                switch(column.operator) {
-                case '+':
-                    datapoint[column.name] = (aggregate || 0) + val;
-                    return;
-                case '*':
-                    datapoint[column.name] = (aggregate || 1) * val;
-                    return;
-                case 'min':
-                    datapoint[column.name] = (aggregate || Infinity) > val
-                                           ? val
-                                           : aggregate;
-                    return;
-                case 'max':
-                    datapoint[column.name] = (aggregate || -Infinity) < val
-                                           ? val
-                                           : aggregate;
-                }
-            });
-
-            if (!r) { graph_data.push(datapoint); }
-        });
-        graph_data = _(graph_data).sortBy(function (point) {
-            return point[self.abscissa] + '[[--]]' + point[self.group_field];
-        });
-        if (_.include(['bar','line','area'],this.chart)) {
-            return this.schedule_bar_line_area(graph_data);
-        } else if (this.chart == "pie") {
-            return this.schedule_pie(graph_data);
-        }
-    },
-    schedule_bar_line_area: function(results) {
-        var self = this;
-        var group_list,
-        view_chart = (self.chart == 'line')?'line':(self.chart == 'area')?'area':'';
-        if (!this.group_field || !results.length) {
-            if (self.chart == 'bar'){
-                view_chart = (this.orientation === 'horizontal') ? 'barH' : 'bar';
-            }
-            group_list = _(this.columns).map(function (column, index) {
-                return {
-                    group: column.name,
-                    text: self.fields[column.name].string,
-                    color: COLOR_PALETTE[index % (COLOR_PALETTE.length)]
-                }
-            });
-        } else {
-            // dhtmlx handles clustered bar charts (> 1 column per abscissa
-            // value) and stacked bar charts (basically the same but with the
-            // columns on top of one another instead of side by side), but it
-            // does not handle clustered stacked bar charts
-            if (self.chart == 'bar' && (this.columns.length > 1)) {
-                this.$element.text(
-                    'OpenERP Web does not support combining grouping and '
-                  + 'multiple columns in graph at this time.');
-                throw new Error(
-                    'dhtmlx can not handle columns counts of that magnitude');
-            }
-            // transform series for clustered charts into series for stacked
-            // charts
-            if (self.chart == 'bar'){
-                view_chart = (this.orientation === 'horizontal')
-                        ? 'stackedBarH' : 'stackedBar';
-            }
-            group_list = _(results).chain()
-                    .pluck(this.group_field)
-                    .uniq()
-                    .map(function (value, index) {
-                        var groupval = '';
-                        if(value) {
-                            groupval = value.toLowerCase().replace(/[\s\/]+/g,'_');
-                        }
-                        return {
-                            group: _.str.sprintf('%s_%s', self.ordinate, groupval),
-                            text: value,
-                            color: COLOR_PALETTE[index % COLOR_PALETTE.length]
-                        };
-                    }).value();
-
-            results = _(results).chain()
-                .groupBy(function (record) { return record[self.abscissa]; })
-                .map(function (records) {
-                    var r = {};
-                    // second argument is coerced to a str, no good for boolean
-                    r[self.abscissa] = records[0][self.abscissa];
-                    _(records).each(function (record) {
-                        var value = record[self.group_field];
-                        if(value) {
-                            value = value.toLowerCase().replace(/[\s\/]+/g,'_');
-                        }
-                        var key = _.str.sprintf('%s_%s', self.ordinate, value);
-                        r[key] = record[self.ordinate];
-                    });
-                    return r;
-                })
-                .value();
-        }
-        var abscissa_description = {
-            title: "<b>" + this.fields[this.abscissa].string + "</b>",
-            template: function (obj) {
-                return obj[self.abscissa] || 'Undefined';
-            }
-        };
-        var ordinate_description = {
-            lines: true,
-            title: "<b>" + this.fields[this.ordinate].string + "</b>"
-        };
-
-        var x_axis, y_axis;
-        if (self.chart == 'bar' && self.orientation == 'horizontal') {
-            x_axis = ordinate_description;
-            y_axis = abscissa_description;
-        } else {
-            x_axis = abscissa_description;
-            y_axis = ordinate_description;
-        }
-        var renderer = function () {
-            if (self.$element.is(':hidden')) {
-                self.renderer = setTimeout(renderer, 100);
-                return;
-            }
-            self.renderer = null;
-            var charts = new dhtmlXChart({
-                view: view_chart,
-                container: self.widget_parent.element_id+"-"+self.chart+"chart",
-                value:"#"+group_list[0].group+"#",
-                gradient: (self.chart == "bar") ? "3d" : "light",
-                alpha: (self.chart == "area") ? 0.6 : 1,
-                border: false,
-                width: 1024,
-                tooltip:{
-                    template: _.str.sprintf("#%s#, %s=#%s#",
-                        self.abscissa, group_list[0].text, group_list[0].group)
+    graph_bar: function (container, data) {
+        return Flotr.draw(container, data.data, this.get_format({
+                bars : {
+                    show : true,
+                    stacked : this.stacked,
+                    horizontal : this.orientation,
+                    barWidth : 0.7,
+                    lineWidth : 1
                 },
-                radius: 0,
-                color: (self.chart != "line") ? group_list[0].color : "",
-                item: (self.chart == "line") ? {
-                            borderColor: group_list[0].color,
-                            color: "#000000"
-                        } : "",
-                line: (self.chart == "line") ? {
-                            color: group_list[0].color,
-                            width: 3
-                        } : "",
-                origin:0,
-                xAxis: x_axis,
-                yAxis: y_axis,
-                padding: {
-                    left: 75
+                grid : {
+                    verticalLines : this.orientation,
+                    horizontalLines : !this.orientation,
+                    outline : "sw",
                 },
-                legend: {
-                    values: group_list,
-                    align:"left",
-                    valign:"top",
-                    layout: "x",
-                    marker: {
-                        type:"round",
-                        width:12
-                    }
+                yaxis : {
+                    ticks: this.orientation?data.ticks:false
+                },
+                xaxis : {
+                    labelsAngle: 45,
+                    ticks: this.orientation?false:data.ticks
                 }
-            });
-            self.$element.find("#"+self.widget_parent.element_id+"-"+self.chart+"chart").width(
-                self.$element.find("#"+self.widget_parent.element_id+"-"+self.chart+"chart").width()+120);
-
-            for (var m = 1; m<group_list.length;m++){
-                var column = group_list[m];
-                if (column.group === self.group_field) { continue; }
-                charts.addSeries({
-                    value: "#"+column.group+"#",
-                    tooltip:{
-                        template: _.str.sprintf("#%s#, %s=#%s#",
-                            self.abscissa, column.text, column.group)
-                    },
-                    color: (self.chart != "line") ? column.color : "",
-                    item: (self.chart == "line") ? {
-                            borderColor: column.color,
-                            color: "#000000"
-                        } : "",
-                    line: (self.chart == "line") ? {
-                            color: column.color,
-                            width: 3
-                        } : ""
-                });
-            }
-            charts.parse(results, "json");
-            self.$element.find("#"+self.widget_parent.element_id+"-"+self.chart+"chart").height(
-                self.$element.find("#"+self.widget_parent.element_id+"-"+self.chart+"chart").height()+50);
-            charts.attachEvent("onItemClick", function(id) {
-                self.open_list_view(charts.get(id));
-            });
-        };
-        if (this.renderer) {
-            clearTimeout(this.renderer);
-        }
-        this.renderer = setTimeout(renderer, 0);
+            })
+        )
     },
-    schedule_pie: function(result) {
-        var self = this;
-        var renderer = function () {
-            if (self.$element.is(':hidden')) {
-                self.renderer = setTimeout(renderer, 100);
-                return;
-            }
-            self.renderer = null;
-            var chart =  new dhtmlXChart({
-                view:"pie3D",
-                container:self.widget_parent.element_id+"-piechart",
-                value:"#"+self.ordinate+"#",
-                pieInnerText:function(obj) {
-                    var sum = chart.sum("#"+self.ordinate+"#");
-                    var val = obj[self.ordinate] / sum * 100 ;
-                    return val.toFixed(1) + "%";
+
+    graph_pie: function (container, data) {
+        return Flotr.draw(container, data.data, this.get_format({
+                pie : {
+                    show: true
                 },
-                tooltip:{
-                    template:"#"+self.abscissa+"#"+"="+"#"+self.ordinate+"#"
+                grid : {
+                    verticalLines : false,
+                    horizontalLines : false,
+                    outline : "",
                 },
-                gradient:"3d",
-                height: 20,
-                radius: 200,
-                legend: {
-                    width: 300,
-                    align:"left",
-                    valign:"top",
-                    layout: "x",
-                    marker:{
-                        type:"round",
-                        width:12
-                    },
-                    template:function(obj){
-                        return obj[self.abscissa] || 'Undefined';
-                    }
+                xaxis :  {showLabels: false},
+                yaxis :  {showLabels: false},
+            })
+        )
+    },
+
+    graph_radar: function (container, data) {
+        return Flotr.draw(container, data.data, this.get_format({
+                radar : {
+                    show : true,
+                    stacked : this.stacked
+                },
+                grid : {
+                    circular : true,
+                    minorHorizontalLines : true
+                },
+                xaxis : {
+                    ticks: data.ticks
+                },
+            })
+        )
+    },
+
+    graph_line: function (container, data) {
+        return Flotr.draw(container, data.data, this.get_format({
+                lines : {
+                    show : true,
+                    stacked : this.stacked
+                },
+                grid : {
+                    verticalLines : this.orientation,
+                    horizontalLines : !this.orientation,
+                    outline : "sw",
+                },
+                yaxis : {
+                    ticks: this.orientation?data.ticks:false
+                },
+                xaxis : {
+                    labelsAngle: 45,
+                    ticks: this.orientation?false:data.ticks
                 }
-            });
-            chart.parse(result,"json");
-            chart.attachEvent("onItemClick", function(id) {
-                self.open_list_view(chart.get(id));
-            });
-        };
-        if (this.renderer) {
-            clearTimeout(this.renderer);
-        }
-        this.renderer = setTimeout(renderer, 0);
+            })
+        )
     },
-    open_list_view : function (id){
+
+    graph_get_data: function (callback) {
+        var data = this.rpc(
+            '/web_graph/graph/data_get',
+            {
+                model: this.dataset.model,
+                domain: this.domain,
+                context: this.context,
+                group_by: this.group_by,
+                view_id: this.view_id,
+                mode: this.mode,
+                orientation: this.orientation,
+                stacked: this.stacked
+            }, callback
+        );
+		return data
+    },
+
+
+    // Render the graph and update menu styles
+    graph_render: function (options) {
+        var i;
         var self = this;
-        // unconditionally nuke tooltips before switching view
-        $(".dhx_tooltip").remove('div');
-        id = id[this.abscissa];
-        if(this.fields[this.abscissa].type == "selection"){
-            id = _.detect(this.fields[this.abscissa].selection,function(select_value){
-                return _.include(select_value, id);
-            });
-        }
-        if (typeof id == 'object'){
-            id = id[0];
-        }
+        if (options)
+            for (i in options.data)
+                this[i] = options.data[i];
 
-        var views;
-        if (this.widget_parent.action) {
-            views = this.widget_parent.action.views;
-            if (!_(views).detect(function (view) {
-                    return view[1] === 'list' })) {
-                views = [[false, 'list']].concat(views);
+        return this.graph_get_data(
+            function (result) {
+                self.graph_render_all(result)
             }
-        } else {
-            views = _(["list", "form", "graph"]).map(function(mode) {
-                return [false, mode];
-            });
-        }
-        this.do_action({
-            res_model : this.dataset.model,
-            domain: [[this.abscissa, '=', id], ['id','in',this.dataset.ids]],
-            views: views,
-            type: "ir.actions.act_window",
-            flags: {default_view: 'list'}
-        });
+        );
     },
 
+    graph_render_all: function (data) {
+        var graph;
+	var i;
+	if (this.mode=='area')
+	    for (i=0; i<data.data.length; i++) {
+		data.data[i].lines = {fill: true}
+	    }
+        if (this.graph)
+            this.graph.destroy();
+
+        // Render the graph
+        this.$element.find(".graph_header_legend").children().remove()
+        this.graph = {
+            radar: $.proxy(this, "graph_radar"),
+            pie: $.proxy(this, "graph_pie"),
+            bar: $.proxy(this, "graph_bar"),
+            area: $.proxy(this, "graph_line"),
+            line: $.proxy(this, "graph_line")
+        }[this.mode](this.container, data)
+
+        // Update styles of menus
+
+        this.$element.find("a[id^='graph_']").removeClass("active");
+        this.$element.find("a[id='graph_"+this.mode+"']").addClass("active");
+        this.$element.find("a[id='graph_"+this.mode+(this.stacked?"_stacked":"_not_stacked")+"']").addClass("active");
+
+        if (this.legend=='inside')
+            this.$element.find("a[id='graph_legend_inside']").addClass("active");
+        else if (this.legend=='top')
+            this.$element.find("a[id='graph_legend_top']").addClass("active");
+        else
+            this.$element.find("a[id='graph_legend_no']").addClass("active");
+
+        if (this.spreadsheet)
+            this.$element.find("a[id='graph_show_data']").addClass("active");
+        return this.graph;
+    },
+
+    // render the graph using the domain, context and group_by
+    // calls the 'graph_data_get' python controller to process all data
+    // TODO: check is group_by should better be in the context
     do_search: function(domain, context, group_by) {
-        var self = this;
-        return $.when(this.is_loaded).pipe(function() {
-            // TODO: handle non-empty group_by with read_group?
-            if (!_(group_by).isEmpty()) {
-                self.abscissa = group_by[0];
-            } else {
-                self.abscissa = self.first_field;
-            }
-            return self.dataset.read_slice(self.list_fields()).then($.proxy(self, 'schedule_chart'));
-        });
+        this.domain = domain;
+        this.context = context;
+        this.group_by = group_by;
+
+        this.graph_render();
+        //});
     },
 
     do_show: function() {
         this.do_push_state({});
         return this._super();
-    }
+    },
+
 });
 };
-// vim:et fdc=0 fdl=0:

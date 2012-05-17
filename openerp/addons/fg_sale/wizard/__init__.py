@@ -7,6 +7,57 @@ from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
 #CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=fg;UID=bi;PWD=xixihaha'
 #CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha'
 CONN_STR = 'DRIVER={SQL Server};SERVER=192.168.209.128;DATABASE=jt;UID=erp;PWD=erp'
+
+ratio_dict = {
+    '吴秀屏':0.35,
+    '徐明':0.35,
+    '孔德彬':0.35,
+    '李世桂':0.3,
+    '钱铭':0.3,
+    '郑奎军':0.25,
+    '周伯利':0.25,
+    '杨辉':0.35,
+    '李莹':0.35,
+    '茹志斌':0.35,
+    '郭治峰':0.35,
+    '王云朋':0.35,
+    '颜晓杰':0.35,
+    '刘春桥':0.35,
+    '吕祥华':0.35,
+    '葛伦明':0.35,
+    '华新荣':0.35,
+    '杭州新富光':0.3,
+    '卢进军':0.35,
+    '杨行超':0.35,
+    '上官斌':0.35,
+    '梁健康':0.3,
+    '徐达报':0.3,
+    '郭毅':0.3,
+    '张灵川':0.3,
+    '潘志发':0.3,
+    '朱庆丰':0.3,
+    '万会平':0.35,
+    '应永泉':0.35,
+    '万红平':0.35,
+    '吴和志':0.35,
+    '史亚凤':0.35,
+    '庞金山':0.35,
+    '杨小红':0.3,
+    '田明':0.3,
+    '殷新文':0.3,
+    '姚金添':0.3,
+    '李凯亮':0.3,
+    '喻萍花':0.3,
+    '陈一欢':0.3,
+    '杨文英':0.3,
+    '李蒙':0.3,
+    '上海办事处':0.3,
+    '陈杨超':0.3,
+    '林棋森':0.3,
+    '海南宏丰':0.3,
+    '南宁秋实':0.3,
+}
+
 def clear_field(i, r=None):
     if not i:
         return ''
@@ -53,8 +104,6 @@ class customer_import(osv.osv_memory):
         FROM
                 t_Organization org
         JOIN t_Item item ON item.FItemID = org.FParentID
-        WHERE
-                item.FNumber = 'FGC001'
         ORDER BY
                 org.FItemID ASC
         """
@@ -101,6 +150,8 @@ class customer_import(osv.osv_memory):
                 'customer':True,
                 'category_id':[(6, 0, [cate_id])],
             }
+            partner['ratio'] = ratio_dict.get(partner['name'], 1)
+            
             partner_id = partner_obj.create(cr, uid, partner)
             
             address = {

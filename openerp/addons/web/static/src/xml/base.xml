@@ -40,7 +40,7 @@
     <tr>
         <td colspan="2">
             <div id="oe_footer" class="oe_footer">
-                <p class="oe_footer_powered">Powered by</p>
+                <p class="oe_footer_powered"></p>
             </div>
         </td>
     </tr>

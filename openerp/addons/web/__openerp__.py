@@ -37,6 +37,22 @@
         "static/lib/underscore/underscore.string.js",
         "static/lib/labjs/LAB.src.js",
         "static/lib/py.parse/lib/py.js",
+        
+        "static/lib/backbone/backbone.js",
+
+        "static/lib/visualsearch/lib/js/visualsearch.js",
+        "static/lib/visualsearch/lib/js/utils/backbone_extensions.js",
+        "static/lib/visualsearch/lib/js/utils/hotkeys.js",
+        "static/lib/visualsearch/lib/js/utils/inflector.js",
+        "static/lib/visualsearch/lib/js/utils/jquery_extensions.js",
+        "static/lib/visualsearch/lib/js/utils/search_parser.js",
+        "static/lib/visualsearch/lib/js/models/search_facets.js",
+        "static/lib/visualsearch/lib/js/models/search_query.js",
+        "static/lib/visualsearch/lib/js/templates/templates.js",
+        "static/lib/visualsearch/lib/js/views/search_facet.js",
+        "static/lib/visualsearch/lib/js/views/search_input.js",
+        "static/lib/visualsearch/lib/js/views/search_box.js",
+        
         "static/src/js/boot.js",
         "static/src/js/core.js",
         "static/src/js/dates.js",
