@@ -24,15 +24,19 @@ class GraphView(View):
         return res
     
     @openerpweb.jsonrequest
-    def data_get(self, req, model=None, domain=[], context={}, group_by=[], view_id=False, orientation=False, stacked=False, mode="bar", **kwargs):
+    def data_get(self, req, model=None, domain=[], context={}, group_by=[], view_id=False, **kwargs):
         obj = req.session.model(model)
         res = obj.fields_view_get(view_id, 'graph')
-        fields = res['fields']
-        toload = filter(lambda x: x not in fields, group_by)
-        if toload:
-            fields.update( obj.fields_get(toload, context) )
 
-        tree = etree.fromstring(res['arch'])
+        fields = res['fields']
+        
+        res = obj.read_group(domain, ['month', 'price_total'], group_by, context=context)
+        print res, 'res'
+        # toload = filter(lambda x: x not in fields, group_by)
+        #         if toload:
+        #             fields.update( obj.fields_get(toload, context) )
+        # 
+        #         tree = etree.fromstring(res['arch'])
 
         #pos = 0
         #xaxis = group_by or []

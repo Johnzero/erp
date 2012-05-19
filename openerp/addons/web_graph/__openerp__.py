@@ -14,6 +14,7 @@
     "depends": ['web'],
     "js": [
         "static/lib/flot/jquery.flot.min.js",
+        "static/lib/flot/jquery.flot.resize.min.js",
         "static/src/js/graph.js"
     ],
     "css": [
