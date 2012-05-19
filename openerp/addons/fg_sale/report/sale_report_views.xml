@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="view_fg_sale_order_report_monthly_tree" model="ir.ui.view">
+        <field eval="1" name="priority"/>
+        <field name="name">fg_sale.order.report.monthly.tree</field>
+        <field name="model">fg_sale.order.report.monthly</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="月度统计">
+                <field name="year" />
+                <field name="month" />
+                <field name="amount" />
+                <field name="source"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="view_fg_sale_order_report_monthly_graph" model="ir.ui.view">
+         <field name="name">fg_sale.order.report.monthly.graph</field>
+         <field name="model">fg_sale.order.report.monthly</field>
+         <field name="type">graph</field>
+         <field name="arch" type="xml">
+             <graph string="Sales Analysis" type="lines" stack="True">
+                 <field name="source"/>
+                 <field name="amount"/>
+             </graph>
+         </field>
+    </record>
+    
+    <record id="action_fg_sale_report_by_month" model="ir.actions.act_window">
+            <field name="name">月度统计</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_sale.order.report.monthly</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,graph</field>
+            <field name="view_id" ref="view_fg_sale_order_report_monthly_tree"/>
+        </record>
+    
+    
+
+</data>
+</openerp>

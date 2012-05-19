@@ -33,6 +33,7 @@ from yaml_import import *
 from sql import *
 from float_utils import *
 from hanzi import get_initial
+from memoize import memoize
 #.apidoc title: Tools
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

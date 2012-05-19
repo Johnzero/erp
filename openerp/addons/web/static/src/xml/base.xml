@@ -213,10 +213,10 @@
             </tr>
             <tr>
             <td><label for="new_pwd">New master password:</label></td>
-       	    <td><input type="password" name="new_pwd" class="required"
+            <td><input type="password" name="new_pwd" class="required"
                        minlength="1"/></td>
             </tr>
-   	    <tr>
+            <tr>
                 <td><label for="confirm_pwd">Confirm new master password:</label></td>
                 <td><input type="password" name="confirm_pwd" class="required"
                            equalTo="input[name=new_pwd]" minlength="1"/></td>
@@ -246,29 +246,8 @@
     </table>
 </t>
 <t t-name="CrashManagerError">
-    <t t-if="!session.openerp_entreprise">
-        <span>Your version of OpenERP is unsupported. Support &amp; maintenance services are available here: <a href="http://www.openerp.com/support-or-publisher-warranty-contract" target="_blank">OpenERP Entreprise</a>.</span>
-    </t>
-    <t t-if="session.openerp_entreprise">
-        <div class="oe_error_send">
-            <div>
-                <div class="oe_centeralign"><b>OpenERP Enterprise Contract.</b></div>
-                <div><br/>Your report will be sent to the OpenERP Enterprise team.<br/></div><br/>
-                <div>
-                    <label>Summary:</label><br/>
-                    <input id="issuename" type="text" class="oe_fielddiv"/>
-                </div><br/><br/>
-                <div>
-                    <label>Description:</label><br/>
-                    <textarea id="explanation" rows="6"></textarea>
-                </div><br/><br/>
-                <div>
-                    <label>What you did:</label><br/>
-                    <textarea id="remark" rows="6" ></textarea>
-                </div>
-            </div>
-        </div><br/>
-    </t>
+    <p>出现异常</p>
+    <p>请把您遇到的问题发送到 fuguang_fg@163.com. 我们会及时反馈。</p>
     <div class="oe_error_detail">
         <pre><t t-esc="error.message"/></pre>
         <hr/>
@@ -1809,17 +1788,10 @@
 <t t-name="About-Page">
     <div>
         <a class="oe_activate_debug_mode" href="?debug" style="float:right; font-size: 80%;">Activate the developper mode</a>
-        <h1 style="margin:0;">OpenERP</h1>
+        <h1 style="margin:0;">富光ERP系统</h1>
         <h3 style="margin:15px 0;padding:0;">Version <t t-esc="version_info.version"/></h3>
         <p>
-            Copyright © 2004-TODAY OpenERP SA. All Rights Reserved.<br />
-            OpenERP is a trademark of the <a target="_blank" href="http://openerp.com/" style="text-decoration: underline;">OpenERP SA Company</a>.
-        </p>
-        <p>
-            Licenced under the terms of <a target="_blank" href="http://www.gnu.org/licenses/agpl.html" style="text-decoration: underline;">GNU Affero General Public License</a>
-        </p>
-        <p>
-            For more information visit <a target="_blank" href="http://openerp.com/" style="text-decoration: underline;">OpenERP.com</a>
+            Copyright © 2012 安徽富光实业股份有限公司.<br />
         </p>
     </div>
 </t>
