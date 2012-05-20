@@ -29,7 +29,7 @@ class GraphView(View):
         res = obj.fields_view_get(view_id, 'graph')
 
         fields = res['fields']
-        
+        print fields
         res = obj.read_group(domain, ['month', 'price_total'], group_by, context=context)
         print res, 'res'
         # toload = filter(lambda x: x not in fields, group_by)
