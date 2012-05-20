@@ -9,8 +9,7 @@
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="月度统计">
-                <field name="year" />
-                <field name="month" />
+                <field name="date" />
                 <field name="amount" />
                 <field name="source"/>
             </tree>
@@ -22,9 +21,10 @@
          <field name="model">fg_sale.order.report.monthly</field>
          <field name="type">graph</field>
          <field name="arch" type="xml">
-             <graph string="Sales Analysis" type="lines" stack="True">
-                 <field name="source"/>
-                 <field name="amount"/>
+             <graph string="Sales Analysis" type="lines" stack="True" legend="True">
+                 <field name="date"/>
+                 <field name="amount" />
+                 <field name="source" group="True" />
              </graph>
          </field>
     </record>

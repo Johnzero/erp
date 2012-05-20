@@ -37,16 +37,16 @@ openerp.web_graph.GraphView = openerp.web.View.extend({
      * get data here.
     */
     do_search: function(domain, context, group_by) {
-        //this.on_search(null);
+        console.log(domain, context, group_by);
         
         this.rpc(
                    '/web_graph/graph/data_get',
                    {
                        'model': this.model,
                        'domain': domain,
-                       'context': context,
                        'group_by': group_by,
                        'view_id': this.view_id
+                       'context': context,
                 
                    }, this.on_search
                 );

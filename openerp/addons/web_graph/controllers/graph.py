@@ -24,13 +24,16 @@ class GraphView(View):
         return res
     
     @openerpweb.jsonrequest
-    def data_get(self, req, model=None, domain=[], context={}, group_by=[], view_id=False, **kwargs):
+    def data_get(self, req, model=None, domain=[], group_by=[], view_id=False, context={}, **kwargs):
         obj = req.session.model(model)
         res = obj.fields_view_get(view_id, 'graph')
 
-        fields = res['fields']
-        print fields
-        res = obj.read_group(domain, ['month', 'price_total'], group_by, context=context)
+        fields = [r for r in res['fields']]
+        print domain, fields, group_by
+        
+        group_by = group_by or ['date']
+        
+        res = obj.read_group(domain, fields, group_by, context=context)
         print res, 'res'
         # toload = filter(lambda x: x not in fields, group_by)
         #         if toload:
@@ -60,9 +63,9 @@ class GraphView(View):
         #res = obj.read_group(domain, yaxis+[xaxis[0]], [xaxis[0]], context=context)
 
 
-        res = {
-            'data': [],
+        result = {
+            'data': res,
             
         }
-        return res
+        return result
 
