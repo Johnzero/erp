@@ -11,6 +11,8 @@ class sale_report_by_month(osv.osv):
     
     _columns = {
         'date': fields.char('月份', size=12, readonly=True),
+        'year': fields.char('年份', size=12, readonly=True),
+        'month': fields.char('月份', size=12, readonly=True),
         'amount': fields.float('金额'),
         'source':fields.char('事业部', size=10),
     }
@@ -23,14 +25,16 @@ class sale_report_by_month(osv.osv):
             SELECT 
               min(l.id) as id,
               to_char(s.date_order, 'YYYY-MM') as date,
+              to_char(s.date_order, 'YYYY') as year,
+              to_char(s.date_order, 'MM') as month,
               sum(l.subtotal_amount) as amount,
               p.source as source
             FROM 
               public.fg_sale_order_line l 
             left join product_product p on (l.product_id=p.id) 
             left join fg_sale_order s on (l.order_id=s.id) 
-             group by p.source,date
-            order by date desc
+             group by p.source,date, year, month
+            order by date asc 
             )""")
 
 

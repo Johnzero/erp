@@ -611,6 +611,17 @@
             </rng:zeroOrMore>
         </rng:element>
     </rng:define>
+    
+    <rng:define name="axe_x">
+        <rng:element name="axe_x">
+            <rng:optional><rng:attribute name="name" /></rng:optional>
+        </rng:element>
+    </rng:define>
+    <rng:define name="axe_y">
+        <rng:element name="axe_y">
+            <rng:optional><rng:attribute name="name" /></rng:optional>
+        </rng:element>
+    </rng:define>
 
     <rng:define name="graph">
         <rng:element name="graph">
@@ -619,7 +630,9 @@
             <rng:optional><rng:attribute name="stack"/></rng:optional>
             <rng:optional><rng:attribute name="legend"/></rng:optional>
             <rng:oneOrMore>
-                <rng:ref name="field"/>
+                <rng:ref name="axe_x"/>
+                <rng:ref name="axe_y"/>
+                <rng:ref name="label"/>
             </rng:oneOrMore>
             <rng:zeroOrMore>
                 <rng:ref name="html"/>

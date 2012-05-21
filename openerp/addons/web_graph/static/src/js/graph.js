@@ -32,12 +32,11 @@ openerp.web_graph.GraphView = openerp.web.View.extend({
     stop: function() {
         this._super();
     },
-    
+
     /*
      * get data here.
     */
     do_search: function(domain, context, group_by) {
-        console.log(domain, context, group_by);
         
         this.rpc(
                    '/web_graph/graph/data_get',
@@ -45,25 +44,25 @@ openerp.web_graph.GraphView = openerp.web.View.extend({
                        'model': this.model,
                        'domain': domain,
                        'group_by': group_by,
-                       'view_id': this.view_id
-                       'context': context,
-                
+                       'view_id': this.view_id,
+                       'context': context
                    }, this.on_search
                 );
 
     },
     
     on_search: function(result){
-        var d1 = [];
-        for (var i = 0; i < 14; i += 0.5)
-            d1.push([i, Math.sin(i)]);
-    
-        var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-    
-        // a null signifies separate line segments
-        var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-        container = this.widget_parent.element_id+"-chart-"+this.chart_id,
-        $.plot($("#"+container), [ d1, d2, d3 ]);
+        container = this.widget_parent.element_id+"-chart-"+this.chart_id;
+        $.plot($("#"+container),
+            result.data,
+            {
+                series: {
+                    stack: result.config.stack,
+                    lines: { show: (result.config.type=='lines')},
+                    bars: { show: (result.config.type=='bars'), barWidth: 0.6}
+                }
+            }
+        );
     },
     
     do_show: function() {
