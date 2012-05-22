@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        
+        <menuitem id="menu_fg_account" name="财务" sequence="2" web_icon="icon/account.png" web_icon_hover="icon/account_hover.png"/>
     </data>
 </openerp>
