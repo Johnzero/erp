@@ -2,5 +2,32 @@
 <openerp>
     <data>
         <menuitem id="menu_fg_account" name="财务" sequence="2" web_icon="icon/account.png" web_icon_hover="icon/account_hover.png"/>
+        
+        <record id="fg_sale_order_form_view_inherit" model="ir.ui.view">
+		  <field name="name">fg_sale.order.form.inherit</field>
+          <field name="model">fg_sale.order</field>
+          <field name="type">form</field>
+          <field name="inherit_id" ref="fg_sale.fg_sale_order_form_view"/>
+          <field name="arch" type="xml">
+              <notebook position="inside">
+                <page string="回款明细">
+                    <field name="rbill_line" colspan="4" mode="tree" nolabel="1" widget="one2many_list"/>
+                </page>
+              </notebook>
+          </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fg_account_rbill_line_form_view">
+            <field name="name">fg_account.rbill.line.form</field>
+            <field name="model">fg_account.rbill.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="form_string">
+                    <field name="name" select="1"/>
+                </form>
+            </field>
+        </record>
+
+        
     </data>
 </openerp>
