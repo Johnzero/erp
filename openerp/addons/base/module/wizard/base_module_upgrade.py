@@ -53,13 +53,13 @@ class base_module_upgrade(osv.osv_memory):
         ids = self.get_module_list(cr, uid, context=context)
         if not ids:
             res['arch'] = '''<form string="Apply Scheduled Upgrades">
-                                <separator string="System update completed" colspan="4"/>
-                                <label align="0.0" string="The selected modules have been updated / installed !" colspan="4"/>
-                                <label align="0.0" string="We suggest to reload the menu tab to see the new menus (Ctrl+T then Ctrl+R)." colspan="4"/>
+                                <separator string="系统升级完成" colspan="4"/>
+                                <label align="0.0" string="已经完成所选模块的升级/安装!" colspan="4"/>
+                                <label align="0.0" string="建议刷新整个页面。 (快捷键：Ctrl+R)." colspan="4"/>
                                  <separator string="" colspan="4"/>
                                 <newline/>
-                                <button special="cancel" string="Close" icon="gtk-cancel"/>
-                                <button name="config" string="Start configuration" type="object" icon="gtk-ok"/>
+                                <button special="cancel" string="关闭" icon="gtk-cancel"/>
+                                <button name="config" string="开始设置" type="object" icon="gtk-ok"/>
                              </form>'''
 
         return res

@@ -11,7 +11,7 @@
             <field name="name">Fuguang Account RBil</field>
             <field name="code">fg_account.rbill</field>
             <field name="prefix">FGRB-%(year)s%(month)s%(day)s</field>
-            <field name="padding">4</field>
+            <field name="padding">0</field>
             <field name="implementation">no_gap</field>
         </record>
         
@@ -37,9 +37,9 @@
             <field name="arch" type="xml">
                 <form string="收款明细">
                     <group col="4" colspan="2">
-                        <field name="order_id" options='{"quick_create": false}' onchange="onchange_order_id(order_id)" />
+                        <field name="order_id" options='{"quick_create": false}' on_change="onchange_order_id(order_id)" />
                         <field name="amount" />
-                        <field name="paid" />
+                        <field name="paid" on_change="onchange_paid(order_id, paid)"/>
                         <field name="unpaid" />
                         <field name="note" colspan="4" />
                     </group>
@@ -53,7 +53,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="收款明细">
-                    <field name="name" />
+                    <field name="order_id" />
                     <field name="amount" />
                     <field name="paid" />
                     <field name="unpaid" />
@@ -114,7 +114,7 @@
         </record>
         
         <record id="action_fg_account_rbill" model="ir.actions.act_window">
-            <field name="name">所有销售单</field>
+            <field name="name">收款单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_account.rbill</field>
             <field name="view_type">form</field>
