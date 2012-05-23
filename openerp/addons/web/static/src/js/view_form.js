@@ -540,7 +540,7 @@ openerp.web.FormView = openerp.web.View.extend( /** @lends openerp.web.FormView#
             }
         });
         msg += "</ul>";
-        this.do_warn("The following fields are invalid :", msg);
+        this.do_warn("请正确填入以下的信息:", msg);
     },
     on_saved: function(r, success) {
         if (!r.result) {

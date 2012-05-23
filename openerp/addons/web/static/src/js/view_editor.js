@@ -146,7 +146,7 @@ openerp.web.ViewEditor =   openerp.web.OldWidget.extend({
             }
         });
         msg += "</ul>";
-        this.do_warn("The following fields are invalid :", msg);
+        this.do_warn("请正确填入以下的信息 :", msg);
     },
     add_node_name : function(node) {
         if(node.tagName.toLowerCase() == "button" || node.tagName.toLowerCase() == "field"){

@@ -21,10 +21,10 @@
          <field name="model">fg_sale.order.report.monthly</field>
          <field name="type">graph</field>
          <field name="arch" type="xml">
-             <graph string="Sales Analysis" type="lines" >
-                 <axe_x name="date"/>
-                 <axe_y name="amount" />
-                 <label name="source"/>
+             <graph string="Sales Analysis" >
+                 <field name="date"/>
+                 <field name="amount" />
+                 <field name="source"/>
              </graph>
          </field>
     </record>

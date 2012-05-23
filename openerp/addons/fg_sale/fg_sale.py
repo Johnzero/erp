@@ -31,7 +31,7 @@ class sale_order(osv.osv):
         'date_confirm': fields.date('审核日期', readonly=True, select=True),
         'user_id': fields.many2one('res.users', '制单人', select=True, readonly=True),
         'confirmer_id': fields.many2one('res.users', '审核人', select=True, readonly=True),
-        'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),        
+        'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
         'amount_total': fields.function(_amount_all, string='金额', store=False, multi='sums'),
         #'amount_total': fields.float('金额', digits=(16,4)),

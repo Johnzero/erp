@@ -3,18 +3,31 @@
     <data>
         <menuitem id="menu_fg_account" name="财务" sequence="2" web_icon="icon/account.png" web_icon_hover="icon/account_hover.png"/>
         
+        <record id="seq_type_fg_account_rbill" model="ir.sequence.type">
+            <field name="name">Fuguang Account RBill</field>
+            <field name="code">fg_account.rbill</field>
+        </record>
+        <record id="seq_fg_account_rbill" model="ir.sequence">
+            <field name="name">Fuguang Account RBil</field>
+            <field name="code">fg_account.rbill</field>
+            <field name="prefix">FGRB-%(year)s%(month)s%(day)s</field>
+            <field name="padding">4</field>
+            <field name="implementation">no_gap</field>
+        </record>
+        
+        
         <record id="fg_sale_order_form_view_inherit" model="ir.ui.view">
-		  <field name="name">fg_sale.order.form.inherit</field>
-          <field name="model">fg_sale.order</field>
-          <field name="type">form</field>
-          <field name="inherit_id" ref="fg_sale.fg_sale_order_form_view"/>
-          <field name="arch" type="xml">
-              <notebook position="inside">
-                <page string="回款明细">
-                    <field name="rbill_line" colspan="4" mode="tree" nolabel="1" widget="one2many_list"/>
-                </page>
-              </notebook>
-          </field>
+            <field name="name">fg_sale.order.form.inherit</field>
+            <field name="model">fg_sale.order</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="fg_sale.fg_sale_order_form_view"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                  <page string="回款明细">
+                      <field name="rbill_line" colspan="4" mode="tree" nolabel="1" widget="one2many_list"/>
+                  </page>
+                </notebook>
+            </field>
         </record>
         
         <record model="ir.ui.view" id="fg_account_rbill_line_form_view">
@@ -22,12 +35,94 @@
             <field name="model">fg_account.rbill.line</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="form_string">
-                    <field name="name" select="1"/>
+                <form string="收款明细">
+                    <group col="4" colspan="2">
+                        <field name="order_id" options='{"quick_create": false}' onchange="onchange_order_id(order_id)" />
+                        <field name="amount" />
+                        <field name="paid" />
+                        <field name="unpaid" />
+                        <field name="note" colspan="4" />
+                    </group>
                 </form>
             </field>
         </record>
-
+        
+        <record model="ir.ui.view" id="fg_account_rbill_line_tree_view">
+            <field name="name">fg_account.rbill.line.tree</field>
+            <field name="model">fg_account.rbill.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="收款明细">
+                    <field name="name" />
+                    <field name="amount" />
+                    <field name="paid" />
+                    <field name="unpaid" />
+                    <field name="note" />
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="fg_account_rbill_form_view">
+            <field name="name">fg_account.rbill.form</field>
+            <field name="model">fg_account.rbill</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="收款单">
+                    <group col="6" colspan="4">
+                        <field name="name" />
+                        <field name="partner_id" options='{"quick_create": false}'/>
+                        <field name="date_issue" />
+                        <field name="date_confirm" />
+                        <field name="user_id" />
+                        <field name="confirmer_id" />
+                        <field name="payment" />
+                        <field name="amount" />
+                    </group>
+                    <newline/>
+                    <notebook colspan="5">
+                        <page string="回款明细">
+                            <field name="bill_line" nolabel="1"/>
+                        </page>
+                        <page string="附注">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                    <group col="6" colspan="4">
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
+                        <field name="paid_all"/>
+                        <button name="button_dummy" states="draft" string="计算价格" type="object" icon="gtk-execute"/>
+                        <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fg_account_rbill_tree_view">
+            <field name="name">fg_account.rbill.tree</field>
+            <field name="model">fg_account.rbill</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="收款单">
+                    <field name="name" />
+                    <field name="partner_id" />
+                    <field name="amount" />
+                    <field name="date_issue" />
+                    <field name="user_id" />
+                </tree>
+            </field>
+        </record>
+        
+        <record id="action_fg_account_rbill" model="ir.actions.act_window">
+            <field name="name">所有销售单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_account.rbill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <menuitem id="menu_fg_account_rbill" parent="menu_fg_account" action="action_fg_account_rbill"/>
         
     </data>
 </openerp>
