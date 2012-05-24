@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="view_fg_account_bill_wizard_import" model="ir.ui.view">
+            <field name="name">导入账单</field>
+            <field name="model">fg_account.bank_bill.import.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="说明">
+                    <field name="excel"/>
+                    <group colspan="4" col="6">
+                        <button  icon="gtk-close" special="cancel" string="关闭"/>
+                        <button icon="gtk-ok" name="import_bill" string="确定" type="object"/>
+                    </group>
+            </form>
+            </field>
+        </record>
+    
+        <record id="action_fg_account_bill_wizard_import" model="ir.actions.act_window">
+                <field name="name">导入账单</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">fg_account.bank_bill.import.wizard</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="view_fg_account_bill_wizard_import"/>
+                <field name="target">new</field>
+            </record>
+        
+        <menuitem id="menu_fg_account_bill_import_wizard" parent="menu_fg_account" action="action_fg_account_bill_wizard_import"/>
+    </data>
+</openerp>

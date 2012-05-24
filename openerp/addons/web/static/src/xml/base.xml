@@ -1181,12 +1181,12 @@
                         </form>
                     </div>
                 </td>
-                <td>
+                <!--<td>
                     <button class="oe_button oe-binary-file-save" type="button" title="Save As">
                         <img t-att-src='_s + "/web/static/src/img/icons/gtk-save.png"'/>
                         <span>Save As</span>
                     </button>
-                </td>
+                </td>-->
                 <td>
                     <button class="oe_button oe-binary-file-clear" type="button" title="Clear">
                         <img t-att-src='_s + "/web/static/src/img/icons/STOCK_MISSING_IMAGE.png"'/>

@@ -28,6 +28,7 @@
     "init_xml": [],
     'update_xml': [
         "fg_account.xml",
+        "wizard/wizard.xml",
     ],
     'demo_xml': [],
     'installable': True,

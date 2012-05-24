@@ -1,1 +1,1 @@
-import fg_account
+import fg_account, wizard
