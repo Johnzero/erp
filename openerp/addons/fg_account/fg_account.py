@@ -7,7 +7,8 @@ import time
 
 class sale_order(osv.osv):
     _inherit = 'fg_sale.order'
-    _columns = {
+    _columns = {\
+        'unpaid':fields.float('未核销金额', digits=(10, 2), readonly=True),
         'rbill_line': fields.one2many('fg_account.rbill.line', 'rbill_id','收款明细', readonly=True),
     }
 
@@ -20,7 +21,7 @@ class fg_account_rbill_line(osv.osv):
         'partner_id':fields.related('rbill_id', 'partner_id', type='many2one', relation='res.partner', string='客户'),
         'rbill_id': fields.many2one('fg_account.rbill', '收款单', required=True, ondelete='cascade', select=True),
         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
-        'amount':fields.float('单据金额', digits=(10, 2), readonly=True),
+        'amount':fields.float('单据未核销金额', digits=(10, 2), readonly=True),
         'paid':fields.float('已核销金额', digits=(10, 2)),
         'unpaid':fields.float('未核销金额', digits=(10, 2), readonly=True),
         'note':fields.text('附注'),
@@ -33,24 +34,24 @@ class fg_account_rbill_line(osv.osv):
         order_obj = self.pool.get('fg_sale.order')
         orders = order_obj.browse(cr, uid, [order_id])
         if orders:
-            return {'value': {'amount': orders[0]['amount_total'], 'paid':orders[0]['amount_total'], 'unpaid':0}}
+            return {'value': {'amount': orders[0]['unpaid'], 'paid':orders[0]['unpaid'], 'unpaid':0}}
     
     def onchange_paid(self, cr, uid, ids, order_id, paid):
         order_obj = self.pool.get('fg_sale.order')
         orders = order_obj.browse(cr, uid, [order_id])
         if orders:
-            if paid > orders[0]['amount_total']:
+            if paid > orders[0]['unpaid']:
                 raise osv.except_osv('核销金额错误', '核销金额不允许大于订单金额.')
             
-            return {'value': {'amount': orders[0]['amount_total'], 'unpaid':(orders[0]['amount_total']-paid)}}
+            return {'value': {'amount': orders[0]['unpaid'], 'unpaid':(orders[0]['unpaid']-paid)}}
     
     def _write_readonly(self, vals):
         if vals.get('order_id'):
             order_obj = self.pool.get('fg_sale.order')
             orders = order_obj.browse(cr, uid, [vals.get('order_id')])
             if orders:
-                vals['amount'] = orders[0]['amount_total']
-                vals['unpaid'] = orders[0]['amount_total']-vals.get('paid', 0)
+                vals['amount'] = orders[0]['unpaid']
+                vals['unpaid'] = orders[0]['unpaid']-vals.get('paid', 0)
         
         return vals
     
@@ -94,6 +95,15 @@ class fg_account_rbill(osv.osv):
     }
     
     def button_dummy(self, cr, uid, ids, context=None):
+        return True
+    
+    def button_review(self, cr, uid, ids, context=None):
+        #set confirming
+        bills = self.browse(cr, uid, ids, context)
+        for bill in bills:
+            
+        
+        
         return True
     
     _defaults = {

@@ -24,6 +24,7 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                   <page string="回款明细">
+                      <field name="unpaid"/>
                       <field name="rbill_line" colspan="4" mode="tree" nolabel="1" widget="one2many_list"/>
                   </page>
                 </notebook>
