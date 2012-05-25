@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import tools
+from tools import safe_eval
 
 try:
     # embedded
@@ -17,26 +18,57 @@ class GraphView(View):
     _cp_path = '/web_graph/graph'
     
     @tools.cache(timeout=3600)
-    def from_db(self, obj, graph_config, domain, group_by, context):
-        ##
-        ##{'axe_x': 'stamp', 'label': 'source', 'type': 'lines', 'stack': 'True', 'axe_y':'amount'}
-        ##
+    def from_db(self, obj, chart_type, title, fields, domain, group_by, context):
         result = {}
+        if len(fields)<2:
+            return result
         
-        label = graph_config['label']
-        axe_x = graph_config['axe_x']
-        axe_y = graph_config['axe_y']
-
+        field_x = fields[1]
+        field_y = fields[2]
+        field_z = (len(fields)==4) and fields[3] or ''
+        
         ids = obj.search([])
+            
         if ids:
             records = obj.read(ids)
-            dataset = {}
-            for r in records:
-                if dataset.has_key(r[label]):
-                    dataset.get(r[label])['data'].append([r[axe_x], r[axe_y]])
-                else:
-                    dataset[r[label]] = {'label':r[label], 'data':[]}
-        return [ dataset[k] for k in dataset]
+            
+            #field_x
+            categories = []
+            #field_z
+            groups = []
+            series = []
+            
+            if field_z:
+                data_set = {}
+                for r in records:
+                    #get categories.
+                    if r[field_x] not in categories:
+                        categories.append(r[field_x])
+                        
+                    if r[field_z] not in groups:
+                        groups.append(r[field_z])
+    
+                    data_set[r[field_x]+r[field_z]] = r[field_y]
+                
+                #transform data
+                # series
+
+                for g in groups:
+                    s = {'name':g, 'data':[]}
+                    for cate in categories:
+                        s['data'].append(data_set.get(cate+g, 0))
+                    series.append(s)
+
+            else:
+                data = []
+                for r in records:
+                    if r[field_x] not in categories:
+                        categories.append(r[field_x])
+                    data.append(r[field_y])
+                
+                series.append({'data':data})
+
+        return categories, series
     
     @openerpweb.jsonrequest
     def data_get(self, req, model=None, domain=[], group_by=[], view_id=False, context={}, **kwargs):
@@ -44,22 +76,18 @@ class GraphView(View):
         xml = obj.fields_view_get(view_id, 'graph')
         graph_xml = etree.fromstring(xml['arch'])
         
-        graph_config = {}
+        chart_type = graph_xml.attrib.get('type') or 'line'
+        chart_title = graph_xml.attrib.get('string') or '图表'
+        fields = [ element.attrib.get('name') for element in graph_xml.iter() ]
         
-        
-        graph_config['type'] = graph_xml.attrib.get('type') or 'lines'
-        graph_config['stack'] = graph_xml.attrib.get('stack') or False
-        for element in graph_xml.iter():
-            key = element.tag
-            value = element.attrib.get('name')
-            if value:
-                graph_config[key] = value
-        
-        data = self.from_db(obj, graph_config, domain, group_by, context)
+        data = self.from_db(obj, chart_type, chart_title, fields, domain, group_by, context)
 
         result = {
-            'data': data,
-            'config': graph_config
+            'title':chart_title,
+            'categories':data[0],
+            'series':data[1],
+            'chart_type':chart_type,
         }
+        
         return result
 

@@ -1,8 +1,0 @@
-说明：
-
-Chart类型:
-1. bars
-2. lines
-2.1 fill lines
-
-3. points

@@ -11,7 +11,7 @@ class bank_bill_import(osv.osv_memory):
     _description = "导入账单明细"
     
     _columns = {
-        'excel': fields.binary('excel文件', filters='*.xsl'),
+        'excel': fields.binary('excel文件', filters='*.xls'),
     }
     
     def import_bill(self, cr, uid, ids, context=None):

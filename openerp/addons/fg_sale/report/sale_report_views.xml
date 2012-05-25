@@ -8,10 +8,10 @@
         <field name="model">fg_sale.order.report.monthly</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="月度统计">
+            <tree string="月度销售统计(事业部)">
                 <field name="date" />
                 <field name="amount" />
-                <field name="source"/>
+                <field name="source" />
             </tree>
         </field>
     </record>
@@ -21,7 +21,7 @@
          <field name="model">fg_sale.order.report.monthly</field>
          <field name="type">graph</field>
          <field name="arch" type="xml">
-             <graph string="Sales Analysis" >
+             <graph string="月度销售统计(事业部)" type="line">
                  <field name="date"/>
                  <field name="amount" />
                  <field name="source"/>
@@ -30,15 +30,14 @@
     </record>
     
     <record id="action_fg_sale_report_by_month" model="ir.actions.act_window">
-            <field name="name">月度统计</field>
+            <field name="name">月度销售统计(事业部)</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_sale.order.report.monthly</field>
             <field name="view_type">form</field>
             <field name="view_mode">graph,tree</field>
+            <field name="domain">[('source','=','in_invoice')]</field>
             <field name="view_id" ref="view_fg_sale_order_report_monthly_tree"/>
-        </record>
-    
-    
+        </record>    
 
 </data>
 </openerp>

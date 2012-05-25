@@ -13,8 +13,7 @@
     "version": "3.0",
     "depends": ['web'],
     "js": [
-        "static/lib/flot/jquery.flot.min.js",
-        "static/lib/flot/jquery.flot.resize.min.js",
+        "static/lib/highchart/js/highcharts.js",
         "static/src/js/graph.js"
     ],
     "css": [

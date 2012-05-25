@@ -16,7 +16,7 @@ class sale_report_by_month(osv.osv):
         'amount': fields.float('金额'),
         'source':fields.char('事业部', size=10),
     }
-    _order = 'date desc'
+    _order = 'date asc'
     
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'fg_sale_order_report_monthly')

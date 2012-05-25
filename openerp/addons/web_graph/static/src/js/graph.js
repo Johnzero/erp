@@ -53,16 +53,20 @@ openerp.web_graph.GraphView = openerp.web.View.extend({
     
     on_search: function(result){
         container = this.widget_parent.element_id+"-chart-"+this.chart_id;
-        $.plot($("#"+container),
-            result.data,
-            {
-                series: {
-                    stack: result.config.stack,
-                    lines: { show: (result.config.type=='lines')},
-                    bars: { show: (result.config.type=='bars'), barWidth: 0.6}
-                }
-            }
-        );
+        
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: container,
+                height: 600
+            },
+            title: {
+                text: result.title
+            },
+            xAxis: {
+                categories: result.categories
+            },
+            series: result.series
+        });
     },
     
     do_show: function() {
