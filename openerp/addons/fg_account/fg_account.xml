@@ -2,18 +2,99 @@
 <openerp>
     <data>
         <menuitem id="menu_fg_account" name="财务" sequence="2" web_icon="icon/account.png" web_icon_hover="icon/account_hover.png"/>
+        <menuitem id="menu_fg_account_bill" parent="menu_fg_account" name="收款单"/>
         
-        <record id="seq_type_fg_account_rbill" model="ir.sequence.type">
-            <field name="name">Fuguang Account RBill</field>
-            <field name="code">fg_account.rbill</field>
+        <record id="seq_type_fg_account_bill" model="ir.sequence.type">
+            <field name="name">Fuguang Account Bill</field>
+            <field name="code">fg_account.bill</field>
         </record>
-        <record id="seq_fg_account_rbill" model="ir.sequence">
-            <field name="name">Fuguang Account RBil</field>
-            <field name="code">fg_account.rbill</field>
-            <field name="prefix">FGRB-%(year)s%(month)s%(day)s</field>
+        <record id="seq_fg_account_bill" model="ir.sequence">
+            <field name="name">Fuguang Account Bill</field>
+            <field name="code">fg_account.bill</field>
+            <field name="prefix">FGAB-%(year)s%(month)s%(day)s</field>
             <field name="padding">0</field>
             <field name="implementation">no_gap</field>
         </record>
+        
+        
+        <record model="ir.ui.view" id="fg_account_bill_form_view">
+            <field name="name">fg_account.bill.form</field>
+            <field name="model">fg_account.bill</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="收款单">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="date_paying"/>
+                    <field name="checker_id"/>
+                    <field name="date_check"/>
+                    <field name="amount"/>
+                    <field name="done"/>
+                    <field name="state"/>
+                    <field name="note" colspan="6"/>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="fg_account_bill_tree_view">
+            <field name="name">fg_account.bill.tree</field>
+            <field name="model">fg_account.bill</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="收款单" colors="blue:state == 'draft';gray:state=='cancel'">
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="date_paying"/>
+                    <field name="partner_id"/>
+                    <field name="amount"/>
+                    <field name="state"/>
+                    <field name="done"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record id="view_fg_account_filter" model="ir.ui.view">
+            <field name="name">fg_account.bill.list.select</field>
+            <field name="model">fg_account.bill</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="搜索收款单">
+                    <filter icon="terp-document-new" string="未审核" domain="[('state','=','draft')]"/>
+                    <filter icon="terp-check" string="已审核" domain="[('state','=','done')]"/>
+                    <filter icon="terp-dialog-close" string="已取消" domain="[('state','=','cancel')]"/>
+                    <separator orientation="vertical"/>
+                    <field name="partner_id"/>
+                    <field name="user_id">
+                        <filter domain="[('user_id','=',uid)]" help="我创建的订单" icon="terp-personal"/>
+                    </field>
+                    <field name="name"/>
+                    <newline/>
+                    <group expand="0" string="分组为..." groups="base.group_extended">
+                        <filter string="客户" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="业务员" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="状态" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="付款日期" icon="terp-go-month" domain="[]" context="{'group_by':'date_paying'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <record id="action_fg_account_bill_all" model="ir.actions.act_window">
+            <field name="name">收款单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_account.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{}</field>
+            <field name="search_view_id" ref="view_fg_account_filter"/>
+        </record>
+        
+        <menuitem id="menu_account_bill_all" parent="menu_fg_account_bill" action="action_fg_account_bill_all"/>
         
     </data>
 </openerp>

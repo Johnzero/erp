@@ -19,7 +19,7 @@
             <field name="model">fg_sale.order</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="销售订单" colors="red:minus == True;blue:state in ('cancel','draft')">
+                <tree string="销售订单" colors="red:minus == True;blue:state == 'draft';gray:state=='cancel'">
                     <field name="name"/>
                     <field name="sub_name"/>
                     <field name="date_order"/>
@@ -46,6 +46,7 @@
                         <field name="date_confirm"/>
                         <field name="confirmer_id"/>
                         <field name="minus"/>
+                        <field name="amount_total"/>
                     </group>
                     <newline/>
                     <notebook colspan="5">
@@ -80,9 +81,9 @@
                     <newline/>
                     <group col="6" colspan="4">
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
-                        <field name="amount_total"/>
                         <button name="button_dummy" states="draft" string="计算价格" type="object" icon="gtk-execute"/>
                         <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                        <button name="button_cancel" confirm="确认取消?" string="取消" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
                     </group>
                 </form>
             </field>
@@ -97,6 +98,7 @@
                 <search string="搜索订单">
                     <filter icon="terp-document-new" string="未审核" domain="[('state','=','draft')]"/>
                     <filter icon="terp-check" string="已审核" domain="[('state','=','done')]"/>
+                    <filter icon="terp-dialog-close" string="已取消" domain="[('state','=','cancel')]"/>
                     <separator orientation="vertical"/>
                     <field name="partner_id"/>
                     <field name="user_id">

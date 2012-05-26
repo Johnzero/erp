@@ -32,7 +32,8 @@ class sale_report_by_month(osv.osv):
             FROM 
               public.fg_sale_order_line l 
             left join product_product p on (l.product_id=p.id) 
-            left join fg_sale_order s on (l.order_id=s.id) 
+            left join fg_sale_order s on (l.order_id=s.id)
+            where s.state != 'cancel'
              group by p.source,date, year, month
             order by date asc 
             )""")

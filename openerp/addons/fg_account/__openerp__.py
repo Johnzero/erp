@@ -29,6 +29,7 @@
     'update_xml': [
         "fg_account.xml",
         "wizard/wizard.xml",
+        "wizard/customer.xml",
     ],
     'demo_xml': [],
     'installable': True,

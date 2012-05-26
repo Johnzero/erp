@@ -88,6 +88,17 @@ class sale_order(osv.osv):
     def button_dummy(self, cr, uid, ids, context=None):
         return True
     
+    def button_cancel(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, { 
+            'state': 'cancel', 
+            'confirmer_id': uid, 
+            'date_confirm': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            }
+        )
+        for i in ids:
+            self.log(cr, uid, id, '取消了订单.')
+        return True
+    
     def button_review(self, cr, uid, ids, context=None):
         #1.see if this is discount...
         #2.deal with minus

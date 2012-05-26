@@ -27,6 +27,6 @@
                 <field name="target">new</field>
             </record>
         
-        <menuitem id="menu_fg_account_bill_import_wizard" parent="menu_fg_account" action="action_fg_account_bill_wizard_import"/>
+        <menuitem id="menu_fg_account_bill_import_wizard" parent="menu_fg_account_bill" action="action_fg_account_bill_wizard_import"/>
     </data>
 </openerp>
