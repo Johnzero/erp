@@ -33,6 +33,9 @@
                     <field name="done"/>
                     <field name="state"/>
                     <field name="note" colspan="6"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
+                    <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                    <button name="button_cancel" confirm="确认取消?" string="取消" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
                 </form>
             </field>
         </record>
@@ -43,7 +46,7 @@
             <field name="model">fg_account.bill</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="收款单" colors="blue:state == 'draft';gray:state=='cancel'">
+                <tree string="收款单" colors="red:state == 'draft';gray:state=='cancel'">
                     <field name="name"/>
                     <field name="user_id"/>
                     <field name="date_paying"/>
@@ -51,6 +54,8 @@
                     <field name="amount"/>
                     <field name="state"/>
                     <field name="done"/>
+                    <button name="button_shou" confirm="确认确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', False), ('state', '!=', 'done')] }"/>
+                    <button name="button_suan" confirm="确认确认?" string="算" type="object" icon="suan" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
                 </tree>
             </field>
         </record>
