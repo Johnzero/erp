@@ -54,8 +54,8 @@
                     <field name="amount"/>
                     <field name="state"/>
                     <field name="done"/>
-                    <button name="button_shou" confirm="确认确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', False), ('state', '!=', 'done')] }"/>
-                    <button name="button_suan" confirm="确认确认?" string="算" type="object" icon="suan" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
+                    <button name="button_shou" confirm="确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', False), ('state', '!=', 'done')] }"/>
+                    <button name="button_suan" confirm="确认?" string="算" type="object" icon="suan" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
                 </tree>
             </field>
         </record>
@@ -99,7 +99,17 @@
             <field name="search_view_id" ref="view_fg_account_filter"/>
         </record>
         
-        <menuitem id="menu_account_bill_all" parent="menu_fg_account_bill" action="action_fg_account_bill_all"/>
+        <record id="action_fg_account_bill_recheck" model="ir.actions.act_window">
+            <field name="name">审核收款单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_account.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{}</field>
+            <field name="domain">[('state','=','done')]</field>
+        </record>
         
+        <menuitem id="menu_account_bill_all" parent="menu_fg_account_bill" action="action_fg_account_bill_all" sequence="0"/>
+        <menuitem id="menu_account_bill_recheck" parent="menu_fg_account_bill" action="action_fg_account_bill_recheck"  sequence="1"/>
     </data>
 </openerp>

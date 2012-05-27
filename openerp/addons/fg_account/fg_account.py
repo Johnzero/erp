@@ -10,7 +10,6 @@ class account_bill(osv.osv):
     _name = "fg_account.bill"
     _description = "富光财务部收款单"
     
-    
     _columns = {
         'name': fields.char('单号', size=64, select=True, readonly=True),
         'user_id': fields.many2one('res.users', '录入', select=True, readonly=True),
