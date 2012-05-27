@@ -48,13 +48,6 @@ class account_bill(osv.osv):
         )
         return True
     
-    #钱总确认.
-    def button_suan(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids, { 
-            'done': False, 
-            }
-        )
-        return True
     
     def button_review(self, cr, uid, ids, context=None):
         

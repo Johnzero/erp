@@ -54,8 +54,7 @@
                     <field name="amount"/>
                     <field name="state"/>
                     <field name="done"/>
-                    <button name="button_shou" confirm="确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', False), ('state', '!=', 'done')] }"/>
-                    <button name="button_suan" confirm="确认?" string="算" type="object" icon="suan" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
+                    <button name="button_shou" confirm="确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
                 </tree>
             </field>
         </record>
