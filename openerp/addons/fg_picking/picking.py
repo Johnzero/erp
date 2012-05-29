@@ -23,10 +23,6 @@ class picking_item_color(osv.osv):
         'sequence': fields.float('序号', digits=(8, 1)),
     }
     
-    _sql_constraints = [
-        ('item_color_sequence_uniq', 'unique(sequence)', '序号不能重复.'),
-    ]
-    
     _order = 'sequence asc'
 
 class picking_uom(osv.osv):
