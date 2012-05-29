@@ -13,6 +13,7 @@
         'security/group.xml',
         'security/ir.model.access.csv',
         'wizard/order_import.xml',
+        'wizard/report.xml',
         'report/sale_report_views.xml',
         'fg_sale_view.xml',
         'fg_sale_sequence.xml',

@@ -27,6 +27,8 @@
        """,
     "init_xml": [],
     'update_xml': [
+        'security/group.xml',
+        'security/ir.model.access.csv',
         "fg_account.xml",
         "wizard/wizard.xml",
         "wizard/customer.xml",

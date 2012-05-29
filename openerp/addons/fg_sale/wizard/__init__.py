@@ -3,6 +3,8 @@
 from osv import osv
 import pyodbc
 from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
+import report
+
 
 #CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=fg;UID=bi;PWD=xixihaha'
 #CONN_STR = 'DRIVER={SQL Server};SERVER=127.0.0.1;DATABASE=AIS20101008134938;UID=bi;PWD=xixihaha'

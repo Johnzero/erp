@@ -57,7 +57,7 @@ openerp.web_graph.GraphView = openerp.web.View.extend({
         var chart = new Highcharts.Chart({
             chart: {
                 renderTo: container,
-                height: 600
+                height: 300
             },
             title: {
                 text: result.title

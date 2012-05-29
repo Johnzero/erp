@@ -34,8 +34,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_sale.order.report.monthly</field>
             <field name="view_type">form</field>
-            <field name="view_mode">graph,tree</field>
-            <field name="domain">[('source','=','in_invoice')]</field>
+            <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_fg_sale_order_report_monthly_tree"/>
         </record>    
 

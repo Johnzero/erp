@@ -3168,7 +3168,7 @@ openerp.web.form.FieldBinary = openerp.web.form.Field.extend({
     start: function() {
         this._super.apply(this, arguments);
         this.$element.find('input.oe-binary-file').change(this.on_file_change);
-        //this.$element.find('button.oe-binary-file-save').click(this.on_save_as);
+        this.$element.find('button.oe-binary-file-save').click(this.on_save_as);
         this.$element.find('.oe-binary-file-clear').click(this.on_clear);
     },
     human_filesize : function(size) {

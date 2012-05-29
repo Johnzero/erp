@@ -14,6 +14,7 @@ class bank_bill_import(osv.osv_memory):
     }
     
     def import_bill(self, cr, uid, ids, context=None):
+        result = {'type': 'ir.actions.act_window_close'}
         for wiz in self.browse(cr,uid,ids):
             if not wiz.excel: continue
             
@@ -30,15 +31,13 @@ class bank_bill_import(osv.osv_memory):
                 date_s = sh.cell(rx, 0).value
                 cash_in = sh.cell(rx, 3).value
                 cash_out = sh.cell(rx, 4).value
-                
-                if not cash_in: continue
+                checked = sh.cell(rx, 5).value
+                if not cash_in or checked: continue
                 
                 try:
                     date = time.strptime(date_s.strip(),'%Y.%m.%d')
-                    
                 except:
                     continue
-                
                 id = bill_obj.create(cr, uid, {
                     'user_id':uid,
                     'date_paying':time.strftime(DEFAULT_SERVER_DATE_FORMAT, date),

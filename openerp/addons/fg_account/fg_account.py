@@ -5,24 +5,33 @@ from osv import fields
 import time
 import tools
 
+class account_bill_category(osv.osv):
+    _name = "fg_account.bill.category"
+    _description = "收款单分类"
+
+    _columns = {
+        'code':fields.char('代号', size=64, select=True, required=True),
+        'name': fields.char('名称', size=64, select=True, required=True),
+    }
 
 class account_bill(osv.osv):
     _name = "fg_account.bill"
-    _description = "富光财务部收款单"
-    
+    _description = "收款单"
+
     _columns = {
         'name': fields.char('单号', size=64, select=True, readonly=True),
         'user_id': fields.many2one('res.users', '录入', select=True, readonly=True),
         'date_paying': fields.date('收款日期', select=True),
         'checker_id': fields.many2one('res.users', '审核', select=True, readonly=True),
         'date_check': fields.date('审核日期', readonly=True, select=True),
+        'category_id':fields.many2one('fg_account.bill.category', '分类', states={'draft': [('readonly', False)]}, select=True),
         'partner_id': fields.many2one('res.partner', '客户', states={'draft': [('readonly', False)]}, select=True),
-        'amount': fields.float('金额', digits=(16,4)),
+        'amount': fields.float('金额', digits=(16,4), states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
         'done':fields.boolean('确认'),
         'note': fields.text('附注'),
     }
-    
+
     _defaults = {
         'date_paying': fields.date.context_today,
         'state': 'draft',
