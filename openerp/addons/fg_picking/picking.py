@@ -207,13 +207,7 @@ class fg_order(osv.osv):
         return id
 
     def copy(self, cr, uid, id, default={}, context=None):
-        obj_sequence = self.pool.get('ir.sequence')
-        name = obj_sequence.get(cr, uid, 'fuguang.order')
-        default.update({
-            'name':name,
-        })
-        res_id = super(fg_order, self).copy(cr, uid, id, default, context=context)
-        return res_id
+        raise osv.except_osv('不允许复制', '订单不允许复制.')
     
     _order = 'name desc'
     
@@ -292,8 +286,8 @@ class fg_delivery(osv.osv):
     _columns = {
         'name': fields.char('单号', size=64, required=True, readonly=True),
         'partner_name': fields.char('发货单位', size=64, required=True),
-        'dep_name': fields.char('事业部', size=64, required=True),
-        'date_import':fields.date('开单日期', required=True),
+        'dep_name': fields.char('事业部', size=64),
+        'date_import':fields.date('开单日期'),
         'user_id': fields.many2one('res.users', '下单人', readonly=True),
         'lines': fields.one2many('fuguang.delivery.line', 'delivery_id', '明细'),
     }
