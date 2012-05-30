@@ -63,11 +63,10 @@
                     <field name="date_paying"/>
                     <notebook colspan="4">
                         <page string="常规">
-                            <field name="payment"/>
                             <field name="category_id"/>
+                            <field name="amount"/>
                             <field name="checker_id"/>
                             <field name="date_check"/>
-                            <field name="amount"/>
                         </page>
                         <page groups="fg_acount.group_fg_account_manager" string="确认">
                             <field name="done"/>

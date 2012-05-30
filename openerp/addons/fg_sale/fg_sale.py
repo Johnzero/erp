@@ -29,6 +29,9 @@ class sale_order(osv.osv):
         'sub_name': fields.char('副单号', size=64, select=True, readonly=True),
         'date_order': fields.date('日期', required=True, readonly=True, select=True, states={'draft': [('readonly', False)]}),
         'date_confirm': fields.date('审核日期', readonly=True, select=True),
+        'due_date_from':fields.function(lambda *a,**k:{}, method=True, type='date',string="开始日期"),
+        'due_date_to':fields.function(lambda *a,**k:{}, method=True, type='date',string="结束日期"),
+        
         'user_id': fields.many2one('res.users', '制单人', select=True, readonly=True),
         'confirmer_id': fields.many2one('res.users', '审核人', select=True, readonly=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),

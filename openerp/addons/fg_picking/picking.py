@@ -285,4 +285,46 @@ class fg_order_line(osv.osv):
 
 fg_order_line()
 
+class fg_delivery(osv.osv):
+    _name = 'fuguang.delivery'
+    _description = '仓库发货单'
     
+    _columns = {
+        'name': fields.char('单号', size=64, required=True, readonly=True),
+        'partner_name': fields.char('发货单位', size=64, required=True),
+        'dep_name': fields.char('事业部', size=64, required=True),
+        'date_import':fields.date('开单日期', required=True),
+        'user_id': fields.many2one('res.users', '下单人', readonly=True),
+        'lines': fields.one2many('fuguang.delivery.line', 'delivery_id', '明细'),
+    }
+    
+    def create(self, cr, uid, vals, context=None):
+        if not vals.has_key('name'):
+            obj_sequence = self.pool.get('ir.sequence')
+            vals['name'] = obj_sequence.get(cr, uid, 'fuguang.delivery')
+        
+        id = super(fg_delivery, self).create(cr, uid, vals, context)
+        return id
+    
+    _defaults = {
+        'user_id': lambda obj, cr, uid, context: uid,
+        'date_import': fields.date.context_today,
+    }
+    
+    _order = 'name desc'
+    
+class fg_delivery_line(osv.osv):
+    _name = 'fuguang.delivery.line'
+    _description = '仓库发货单明细'
+    
+    _columns = {
+        'delivery_id':fields.many2one('fuguang.delivery', 'Delivery Reference', required=True, ondelete='cascade', select=True),
+        'product':fields.char('品名', size=64, required=True),
+        'code':fields.char('货号', size=64),
+        'color':fields.char('颜色', size=64),
+        'uom':fields.char('单位', size=64),
+        'plan':fields.char('计划发出', size=64),
+        'real':fields.char('实际发出', size=64),
+        'warehouse':fields.char('货物所在地', size=64),
+        'note':fields.char('备注', size=128),
+    }

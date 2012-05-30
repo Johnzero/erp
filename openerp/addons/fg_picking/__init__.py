@@ -1,2 +1,2 @@
 import picking
-import report
+import report, wizard

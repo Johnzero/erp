@@ -147,6 +147,69 @@
             </field>
         </record>
         
+        <record model="ir.ui.view" id="fuguang_delivery_form_view">
+            <field name="name">fuguang.delivery.form</field>
+            <field name="model">fuguang.delivery</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="仓库发货单">
+                    <field name="name"/>
+                    <field name="partner_name"/>
+                    <field name="user_id"/>
+                    <field name="date_import"/>
+                    <field name="dep_name"/>
+                    <newline />
+                    <field colspan="4" name="lines" nolabel="1" widget="one2many_list">
+                        <form string="明细">
+                            <field name="product"/>
+                            <field name="code"/>
+                            <field name="color"/>
+                            <field name="uom"/>
+                            <field name="plan"/>
+                            <field name="real"/>
+                            <field name="warehouse"/>
+                            <field name="note"/>
+                        </form>
+                        <tree string="明细" editable="bottom">
+                            <field name="product"/>
+                            <field name="code"/>
+                            <field name="color"/>
+                            <field name="uom"/>
+                            <field name="plan"/>
+                            <field name="real"/>
+                            <field name="warehouse"/>
+                            <field name="note"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fuguang_delivery_tree_view">
+            <field name="name">fuguang.delivery.tree</field>
+            <field name="model">fuguang.delivery</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="仓库发货单">
+                    <field name="name" />
+                    <field name="partner_name"/>
+                    <field name="user_id"/>
+                    <field name="date_import"/>
+                    <field name="dep_name"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_fuguang_delivery_tree_view">
+            <field name="name">仓库发货单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fuguang.delivery</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="fuguang_delivery_tree_view"/>
+        </record>
+        
+        
         <record id="action_fuguang_order_form" model="ir.actions.act_window">
             <field name="name">订单列表</field>
             <!-- 内部用户使用,规则控制只能看到自己负责客户的,没有设置负责人的单子大家都能看到 -->
@@ -188,9 +251,14 @@
         </record>
                 
                 <report auto="False" id="report_fuguang_order_html" model="fuguang.order" name="fuguang.order.html" rml="fg_picking/report/order.html" string="导出订单" report_type="mako2html" />
+                <report auto="False" id="report_fuguang_picking_html" model="fuguang.delivery" name="fuguang.picking.html" rml="fg_picking/report/picking.html" string="打印仓库发货单" report_type="mako2html" />
                 
                 <menuitem id="menu_fg_picking" name="客户订单" sequence="1" web_icon="icon/icon.png" web_icon_hover="icon/icon_hover.png"/>
                 <menuitem id="fg_order_menu" name="客户订单" parent="menu_fg_picking" sequence="1"/>
+                
+                <menuitem id="fg_picking_delivery" name="仓库发货单" parent="menu_fg_picking" sequence="2"/>
+                <menuitem id="fg_picking_delivery_all" action="action_fuguang_delivery_tree_view" parent="fg_picking_delivery" sequence="1"/>
+                
                 <menuitem id="fg_picking_config_menu" name="配置" parent="menu_fg_picking" sequence="3" groups="fg_picking.group_fgp_admin"/>
                 
                 <menuitem action="action_fuguang_order_form" id="menu_action_fuguang_picking_order_form"

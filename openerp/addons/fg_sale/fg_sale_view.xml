@@ -105,7 +105,8 @@
                         <filter domain="[('user_id','=',uid)]" help="我创建的订单" icon="terp-personal"/>
                     </field>
                     <field name="name"/>
-                    <field name="date_order"/>
+                    <field name="due_date_from" filter_domain="[('date_confirm','&gt;=',self)]"/>
+                    <field name="due_date_to" filter_domain="[('date_confirm','&lt;=',self)]"/>
                     <newline/>
                     <group expand="0" string="分组为..." groups="base.group_extended">
                         <filter string="客户" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>

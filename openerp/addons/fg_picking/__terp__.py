@@ -13,6 +13,7 @@
 		'security/user.xml',
 		'security/ir.model.access.csv',
         'picking_sequence.xml',
+        'wizard/wizard.xml',
         'picking_views.xml',
 		'data/items.xml',
 		#'data/1st_cus_20120424.xml',

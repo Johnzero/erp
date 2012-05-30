@@ -23,3 +23,11 @@
 "fuguang_picking_item_uom","group_fgp_admin fuguang_picking_item_uom","model_fuguang_picking_item_uom","fg_picking.group_fgp_admin",1,1,1,1
 "fg_picking_item_uom_user","group_fgp_user fuguang_picking_item_uom","model_fuguang_picking_item_uom","fg_picking.group_fgp_user",1,0,0,0
 "fg_picking_item_uom_client","group_fgp_client fuguang_picking_item_uom","model_fuguang_picking_item_uom","fg_picking.group_fgp_client",1,0,0,0
+
+"fuguang_delivery_user","group_fgp_user fuguang_delivery","model_fuguang_delivery","fg_picking.group_fgp_user",1,1,1,0
+"fuguang_delivery_admin","group_fgp_admin fuguang_delivery","model_fuguang_delivery","fg_picking.group_fgp_admin",1,1,1,0
+"fuguang_delivery_client","group_fgp_client fuguang_delivery","model_fuguang_delivery","fg_picking.group_fgp_client",0,0,0,0
+
+"fuguang_delivery_line_user","group_fgp_user fuguang_delivery_line","model_fuguang_delivery_line","fg_picking.group_fgp_user",1,1,1,1
+"fuguang_delivery_line_admin","group_fgp_admin fuguang_delivery_line","model_fuguang_delivery_line","fg_picking.group_fgp_admin",1,1,1,1
+"fuguang_delivery_line_client","group_fgp_client fuguang_delivery_line","model_fuguang_delivery_line","fg_picking.group_fgp_client",0,0,0,0

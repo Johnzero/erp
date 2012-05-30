@@ -23,7 +23,6 @@ class account_bill(osv.osv):
         'user_id': fields.many2one('res.users', '录入', select=True, readonly=True),
         'date_paying': fields.date('收款日期', select=True),
         'checker_id': fields.many2one('res.users', '审核', select=True, readonly=True),
-        'payment': fields.selection([('bank','银行'),('cash','现金')], '付款方式'),
         'date_check': fields.date('审核日期', readonly=True, select=True),
         'category_id':fields.many2one('fg_account.bill.category', '分类', states={'draft': [('readonly', False)]}, select=True),
         'partner_id': fields.many2one('res.partner', '客户', states={'draft': [('readonly', False)]}, select=True),
