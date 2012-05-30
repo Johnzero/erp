@@ -290,7 +290,7 @@
       </form>
       <div class="footer">
         <a href="#" id="oe-db-config">管理数据库</a> |
-        <a href="http://www.fuguangchina.com" target="_blank">富光实业</a>
+        <a href="/web_lodop/static/src/js/install_lodop32.exe" target="_blank">安装打印控件</a>
       </div>
     </div>
   </div>
