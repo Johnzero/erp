@@ -22,12 +22,10 @@ class delivery_import(osv.osv_memory):
         
         for wiz in self.browse(cr,uid,ids):
             if not wiz.excel: continue
-            
-            excel = xlrd.open_workbook(file_contents=base64.decodestring(wiz.excel))
-            sh = excel.sheet_by_index(0)
-            
             try:
-            
+                excel = xlrd.open_workbook(file_contents=base64.decodestring(wiz.excel))
+                sh = excel.sheet_by_index(0)
+
                 partner_name = sh.cell(0, 0).value
                 dep_name = sh.cell(1, 3).value
             
@@ -44,11 +42,14 @@ class delivery_import(osv.osv_memory):
                         'note': sh.cell(row_index, 5).value,
                     }
                     delivery_line_obj.create(cr, uid, line)
-                
+            
+            except Exception as ex:
+                raise osv.except_osv('Excel格式错误', ex.value)
+            
             obj_model = self.pool.get('ir.model.data')
             model_data_ids = obj_model.search(cr,uid,[('model','=','ir.ui.view'),('name','=','fuguang_delivery_form_view')])
             resource_id = obj_model.read(cr, uid, model_data_ids, fields=['res_id'])[0]['res_id']
-        
+    
             result = {
             'view_type': 'form',
             'view_mode': 'form',
@@ -58,7 +59,5 @@ class delivery_import(osv.osv_memory):
             'context': context,
             'res_id':d_id,
             }
-        except Exception as ex:
-            raise osv.except_osv('Excel格式错误', ex.value)
         
         return result
