@@ -40,7 +40,7 @@ class delivery_import(osv.osv_memory):
                         'code': sh.cell(row_index, 1).value,
                         'color': sh.cell(row_index, 2).value,
                         'uom': sh.cell(row_index, 3).value,
-                        'plan': int(sh.cell(row_index, 4).value or 0),
+                        'real': int(sh.cell(row_index, 4).value or 0),
                         'note': sh.cell(row_index, 5).value,
                     }
                     delivery_line_obj.create(cr, uid, line)
