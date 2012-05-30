@@ -253,7 +253,8 @@
                 <report auto="False" id="report_fuguang_order_html" model="fuguang.order" name="fuguang.order.html" rml="fg_picking/report/order.html" string="导出订单" report_type="mako2html" />
                 <report auto="False" id="report_fuguang_picking_html" model="fuguang.delivery" name="fuguang.picking.html" rml="fg_picking/report/picking.html" string="打印仓库发货单" report_type="mako2html" />
                 
-                <menuitem id="menu_fg_picking" name="客户订单" sequence="1" web_icon="icon/icon.png" web_icon_hover="icon/icon_hover.png"/>
+                <menuitem id="menu_fg_picking" name="客户订单" sequence="1" web_icon="icon/icon.png" web_icon_hover="icon/icon_hover.png"
+                    groups="fg_picking.group_fgp_client,fg_picking.group_fgp_user,fg_picking.group_fgp_admin"/>
                 <menuitem id="fg_order_menu" name="客户订单" parent="menu_fg_picking" sequence="1"/>
                 
                 <menuitem id="fg_picking_delivery" name="仓库发货单" parent="menu_fg_picking" sequence="2"/>

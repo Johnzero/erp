@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem id="menu_fg_account" name="财务" sequence="2" web_icon="icon/account.png" web_icon_hover="icon/account_hover.png"/>
+        <menuitem id="menu_fg_account" name="财务" sequence="2" web_icon="icon/account.png" web_icon_hover="icon/account_hover.png"
+            groups="fg_account.group_fg_account_manager,fg_account.group_fg_account_user,fg_account.group_fg_account_checker,fg_account.group_fg_account_chart"/>
         <menuitem id="menu_fg_account_bill" parent="menu_fg_account" name="收款单" sequence="1"/>
         <menuitem id="menu_fg_account_manage" parent="menu_fg_account" name="管理" sequence="2"/>
         
@@ -68,7 +69,7 @@
                             <field name="checker_id"/>
                             <field name="date_check"/>
                         </page>
-                        <page groups="fg_acount.group_fg_account_manager" string="确认">
+                        <page groups="fg_account.group_fg_account_manager" string="确认">
                             <field name="done"/>
                         </page>
                         <page string="附注">
@@ -99,7 +100,7 @@
                     <field name="amount"/>
                     <field name="state"/>
                     <field name="done"/>
-                    <button name="button_shou"  groups="fg_acount.group_fg_account_manager" confirm="确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
+                    <button name="button_shou"  groups="fg_account.group_fg_account_manager" confirm="确认?" string="收" type="object" icon="shou" attrs="{'invisible' : ['|',('done', '=', True), ('state', '!=', 'done')] }"/>
                 </tree>
             </field>
         </record>
