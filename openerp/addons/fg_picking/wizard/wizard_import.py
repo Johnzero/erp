@@ -27,11 +27,11 @@ class delivery_import(osv.osv_memory):
                 sh = excel.sheet_by_index(0)
 
                 partner_name = sh.cell(0, 0).value
-                dep_name = sh.cell(1, 3).value
+                dep_name = ''
             
                 d_id = delivery_obj.create(cr, uid, {'partner_name':partner_name, 'dep_name':dep_name})
             
-                for row_index in range(1, sh.nrows):
+                for row_index in range(2, sh.nrows):
                     line = {
                         'delivery_id':d_id,
                         'product': sh.cell(row_index, 0).value,
@@ -44,7 +44,7 @@ class delivery_import(osv.osv_memory):
                     delivery_line_obj.create(cr, uid, line)
             
             except Exception as ex:
-                raise osv.except_osv('Excel格式错误', ex.value)
+                raise osv.except_osv('Excel格式错误', 'Excel文件的格式和约定的格式不一致.')
             
             obj_model = self.pool.get('ir.model.data')
             model_data_ids = obj_model.search(cr,uid,[('model','=','ir.ui.view'),('name','=','fuguang_delivery_form_view')])
