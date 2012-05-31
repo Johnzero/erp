@@ -155,7 +155,7 @@
         </record>
         
         <record id="action_fg_account_bill_to_confirm" model="ir.actions.act_window">
-            <field name="name">待确认客户</field>
+            <field name="name">待确认客户收款单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_account.bill</field>
             <field name="view_type">form</field>

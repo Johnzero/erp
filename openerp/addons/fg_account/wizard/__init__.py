@@ -49,9 +49,9 @@ class bank_bill_import(osv.osv_memory):
                 #check for partner_id
                 partner_name = sh.cell(rx, 2).value.strip()
                 if partner_name:
-                    partner_list = partner_obj.name_search(cr, uid, partner_name)
+                    partner_list = partner_obj.search(cr, uid, [('name','=',partner_name)])
                     if partner_list:
-                        data['partner_id'] = partner_list[0][0]
+                        data['partner_id'] = partner_list[0]
 
                 id = bill_obj.create(cr, uid, data)
                 new_ids.append(id)
