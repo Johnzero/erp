@@ -94,6 +94,7 @@
                     <field name="user_id"/>
                     <field name="date_paying"/>
                     <field name="partner_id"/>
+                    <field name="note"/>
                     <field name="amount"/>
                     <field name="state"/>
                     <button name="button_done" states="check" groups="fg_account.group_fg_account_manager" confirm="确认后,将不能再次修改, 是否确认?" string="收" type="object" icon="shou"/>
@@ -153,8 +154,28 @@
             <field name="search_view_id" ref="view_fg_account_filter"/>
         </record>
         
+        <record id="action_fg_account_bill_to_confirm" model="ir.actions.act_window">
+            <field name="name">待确认客户</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_account.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{}</field>
+            <field name="domain">[('partner_id','=','')]</field>
+        </record>
+        
+        <record id="action_fg_account_bill_to_check" model="ir.actions.act_window">
+            <field name="name">待检查收款单</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_account.bill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar</field>
+            <field name="context">{}</field>
+            <field name="domain">[('state','=','draft'),('partner_id','!=','')]</field>
+        </record>
+        
         <record id="action_fg_account_bill_recheck" model="ir.actions.act_window">
-            <field name="name">已检查收款单</field>
+            <field name="name">待审核收款单</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_account.bill</field>
             <field name="view_type">form</field>
@@ -174,7 +195,9 @@
         </record>
         
         <menuitem id="menu_account_bill_all" parent="menu_fg_account_bill" action="action_fg_account_bill_all" sequence="0"/>
-        <menuitem id="menu_account_bill_recheck" parent="menu_fg_account_bill" action="action_fg_account_bill_recheck"  sequence="1"/>
-        <menuitem id="menu_account_bill_done" parent="menu_fg_account_bill" action="action_fg_account_bill_done"  sequence="2"/>
+        <menuitem id="menu_account_bill_to_confirm" parent="menu_fg_account_bill" action="action_fg_account_bill_to_confirm"  sequence="1"/>
+        <menuitem id="menu_account_bill_to_recheck" parent="menu_fg_account_bill" action="action_fg_account_bill_to_check"  sequence="2"/>
+        <menuitem id="menu_account_bill_recheck" parent="menu_fg_account_bill" action="action_fg_account_bill_recheck"  sequence="3"/>
+        <menuitem id="menu_account_bill_done" parent="menu_fg_account_bill" action="action_fg_account_bill_done"  sequence="4"/>
     </data>
 </openerp>

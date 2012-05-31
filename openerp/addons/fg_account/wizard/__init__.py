@@ -24,7 +24,8 @@ class bank_bill_import(osv.osv_memory):
             bill_obj = self.pool.get('fg_account.bill')
             act_obj = self.pool.get('ir.actions.act_window')
             mod_obj = self.pool.get('ir.model.data')
-            
+            partner_obj = self.pool.get('res.partner')
+
             new_ids = []
             for rx in range(sh.nrows):
                 #如果第一个单元格是日期，则解析.
@@ -37,14 +38,22 @@ class bank_bill_import(osv.osv_memory):
                     date = time.strptime(date_s.strip(),'%Y.%m.%d')
                 except:
                     continue
-                    
-                id = bill_obj.create(cr, uid, {
+                
+                data = {
                     'user_id':uid,
                     'date_paying':time.strftime(DEFAULT_SERVER_DATE_FORMAT, date),
                     'note':sh.cell(rx, 1).value,
                     'category_id':2,
                     'amount':float(cash_in),
-                })
+                }
+                #check for partner_id
+                partner_name = sh.cell(rx, 2).value.strip()
+                if partner_name:
+                    partner_list = partner_obj.name_search(cr, uid, partner_name)
+                    if partner_list:
+                        data['partner_id'] = partner_list[0][0]
+
+                id = bill_obj.create(cr, uid, data)
                 new_ids.append(id)
             
             result = mod_obj.get_object_reference(cr, uid, 'fg_account', 'action_fg_account_bill_all')
