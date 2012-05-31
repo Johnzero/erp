@@ -59,7 +59,7 @@
                                     <field name="product_id"/>
                                     <field name="product_uom"/>
                                     <field name="product_uom_qty"/>
-                                    <field name="aux_qty"/>
+                                    <field name="aux_qty" invisible="1"/>
                                     <field name="unit_price"/>
                                     <field name="subtotal_amount"/>
                                     <field name="note"/>
@@ -68,7 +68,7 @@
                                     <field name="product_id" on_change="product_id_change(product_id)"/>
                                     <field name="product_uom" on_change="product_uom_id_change(product_id, product_uom)"/>
                                     <field name="product_uom_qty" on_change="product_uom_qty_change(product_id, product_uom, product_uom_qty, unit_price)"/>
-                                    <field name="aux_qty"/>
+                                    <field name="aux_qty" invisible="1"/>
                                     <field name="unit_price" on_change="product_uom_qty_change(product_id, product_uom, product_uom_qty, unit_price)"/>
                                     <field name="subtotal_amount" sum="共计"/>
                                     <field name="note"/>
@@ -145,6 +145,7 @@
         <report auto="False" id="report_fg_sale_order_html" model="fg_sale.order"
                 name="fg_sale.order.html" rml="fg_sale/report/order.html"
                 string="打印产品清单" report_type="mako2html" />
+                
         <report auto="False" id="report_fg_sale_order_notice_html" model="fg_sale.order"
                 name="fg_sale.order.notice.html" rml="fg_sale/report/notice.html"
             string="打印发货通知单" report_type="mako2html" />
@@ -161,6 +162,8 @@
         
         <menuitem id="menu_fg_sale_chart_by_month" parent="menu_fg_sale_chart" action="action_fg_sale_report_by_month" sequence="0"/>
         <menuitem id="menu_fg_sale_report_export_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_report_export_wizard" sequence="1"/>
+        <menuitem id="menu_fg_sale_report_order_export_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_report_order_export_wizard" sequence="2"/>
+        
         <menuitem id="menu_fg_sale_customer_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_customer_wizard_import"/>
         <menuitem id="menu_fg_sale_user_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_user_wizard_import"/>
         <menuitem id="menu_fg_sale_product_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_product_wizard_import"/>

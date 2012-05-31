@@ -4,6 +4,41 @@ import tools, base64
 from osv import fields, osv
 import xlwt, cStringIO
 
+class report_order(osv.osv_memory):
+    _name = "fg_sale.order.export.wizard"
+    _description = "导出订单明细"
+    
+    _columns = {
+        'name': fields.char('文件名', 16, readonly=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': 'report.xls',
+    }
+    
+    def export_excel(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        order_obj = self.pool.get('fg_sale.order')
+        
+        book = xlwt.Workbook(encoding='utf-8')
+        sheet1 = book.add_sheet(u'总体统计')
+        
+        order_list = order_obj.search(cr, uid, [
+                ('date_confirm','>=', this.date_start),
+                ('date_confirm','<=', this.date_end),
+                ('state','=','done')
+            ])
+        for order in order_obj.browse(cr, uid, order_list):
+            pass
+        
 
 class report_product(osv.osv_memory):
     _name = "fg_sale.product.export.wizard"
