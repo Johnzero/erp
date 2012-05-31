@@ -13,7 +13,7 @@ class report_product(osv.osv_memory):
         'date_start': fields.date('开始日期', required=True),
         'date_end': fields.date('截止日期', required=True),
         'data': fields.binary('文件', readonly=True),
-        'state': fields.selection( [('choose','choose'),   # choose language
+        'state': fields.selection( [('choose','choose'),   # choose 
                                      ('get','get'),         # get the file
                                    ] ),
     }

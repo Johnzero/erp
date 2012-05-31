@@ -7,9 +7,8 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="确认客户">
-                    <separator colspan="4" string="从下面的列表里选择一个客户:" />
                     <field name="partner_id"/>
-                    <separator string="" colspan="6"/>
+                    <newline/>
                     <button special="cancel" string="关闭" icon="gtk-cancel"/>
                     <button name="confirm_customer" string="确认客户" type="object" icon="terp-gtk-go-back-rtl"/>
                </form>

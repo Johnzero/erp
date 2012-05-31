@@ -29,6 +29,7 @@
     'update_xml': [
         'security/group.xml',
         'security/ir.model.access.csv',
+        'report/period_check_view.xml',
         "fg_account.xml",
         "wizard/wizard.xml",
         "wizard/customer.xml",
