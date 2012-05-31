@@ -31,7 +31,7 @@ class bank_bill_import(osv.osv_memory):
                 date_s = sh.cell(rx, 0).value
                 cash_in = sh.cell(rx, 3).value
 
-                if not cash_in continue
+                if not cash_in: continue
                 
                 try:
                     date = time.strptime(date_s.strip(),'%Y.%m.%d')
