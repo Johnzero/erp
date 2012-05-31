@@ -30,8 +30,7 @@ class bank_bill_import(osv.osv_memory):
                 #如果第一个单元格是日期，则解析.
                 date_s = sh.cell(rx, 0).value
                 cash_in = sh.cell(rx, 3).value
-                cash_out = sh.cell(rx, 4).value
-                checked = sh.cell(rx, 5).value
+
                 if not cash_in or checked: continue
                 
                 try:
