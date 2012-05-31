@@ -274,7 +274,7 @@
     <div class="bottom"> </div>
     <div class="login_error_message">账户或者登录密码错误. 请联系富光ERP系统的管理员.</div>
     <div class="pane">
-      <div id="logo"><img src='/web/static/src/img/logo2.png'/></div>
+      <div id="logo"><img src='/web/static/src/img/logo.png'/></div>
       <form action="" method="post">
         <div class="dbpane" >
           数据库:
