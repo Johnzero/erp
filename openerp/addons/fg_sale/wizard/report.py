@@ -4,6 +4,7 @@ import tools, base64
 from osv import fields, osv
 import xlwt, cStringIO
 
+
 class report_product(osv.osv_memory):
     _name = "fg_sale.product.export.wizard"
     _description = "按单品统计"
