@@ -42,6 +42,7 @@ class bank_bill_import(osv.osv_memory):
                     'user_id':uid,
                     'date_paying':time.strftime(DEFAULT_SERVER_DATE_FORMAT, date),
                     'note':sh.cell(rx, 1).value,
+                    'category_id':2,
                     'amount':float(cash_in),
                 })
                 new_ids.append(id)

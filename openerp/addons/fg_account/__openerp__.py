@@ -33,6 +33,7 @@
         'report/period_check_view.xml',
         "wizard/wizard.xml",
         "wizard/customer.xml",
+        'data.xml'
     ],
     'demo_xml': [],
     'installable': True,
