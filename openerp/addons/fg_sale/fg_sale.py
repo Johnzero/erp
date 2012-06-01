@@ -161,7 +161,7 @@ class sale_order(osv.osv):
     _sql_constraints = [
         ('name_uniq', 'unique(name)', '订单名称不能重复!'),
     ]
-    _order = 'date_order desc'
+    _order = 'id desc'
     
 class sale_order_line(osv.osv):
     _name = "fg_sale.order.line"
@@ -173,8 +173,8 @@ class sale_order_line(osv.osv):
         'sequence': fields.integer('Sequence'),
         'product_id': fields.many2one('product.product', '产品', domain=[('sale_ok', '=', True)], change_default=True),
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
-        'product_uom_qty': fields.float('数量', required=True),
-        'aux_qty': fields.float('只数', required=True),
+        'product_uom_qty': fields.float('数量', required=True, digits=(16,0)),
+        'aux_qty': fields.float('只数', required=True, digits=(16,0)),
         'unit_price': fields.float('单价', required=True, digits=(16,4)),
         'subtotal_amount': fields.float('小计', digits=(16,4)),
         'note': fields.char('附注', size=100),
