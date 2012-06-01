@@ -21,7 +21,7 @@ class report_order(osv.osv_memory):
     _defaults = {
         'date_end': fields.date.context_today,
         'state': lambda *a: 'choose',
-        'name': 'report.xls',
+        'name': 'lines.xls',
     }
     
     def export_excel(self, cr, uid, ids, context=None):
@@ -36,9 +36,41 @@ class report_order(osv.osv_memory):
                 ('date_confirm','<=', this.date_end),
                 ('state','=','done')
             ])
+        cols = ['日期','发票号码','产品名称','规格型号','购货单位','单位','数量','数量/只','单价','金额','事业部','摘要']
+        i = 0
+        for c in cols:
+            sheet1.write(0, i, c)
+            i = i + 1
+            
+        i = 1
+        _first = True
         for order in order_obj.browse(cr, uid, order_list):
-            pass
+                for line in order.order_line:
+                    if _first:
+                        sheet1.write(i, 0, order.date_confirm)
+                        sheet1.write(i, 1, order.name)
+                        _first = False
+                    
+                    sheet1.write(i, 2, line.product_id.name)
+                    sheet1.write(i, 3, line.product_id.default_code or '')
+                    sheet1.write(i, 4, order.partner_id.name)
+                    sheet1.write(i, 5, line.product_uom.name)
+                    sheet1.write(i, 6, line.product_uom_qty)
+                    sheet1.write(i, 7, line.aux_qty)
+                    sheet1.write(i, 8, line.unit_price)
+                    sheet1.write(i, 9, line.subtotal_amount)
+                    sheet1.write(i, 10, line.product_id.source)
+                    sheet1.write(i, 11, line.note or '')
+                    i = i + 1
+                _first = True
         
+        buf=cStringIO.StringIO()
+        book.save(buf)
+
+        out=base64.encodestring(buf.getvalue())
+
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
+
 
 class report_product(osv.osv_memory):
     _name = "fg_sale.product.export.wizard"
