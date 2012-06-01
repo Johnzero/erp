@@ -206,10 +206,16 @@ class sale_order_line(osv.osv):
     def product_uom_qty_change(self, cr, uid, ids, product_id, product_uom, qty, unit_price_new, context=None):
         if product_id and product_uom and qty and unit_price_new:
             product_obj = self.pool.get('product.product')
-            #product_uom_obj = self.pool.get('product.uom')
+            product_uom_obj = self.pool.get('product.uom')
             product = product_obj.browse(cr, uid, product_id, context=context)
+            
+            uoms = product_uom_obj.browse(cr, uid,[product_uom])
+            factor = 1
+            if uoms:
+                factor = uoms[0].factor
+
             if product:
-                price = unit_price_new * product.uom_id.factor * qty
+                price = unit_price_new * factor * qty
                 
                 return {'value': {'subtotal_amount':price, 'aux_qty':product.uom_id.factor * qty}}
         return {'value':{}}
