@@ -1,12 +1,13 @@
 # -*- encoding: utf-8 -*-
 import pooler, time
 from osv import fields, osv
-from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
+from tools import get_initial
 
 class res_partner(osv.osv):
     _inherit = 'res.partner'
     _columns = {
-        'ratio': fields.float('比率', digit=2)
+        'ratio': fields.float('比率', digit=2),
+        
     }
 
 class sale_order(osv.osv):
@@ -43,6 +44,7 @@ class sale_order(osv.osv):
         'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
         'note': fields.text('附注'),
         'sales_ids': fields.related('partner_id','sales_ids', type='many2many', relation='res.users', string='负责人',store=False),
+        'partner_cate_ids': fields.related('partner_id', 'category_id', type='many2many', relation='res.partner.category', string='客户分类',store=False),
         'sync':fields.boolean('备用'),
     }
         
@@ -95,7 +97,7 @@ class sale_order(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'cancel', 
             'confirmer_id': uid, 
-            'date_confirm': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            'date_confirm': fields.date.context_today,
             }
         )
         for i in ids:
@@ -144,7 +146,7 @@ class sale_order(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'done', 
             'confirmer_id': uid, 
-            'date_confirm': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            'date_confirm': fields.date.context_today,
             }
         )
         return True
@@ -153,7 +155,7 @@ class sale_order(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'cancel', 
             'confirmer_id': uid, 
-            'date_confirmed': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+            'date_confirmed': fields.date.context_today,
             }
         )
         return True

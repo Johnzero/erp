@@ -13,16 +13,16 @@
 	    <record id="group_fg_sale_fga" model="res.groups">
 	        <field name="name">业务开单系统 / FGA组</field>
 	    </record>
-	    <!-- <record id="fg_sale_user_strict" model="ir.rule">
-	                  <field name="name">user fg_order</field>
-	                  <field name="model_id" ref="model_fg_sale_order"/>
-	                  <field name="prem_read" eval="True"/>
-	                  <field name="perm_write" eval="True"/>
-	                  <field name="perm_create" eval="True"/>
-	                  <field name="perm_unlink" eval="False"/>
-	                  <field eval="0" name="global"/>
-	                  <field eval="[(6,0,[ref('fg_sale.group_fg_sale_user')])]" name="groups"/>
-	                  <field name="domain_force">['|',('sales_ids','in',[user.id]), ('sales_ids','=',False)]</field>
-	              </record> -->
+	    <record id="fg_sale_fga_strict" model="ir.rule">
+	         <field name="name">fga fg_order</field>
+             <field name="model_id" ref="model_fg_sale_order"/>
+             <field name="prem_read" eval="True"/>
+             <field name="perm_write" eval="False"/>
+             <field name="perm_create" eval="False"/>
+             <field name="perm_unlink" eval="False"/>
+             <field eval="0" name="global"/>
+             <field eval="[(6,0,[ref('fg_sale.group_fg_sale_fga')])]" name="groups"/>
+             <field name="domain_force">[('partner_cate_ids','in',[4])]</field>
+         </record>
 	</data>
 </openerp>

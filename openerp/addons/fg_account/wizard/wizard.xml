@@ -89,7 +89,7 @@
             <field name="view_id" ref="fg_account_reconcile_export_wizard_form_view"/>
         </record>
         
-        <menuitem id="menu_fg_account_reconcile_export_wizard" action="action_fg_account_reconcile_export_wizard_tree_view" parent="menu_fg_account_period_check" sequence="2"/>
+        <menuitem id="menu_fg_account_reconcile_export_wizard" action="action_fg_account_reconcile_export_wizard_tree_view" parent="menu_fg_account_period_check" sequence="10"/>
         <menuitem id="menu_fg_account_bill_import_wizard" parent="menu_fg_account_bill" action="action_fg_account_bill_wizard_import" sequence="10"/>
         
     </data>
