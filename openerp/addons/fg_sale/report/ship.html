@@ -25,7 +25,7 @@
 			目前不支持多单据打印.
 		% else:
     		% for o in objects:
-    		    % if o['state'] == 'done':
+    		    
                     <div id="div2">
                     <table border="0" cellspacing="2" cellpadding="2" bordercolor="#000000" style="font-size:14px;">
                       <thead>
@@ -99,9 +99,6 @@
                         }
                         print_all();
         		    </script>
-        		% else:
-        		    本单据还没有审核,不能打印.
-        		% endif
         	% endfor
 		% endif 
         </body>
