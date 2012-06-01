@@ -16,12 +16,21 @@ class period_check(osv.osv):
         'o_partner': fields.many2one('res.partner', '客户', readonly=True),
         't':fields.char('项目', size=12, readonly=True),
         'reconciled':fields.boolean('已对账', readonly=True),
+        'cleared':fields.boolean('已清账', readonly=True),
         'amount': fields.float('金额', digits=(16,4), readonly=True),
         'due_date_from':fields.function(lambda *a,**k:{}, method=True, type='date',string="开始日期"),
         'due_date_to':fields.function(lambda *a,**k:{}, method=True, type='date',string="结束日期"),
         'note':fields.text('附注'),
     }
     _order = 'o_date asc'
+    
+    def button_clear(self, cr, uid, ids, context=None):
+        order_obj = self.pool.get('fg_sale.order')
+        #this should all be order.
+        #check_record's id IS the id of order.
+        order_obj.write(cr, uid, ids, {'clear':True})
+
+        return True
     
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'fg_account_period_check')
@@ -37,7 +46,8 @@ class period_check(osv.osv):
             		'发货额' AS T,
             		o.reconciled AS reconciled,
             		SUM(line.subtotal_amount)AS amount,
-            		o.note AS note
+            		o.note AS note,
+            		o.clear as cleared
             	FROM
             		fg_sale_order_line line
             	JOIN fg_sale_order o ON o."id" = line.order_id
@@ -61,7 +71,8 @@ class period_check(osv.osv):
             			'退回' AS T,
             			o.reconciled AS reconciled,
             			SUM(line.subtotal_amount)AS amount,
-            			o.note AS note
+            			o.note AS note,
+            			o.clear as cleared
             		FROM
             			fg_sale_order_line line
             		JOIN fg_sale_order o ON o."id" = line.order_id
@@ -85,7 +96,8 @@ class period_check(osv.osv):
             			cate."name" AS T,
             			bill.reconciled AS reconciled,
             			bill.amount AS amount,
-            			bill.note AS note
+            			bill.note AS note,
+            			False as cleared
             		FROM
             			fg_account_bill bill
             		JOIN fg_account_bill_category cate ON bill.category_id = cate. ID

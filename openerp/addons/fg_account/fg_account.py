@@ -10,10 +10,12 @@ class sale_order(osv.osv):
     
     _columns = {
         'reconciled':fields.boolean('已对账'),
+        'clear':fields.boolean('已清账'),
     }
     
     _defaults = {
         'reconciled':False,
+        'clear':False,
     }
     
 
