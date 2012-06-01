@@ -191,11 +191,20 @@ class sale_order_line(osv.osv):
                 'aux_qty':0, 'unit_price':0, 'subtotal_amount':0}}
         result = {}
         product_obj = self.pool.get('product.product')
+        product_uom_obj = self.pool.get('product.uom')
         
         product = product_obj.browse(cr, uid, product_id, context=context)
+        
+        uom_list = [product.uom_id.id]
+        uoms = product_uom_obj.search(cr, uid, [('factor','=',1), ('fullnum','!=',False)])
+        for u in uoms:
+            uom_list.append(u)
+        domain = {'product_uom':[('id','in',uom_list)]}
+
         result['product_uom'] = product.uom_id.id
         result['unit_price'] = product.lst_price
-        return {'value': result}
+        
+        return {'domain':domain, 'value': result}
     
     
     def product_uom_id_change(self, cr, uid, ids, product_id, uom_id, context=None):
