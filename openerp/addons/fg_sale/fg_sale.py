@@ -173,7 +173,7 @@ class sale_order_line(osv.osv):
     _columns = {
         'order_id': fields.many2one('fg_sale.order', '订单', required=True, ondelete='cascade', select=True),
         'sequence': fields.integer('Sequence'),
-        'product_id': fields.many2one('product.product', '产品', domain=[('sale_ok', '=', True)], change_default=True),
+        'product_id': fields.many2one('product.product', '产品', required=True, domain=[('sale_ok', '=', True)], change_default=True),
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
         'product_uom_qty': fields.float('数量', required=True, digits=(16,0)),
         'aux_qty': fields.float('只数', required=True, digits=(16,0)),

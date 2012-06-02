@@ -214,6 +214,7 @@ openerp.web.list_editable = function (openerp) {
                     .keyup(function () {
                         return self.on_row_keyup.apply(self, arguments); })
                     .keydown(function (e) { e.stopPropagation(); });
+                
                 if (row) {
                     $new_row.replaceAll(row);
                 } else if (self.options.editable) {

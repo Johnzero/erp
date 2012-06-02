@@ -75,7 +75,7 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="附注">
+                        <page string="摘要">
                             <field name="note" nolabel="1"/>
                         </page>
                     </notebook>
