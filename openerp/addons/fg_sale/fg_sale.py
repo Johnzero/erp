@@ -97,7 +97,7 @@ class sale_order(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'cancel', 
             'confirmer_id': uid, 
-            'date_confirm': fields.date.context_today,
+            'date_confirm': fields.date.context_today(self, cr, uid, context=context),
             }
         )
         for i in ids:
@@ -146,7 +146,7 @@ class sale_order(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'done', 
             'confirmer_id': uid, 
-            'date_confirm': fields.date.context_today,
+            'date_confirm': fields.date.context_today(self, cr, uid, context=context),
             }
         )
         return True
@@ -155,7 +155,7 @@ class sale_order(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'cancel', 
             'confirmer_id': uid, 
-            'date_confirmed': fields.date.context_today,
+            'date_confirmed': fields.date.context_today(self, cr, uid, context=context),
             }
         )
         return True
