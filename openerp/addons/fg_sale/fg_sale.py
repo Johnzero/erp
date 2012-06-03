@@ -42,7 +42,7 @@ class sale_order(osv.osv):
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
         'minus': fields.boolean('红字', readonly=True, states={'draft': [('readonly', False)]}),
-        'note': fields.text('附注'),
+        'note': fields.text('摘要'),
         'sales_ids': fields.related('partner_id','sales_ids', type='many2many', relation='res.users', string='负责人',store=False),
         'partner_cate_ids': fields.related('partner_id', 'category_id', type='many2many', relation='res.partner.category', string='客户分类',store=False),
         'sync':fields.boolean('备用'),
