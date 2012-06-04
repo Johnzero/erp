@@ -16,6 +16,7 @@
                     <field name="amount"/>
                     <field name="note"/>
                     <field name="cleared" invisible="1"/>
+                    <button name="button_view" string="单据" icon="STOCK_JUMP_TO" type="object"/>
                     <button name="button_clear" groups="fg_account.group_fg_account_manager" confirm="是否确认清账?" string="清" type="object" icon="shou" 
                         attrs="{'invisible':[('cleared','=',True)]}"/>
                 </tree>

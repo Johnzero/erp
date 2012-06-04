@@ -203,9 +203,10 @@ class sale_order_line(osv.osv):
         product = product_obj.browse(cr, uid, product_id, context=context)
         
         uom_list = [product.uom_id.id]
-        uoms = product_uom_obj.search(cr, uid, [('factor','=',1), ('fullnum','!=',False)])
+        uoms = product_uom_obj.search(cr, uid, [('uom_type','=','smaller'), ('category_id','=',1)])
         for u in uoms:
             uom_list.append(u)
+
         domain = {'product_uom':[('id','in',uom_list)]}
 
         result['product_uom'] = product.uom_id.id

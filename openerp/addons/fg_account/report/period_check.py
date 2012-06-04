@@ -24,6 +24,24 @@ class period_check(osv.osv):
     }
     _order = 'id desc'
     
+    def button_view(self, cr, uid, ids, context=None):
+        record = self.browse(cr, uid, ids)[0]
+
+        r = {
+                'type': 'ir.actions.act_window',
+                'name': '查看单据',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'res_model': record.ref_doc._table_name,
+                'res_id': record.id,
+                'target': 'new',
+                'context': context,
+            }
+        if record.ref_doc._table_name == 'fg_account.bill':
+            r['res_id'] = record.id - 1000000000
+        
+        return r
+    
     def button_clear(self, cr, uid, ids, context=None):
         order_obj = self.pool.get('fg_sale.order')
         #this should all be order.
