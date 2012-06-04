@@ -34,11 +34,11 @@
                               <p align="center" style="font-size:16px;"><b>产品清单</b></p></td>
                           </tr>
                           <tr>
-                            <td colspan="2"  height="18">单位名称: ${ o.partner_id.name }</td>
-                            <td colspan="2"  height="18">备注: ${ o.note or '' }</td>
+                            <td colspan="2"  height="18">单位名称: ${ o.partner_id.name } (经理)</td>
+                            <td colspan="2"  height="18">摘要: ${ o.note or '' }</td>
                             <td colspan="2" height="18">时间: ${ o.date_order }</td>
                             <td colspan="2" height="18">
-                                单号: ${ o.sub_name }
+                                单号: ${ o.name }
     						</td>
                           </tr>
                           <tr>
@@ -98,7 +98,7 @@
                         		LODOP.SET_LICENSES("","292881049110510152101109126561","","");
                         		LODOP.PRINT_INIT("FG ERP Order");
                         		LODOP.SET_PRINT_PAGESIZE(1, 2300, 1390, 'fg_sale_order_order');
-                        		LODOP.ADD_PRINT_TABLE("0mm","5mm","220mm", "98mm", document.getElementById("div2").innerHTML);
+                        		LODOP.ADD_PRINT_TABLE("0mm","0mm","220mm", "98mm", document.getElementById("div2").innerHTML);
                                 
                         		LODOP.PREVIEW();
                         		
