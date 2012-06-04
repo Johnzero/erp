@@ -207,7 +207,7 @@ class sale_order_line(osv.osv):
         for u in uoms:
             uom_list.append(u)
 
-        domain = {'product_uom':[('id','in',uom_list)]}
+        domain = {'product_uom':[('id','in',sorted(uom_list))]}
 
         result['product_uom'] = product.uom_id.id
         result['unit_price'] = product.lst_price
