@@ -22,7 +22,7 @@ class period_check(osv.osv):
         'due_date_to':fields.function(lambda *a,**k:{}, method=True, type='date',string="结束日期"),
         'note':fields.text('附注'),
     }
-    _order = 'o_date asc'
+    _order = 'id desc'
     
     def button_clear(self, cr, uid, ids, context=None):
         order_obj = self.pool.get('fg_sale.order')
@@ -41,7 +41,7 @@ class period_check(osv.osv):
             		o."id" AS ID,
             		o.name as name,
             		'fg_sale.order,' || o."id" AS ref_doc,
-            		o.date_confirm AS o_date,
+            		o.date_order AS o_date,
             		o.partner_id AS o_partner,
             		'发货额' AS T,
             		o.reconciled AS reconciled,
@@ -66,7 +66,7 @@ class period_check(osv.osv):
             			o."id" AS ID,
             			o.name as name,
             			'fg_sale.order,' || o."id" AS ref_doc,
-            			o.date_confirm AS o_date,
+            			o.date_order AS o_date,
             			o.partner_id AS o_partner,
             			'退回' AS T,
             			o.reconciled AS reconciled,
@@ -104,6 +104,7 @@ class period_check(osv.osv):
             		WHERE
             			bill."state" IN('check', 'done')
             	)
+            ORDER BY id desc
             )
             """)
             

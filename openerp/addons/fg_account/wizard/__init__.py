@@ -116,13 +116,13 @@ class reconcile_wizard(osv.osv_memory):
         
         data = self.read(cr, uid, ids, [], context=context)[0]
         record_ids = context and context.get('active_ids', False)
-        
         for record in period_check_obj.browse(cr, uid, record_ids, context):
             if record.ref_doc._table_name == 'fg_sale.order':
                 order_obj.write(cr, uid, [record.id], {'reconciled':data['confirm']})
                 
             if record.ref_doc._table_name == 'fg_account.bill':
-                bill_obj.write(cr, uid, [record.id], {'reconciled':data['confirm']})
+                rid = record.id - 1000000000
+                bill_obj.write(cr, uid, [rid], {'reconciled':data['confirm']})
         
         return {'type': 'ir.actions.act_window_close'}
     
@@ -213,6 +213,7 @@ class reconcile_export(osv.osv_memory):
         
         i = 2
         last_amount = inital_amount
+        
         cr.execute(sql % (this.reconciled, this.partner_id.id, this.date_start, this.date_end))
         for p in cr.fetchall():
             sheet1.write(i, 0, p[0])

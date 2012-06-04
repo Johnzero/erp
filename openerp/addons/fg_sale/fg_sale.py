@@ -112,6 +112,7 @@ class sale_order(osv.osv):
         order_line_obj = self.pool.get('fg_sale.order.line')
         orders = self.browse(cr, uid, ids)
         order_list = []
+        minus_list = []
         for order in orders:
             for line in order.order_line:
                 if order.minus:
@@ -121,6 +122,9 @@ class sale_order(osv.osv):
                         'subtotal_amount':(0-line.subtotal_amount),
                     }
                     order_line_obj.write(cr, uid, [line.id], update)
+                    minus_list.append(order.name)
+                    break
+                
                 product = product_obj.browse(cr, uid, line.product_id, context=context)
                 if product.lst_price > line.unit_price:
                     #notify 
@@ -130,7 +134,8 @@ class sale_order(osv.osv):
             body = """
             您好, ! 
             这是一封提醒邮件. 
-            单据 %s 存在折扣的明细, 请及时查看.
+            单据 %s 存在折扣的明细, 请及时查看.<br/>
+            另,单据 %s 为红票.
             %s
             """
             mail_message = self.pool.get('mail.message')
@@ -138,7 +143,7 @@ class sale_order(osv.osv):
                 '富光ERP系统 <fuguang_fg@163.com>',
                 ['133120528@qq.com'],
                 '[折扣订单提醒]编号:%s' % ','.join(order_list),
-                body % (''.join(order_list),  time.strftime('%Y-%m-%d %H:%m')),
+                body % (''.join(order_list),  ','.join(minus_list), time.strftime('%Y-%m-%d %H:%m')),
                 reply_to='fuguang_fg@163.com',
                 context=context
             )

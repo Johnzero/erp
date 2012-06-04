@@ -8,7 +8,7 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="对账单">
-                    <field name="ref_doc"/>
+                    <field name="name"/>
                     <field name="o_date"/>
                     <field name="o_partner"/>
                     <field name="t"/>
@@ -62,7 +62,7 @@
         <menuitem id="menu_fg_account_period_check" parent="menu_fg_account" name="对账单" sequence="2" groups="fg_account.group_fg_account_checker,fg_account.group_fg_account_manager"/>
         
         <menuitem id="menu_fg_account_period_check_all" action="action_fg_account_period_check_tree_view" parent="menu_fg_account_period_check" name="所有对账单" sequence="1"/>
-        <menuitem id="menu_fg_account_period_check_clear" groups="fg_account.group_fg_account_manager" action="action_fg_account_period_check_clear_tree_view" parent="menu_fg_account_period_check" sequence="2"/>
+        <menuitem id="menu_fg_account_period_check_clear" action="action_fg_account_period_check_clear_tree_view" parent="menu_fg_account_check" sequence="2"/>
         
         
     </data>
