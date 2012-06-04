@@ -1286,6 +1286,7 @@ msgstr "其它价格表"
 #: model:ir.ui.menu,name:product.menu_products
 #: model:ir.ui.menu,name:product.prod_config_main
 #: view:product.product:0
+
 msgid "Products"
 msgstr "产品"
 
