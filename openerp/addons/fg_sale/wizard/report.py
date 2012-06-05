@@ -4,6 +4,32 @@ import tools, base64
 from osv import fields, osv
 import xlwt, cStringIO
 
+class amount_by_source_wizard(osv.osv_memory):
+    _name = "fg_sale.amount.source.wizard"
+    _description = "事业部销量统计"
+    _columns = {
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+    }
+    
+    def show_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        
+        r = {
+                'type': 'ir.actions.act_window',
+                'name': '统计结果',
+                'view_mode': 'form',
+                'view_type': 'tree',
+                'res_model': 'fg_sale.product.source.summary.grid',
+                'target': 'new',
+                'context': context,
+            }
+        return r
+        
+
 class report_order(osv.osv_memory):
     _name = "fg_sale.order.export.wizard"
     _description = "导出订单明细"

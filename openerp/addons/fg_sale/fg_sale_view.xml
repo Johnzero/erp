@@ -163,6 +163,8 @@
         
         <menuitem id="menu_fg_sale_chart_by_month" parent="menu_fg_sale_chart" action="action_fg_sale_report_by_month" sequence="0"/>
         <menuitem id="menu_fg_sale_chart_by_date" parent="menu_fg_sale_chart" action="action_fg_sale_order_report_daily_view" sequence="1"/>
+        <menuitem id="menu_fg_sale_amount_resource_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_resource_wizard" sequence="2"/>
+        
         <menuitem id="menu_fg_sale_report_export_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_report_export_wizard" sequence="10"/>
         <menuitem id="menu_fg_sale_report_order_export_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_report_order_export_wizard" sequence="11"/>
         

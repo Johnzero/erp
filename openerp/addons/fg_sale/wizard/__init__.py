@@ -555,5 +555,3 @@ class order_import(osv.osv_memory):
             l = l - 1
             print l
         return {'type': 'ir.actions.act_window_close'}
-
-    

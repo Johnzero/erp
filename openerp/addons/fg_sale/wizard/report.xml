@@ -61,6 +61,32 @@
             </field>
         </record>
         
+        <record model="ir.ui.view" id="fg_sale_amount_resource_wizard_form_view">
+            <field name="name">fg_sale.amount.source.wizard.form</field>
+            <field name="model">fg_sale.amount.source.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="事业部销量统计">
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <group colspan="4" col="6">
+                        <button  icon="gtk-close" special="cancel" string="关闭"/>
+                        <button icon="gtk-ok" name="show_result" string="生成" type="object"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_fg_sale_resource_wizard">
+            <field name="name">事业部销量统计</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_sale.amount.source.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fg_sale_amount_resource_wizard_form_view"/>
+            <field name="target">new</field>
+        </record>
+        
         
         <record id="action_fg_sale_report_order_export_wizard" model="ir.actions.act_window">
             <field name="name">导出订单明细</field>
