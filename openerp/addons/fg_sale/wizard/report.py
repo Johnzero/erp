@@ -12,6 +12,9 @@ class report_order(osv.osv_memory):
         'name': fields.char('文件名', 16, readonly=True),
         'date_start': fields.date('开始日期', required=True),
         'date_end': fields.date('截止日期', required=True),
+        'source':fields.selection([(u'真空事业部',u'真空事业部'),
+                            (u'塑胶事业部',u'塑胶事业部'),(u'玻璃事业部',u'玻璃事业部'), (u'财务部',u'财务部'),
+                            (u'安全帽事业部',u'安全帽事业部'),(u'其他',u'其他'),(u'塑胶制品',u'塑胶制品')], '事业部'),
         'data': fields.binary('文件', readonly=True),
         'state': fields.selection( [('choose','choose'),   # choose 
                                      ('get','get'),         # get the file
@@ -46,6 +49,9 @@ class report_order(osv.osv_memory):
         _first = True
         for order in order_obj.browse(cr, uid, order_list):
                 for line in order.order_line:
+                    if this.source:
+                        if this.source != line.product_id.source:
+                            continue
                     if _first:
                         sheet1.write(i, 0, order.date_confirm)
                         sheet1.write(i, 1, order.name)
@@ -117,27 +123,27 @@ class report_product(osv.osv_memory):
         sql = """
         SELECT
             product.id,
-        	product.name_template,
-        	product.default_code,
-        	product.source,
-        	SUM(line.aux_qty)AS qty,
-        	SUM(line.subtotal_amount)AS amount
+                product.name_template,
+                product.default_code,
+                product.source,
+                SUM(line.aux_qty)AS qty,
+                SUM(line.subtotal_amount)AS amount
         FROM
-        	product_product product
+                product_product product
         JOIN fg_sale_order_line line ON line.product_id = product."id"
         JOIN fg_sale_order o ON o."id" = line.order_id
         WHERE
-        	product."source" IS NOT NULL
+                product."source" IS NOT NULL
         AND o."state" = 'done'
         AND o.date_confirm >= to_date('%s', 'YYYY-MM-DD')
         AND o.date_confirm <= to_date('%s', 'YYYY-MM-DD')
         GROUP BY
             product.id,
-        	product.name_template,
-        	product.source,
-        	product.default_code
+                product.name_template,
+                product.source,
+                product.default_code
         ORDER BY
-        	amount DESC
+                amount DESC
         """
         
         def _write_cell(s, r, p):

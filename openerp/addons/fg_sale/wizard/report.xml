@@ -11,6 +11,7 @@
                  <group states="choose">
                     <field name="date_start"/>
                     <field name="date_end"/>
+                    <field name="source"/>
                     <field invisible="1" name="state"/>
                 </group>
                 <group states="get">

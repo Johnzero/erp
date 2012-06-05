@@ -4,6 +4,36 @@
 import tools
 from osv import fields, osv
 
+
+class report_product_source_grid(osv.osv_memory):
+    _name = 'fg_sale.product.source.summary.grid'
+    _description = '事业部销售汇总'
+    
+    def create(self, cr, uid, vals, cotext=None):
+        raise osv.except_osv('Error !','You cannot add an entry to this view!')
+    
+    def unlink(self, *args, **argv):
+        raise osv.except_osv('Error !', 'You cannot delete an entry of this view !')
+    
+    def write(self, cr, uid, ids, vals, context=None):
+        raise osv.except_osv('Error !', 'You cannot write an entry of this view !')
+    
+    def read(self, cr, uid, ids, fields=None, context=None, load='_classic_read'):
+        pass
+    
+    def fields_get(self, cr, uid, view_id=None,view_type='form',context={},toolbar=False):
+        result = super(report_product_source_grid, self).fields_get(cr, uid, fields, context)
+        result['line_num'] = {'string': '行号/列号','type': 'char','size': 7}
+        
+        return result
+    
+    def fields_view_get(self, cr, uid, view_id=None,view_type='form',context={},toolbar=False):
+        result = super(report_product_source_grid, self).fields_view_get(
+                cr, uid, view_id, view_type, context=context, toolbar=toolbar)
+        xml = """<?xml version="1.0"?><%s>"""
+        result['arch'] = xml
+        return result
+
 class sale_report_by_day(osv.osv):
     _name = "fg_sale.order.report.daily"
     _auto = False
