@@ -195,7 +195,7 @@ class reconcile_export(osv.osv_memory):
         AND o_partner = %s
         AND o_date >= to_date('%s', 'YYYY-MM-DD')
         AND o_date <= to_date('%s', 'YYYY-MM-DD')
-        
+        ORDER BY o_date asc
         """
         
         
