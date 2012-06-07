@@ -35,7 +35,6 @@ class sale_report_by_day(osv.osv):
                 JOIN res_partner partner ON partner."id" = o.partner_id
                 WHERE
                         o."state" = 'done'
-                OR o.minus = TRUE
                 GROUP BY
                         product."source",
                         o.partner_id,

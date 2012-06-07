@@ -141,7 +141,7 @@ class sale_order(osv.osv):
             mail_message.schedule_with_attach(cr, uid,
                 '富光ERP系统 <fuguang_fg@163.com>',
                 ['133120528@qq.com'],
-                '[折扣订单提醒]编号:%s' % ','.join(order_list),
+                '[折扣/红票订单提醒]',
                 body % (''.join(order_list),  ','.join(minus_list), time.strftime('%Y-%m-%d %H:%m')),
                 reply_to='fuguang_fg@163.com',
                 context=context

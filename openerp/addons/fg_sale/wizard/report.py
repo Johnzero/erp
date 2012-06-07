@@ -26,8 +26,8 @@ class amount_by_partner_wizard(osv.osv_memory):
         FROM
                 fg_sale_order_report_daily
         WHERE
-                DATE > to_date('%s', 'YYYY-MM-DD')
-        AND DATE < to_date('%s', 'YYYY-MM-DD')
+                DATE >= to_date('%s', 'YYYY-MM-DD')
+        AND DATE <= to_date('%s', 'YYYY-MM-DD')
         AND partner_id = %s
         GROUP BY
                 "source"
