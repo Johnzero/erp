@@ -125,10 +125,28 @@ class reconcile_wizard(osv.osv_memory):
                 bill_obj.write(cr, uid, [rid], {'reconciled':data['confirm']})
         
         return {'type': 'ir.actions.act_window_close'}
+
+class reconcile_view(osv.osv_memory):
+    _name = "fg_account.reconcile.view.wizard"
     
+    _columns = {
+        'partner_id': fields.many2one('res.partner', '客户'),
+        'date_start': fields.date('开始日期'),
+        'date_end': fields.date('结束日期'),
+    }
+    
+    _defaults = {
+        'date_end': fields.date.context_today,
+    }
+    
+    def show_result(self, cr, uid, ids, context=None):
+        pass
+
+
 class reconcile_export(osv.osv_memory):
     _name = "fg_account.reconcile.export.wizard"
     _description = "对账单导出"
+    
     
     _columns = {
         'partner_id': fields.many2one('res.partner', '客户'),

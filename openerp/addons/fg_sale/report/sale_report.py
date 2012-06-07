@@ -14,6 +14,7 @@ class sale_report_by_day(osv.osv):
         'date': fields.char('月份', size=12, readonly=True),
         'amount': fields.float('金额'),
         'source':fields.char('事业部', size=10),
+        'partner_id':fields.many2one('res.partner', '客户'),
     }
     _order = 'date asc'
 
@@ -22,20 +23,23 @@ class sale_report_by_day(osv.osv):
            cr.execute("""
                create or replace view fg_sale_order_report_daily as (
                SELECT
-               min(line.id) as id,
-                  o.date_confirm as date,
-                  product."source",
-                  SUM(line.subtotal_amount) as amount
-               FROM
-                  fg_sale_order_line line
-               JOIN fg_sale_order o ON o."id" = line.order_id
-               JOIN product_product product ON product."id" = line.product_id
-               JOIN res_partner partner ON partner."id" = o.partner_id
-               WHERE
-                  o."state" = 'done' 
-               GROUP BY
-                  product."source",
-                  o.date_confirm
+                        MIN (line. ID) AS ID,
+                        o.date_confirm AS DATE,
+                        product."source",
+                        o.partner_id,
+                        SUM (line.subtotal_amount) AS amount
+                FROM
+                        fg_sale_order_line line
+                JOIN fg_sale_order o ON o."id" = line.order_id
+                JOIN product_product product ON product."id" = line.product_id
+                JOIN res_partner partner ON partner."id" = o.partner_id
+                WHERE
+                        o."state" = 'done'
+                OR o.minus = TRUE
+                GROUP BY
+                        product."source",
+                        o.partner_id,
+                        o.date_confirm
                )
                """)
                

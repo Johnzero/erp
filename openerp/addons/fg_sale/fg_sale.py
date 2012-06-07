@@ -123,14 +123,13 @@ class sale_order(osv.osv):
                     }
                     order_line_obj.write(cr, uid, [line.id], update)
                     minus_list.append(order.name)
-                    break
                 
                 product = product_obj.browse(cr, uid, line.product_id, context=context)
                 if product.lst_price > line.unit_price:
                     #notify 
                     order_list.append(order.name)
-                    break
-        if order_list:
+        
+        if order_list or minus_list:
             body = """
             您好, ! 
             这是一封提醒邮件. 

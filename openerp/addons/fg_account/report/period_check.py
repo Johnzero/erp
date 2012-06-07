@@ -4,6 +4,7 @@
 import tools
 from osv import fields, osv
 
+
 class period_check(osv.osv):
     _name = "fg_account.period.check"
     _auto = False
@@ -41,7 +42,8 @@ class period_check(osv.osv):
             r['res_id'] = record.id - 1000000000
         
         return r
-    
+        
+        
     def button_clear(self, cr, uid, ids, context=None):
         order_obj = self.pool.get('fg_sale.order')
         #this should all be order.

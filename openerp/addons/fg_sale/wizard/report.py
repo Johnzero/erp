@@ -4,6 +4,52 @@ import tools, base64
 from osv import fields, osv
 import xlwt, cStringIO
 
+class amount_by_partner_wizard(osv.osv_memory):
+    _name = "fg_sale.amount.parnter.wizard"
+    _description = "客户销量统计"
+    _columns = {
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'partner_id':fields.many2one('res.partner', '客户', required=True),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+    }
+    
+    def show_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        
+        sql = """
+        SELECT
+                "source",
+                SUM (amount)
+        FROM
+                fg_sale_order_report_daily
+        WHERE
+                DATE > to_date('%s', 'YYYY-MM-DD')
+        AND DATE < to_date('%s', 'YYYY-MM-DD')
+        AND partner_id = %s
+        GROUP BY
+                "source"
+        """
+        
+        cr.execute(sql % (this.date_start, this.date_end, this.partner_id.id))
+        
+        report_obj = self.pool.get('fg_data.report.horizontal')
+        
+        ids = [report_obj.create(cr, uid, {'name':p[0], 'value':p[1]}) for p in cr.fetchall()]
+        
+        act_obj = self.pool.get('ir.actions.act_window')
+        mod_obj = self.pool.get('ir.model.data')
+        
+        result = mod_obj.get_object_reference(cr, uid, 'fg_data', 'action_fg_data_report_horizontal')
+        id = result and result[1] or False
+        
+        result = act_obj.read(cr, uid, [id], context=context)[0]
+        result['domain'] = "[('id','in', ["+','.join(map(str, ids))+"])]"
+        return result
+
+
 class amount_by_source_wizard(osv.osv_memory):
     _name = "fg_sale.amount.source.wizard"
     _description = "事业部销量统计"
@@ -18,17 +64,34 @@ class amount_by_source_wizard(osv.osv_memory):
     def show_result(self, cr, uid, ids, context=None):
         this = self.browse(cr, uid, ids)[0]
         
-        r = {
-                'type': 'ir.actions.act_window',
-                'name': '统计结果',
-                'view_mode': 'form',
-                'view_type': 'tree',
-                'res_model': 'fg_sale.product.source.summary.grid',
-                'target': 'new',
-                'context': context,
-            }
-        return r
+        sql = """
+        SELECT
+                "source",
+                SUM (amount)
+        FROM
+                fg_sale_order_report_daily
+        WHERE
+                DATE > to_date('%s', 'YYYY-MM-DD')
+        AND DATE < to_date('%s', 'YYYY-MM-DD')
+        GROUP BY
+                "source"
+        """
         
+        cr.execute(sql % (this.date_start, this.date_end))
+        
+        report_obj = self.pool.get('fg_data.report.horizontal')
+        
+        ids = [report_obj.create(cr, uid, {'name':p[0], 'value':p[1]}) for p in cr.fetchall()]
+        
+        act_obj = self.pool.get('ir.actions.act_window')
+        mod_obj = self.pool.get('ir.model.data')
+        
+        result = mod_obj.get_object_reference(cr, uid, 'fg_data', 'action_fg_data_report_horizontal')
+        id = result and result[1] or False
+        
+        result = act_obj.read(cr, uid, [id], context=context)[0]
+        result['domain'] = "[('id','in', ["+','.join(map(str, ids))+"])]"
+        return result
 
 class report_order(osv.osv_memory):
     _name = "fg_sale.order.export.wizard"
@@ -64,7 +127,7 @@ class report_order(osv.osv_memory):
                 ('date_confirm','>=', this.date_start),
                 ('date_confirm','<=', this.date_end),
                 ('state','=','done')
-            ])
+            ], order='date_confirm asc')
         cols = ['日期','发票号码','产品名称','规格型号','购货单位','单位','数量','数量/只','单价','金额','事业部','摘要']
         i = 0
         for c in cols:

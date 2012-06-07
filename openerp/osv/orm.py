@@ -4900,9 +4900,11 @@ class BaseModel(object):
         """
         assert self._transient, "Model %s is not transient, it cannot be vacuumed!" % self._name
         self._transient_check_count += 1
+        
         if (not force) and (self._transient_check_count % self._transient_check_time):
             self._transient_check_count = 0
             return True
+        
 
         # Age-based expiration
         if self._transient_max_hours:

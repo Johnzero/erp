@@ -35,3 +35,11 @@ class product_category(osv.osv):
     _columns = {
         'fullnum': fields.char('num', size=40),
     }
+    
+class fg_report_horizontal(osv.osv_memory):
+    _name = "fg_data.report.horizontal"
+
+    _columns = {
+        'name':fields.char('统计项', size=40),
+        'value': fields.float('数据', digits=(12, 2)),
+    }

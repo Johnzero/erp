@@ -14,6 +14,7 @@
                     <field name="t"/>
                     <field name="reconciled"/>
                     <field name="amount"/>
+                    <field name="balance"/>
                     <field name="note"/>
                     <field name="cleared" invisible="1"/>
                     <button name="button_view" string="单据" icon="STOCK_JUMP_TO" type="object"/>
