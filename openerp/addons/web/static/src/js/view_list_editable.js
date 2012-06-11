@@ -168,6 +168,7 @@ openerp.web.list_editable = function (openerp) {
         },
         on_row_keyup: function (e) {
             var self = this;
+            
             switch (e.which) {
             case KEY_RETURN:
                 this.save_row().then(function (result) {

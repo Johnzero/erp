@@ -5,6 +5,42 @@ import tools
 from osv import fields, osv
 
 
+class reconcile_item(osv.osv_memory):
+    _name = "fg_account.reconcile.item"
+    
+    _columns = {
+        'ref_doc':fields.reference('单据', selection=[('fg_sale.order','销售订单'),('fg_account.bill','收款单')], 
+                size=128, readonly=True),
+        'o_date': fields.date('单据日期', readonly=True),
+        'name':fields.char('单号', size=24),
+        'o_partner': fields.many2one('res.partner', '客户', readonly=True),
+        't':fields.char('项目', size=12, readonly=True),
+        'reconciled':fields.boolean('已对账', readonly=True),
+        'cleared':fields.boolean('已清账', readonly=True),
+        'amount': fields.float('金额', digits=(16,4), readonly=True),
+        'balance':fields.float('余额', digits=(16,4), readonly=True),
+        'note':fields.text('附注'),
+    }
+    
+    def button_view(self, cr, uid, ids, context=None):
+        record = self.browse(cr, uid, ids)[0]
+
+        r = {
+                'type': 'ir.actions.act_window',
+                'name': '查看单据',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'res_model': record.ref_doc._table_name,
+                'res_id': record.id,
+                'target': 'new',
+                'context': context,
+            }
+        if record.ref_doc._table_name == 'fg_account.bill':
+            r['res_id'] = record.id - 1000000000
+        
+        return r
+
+
 class period_check(osv.osv):
     _name = "fg_account.period.check"
     _auto = False
@@ -23,7 +59,7 @@ class period_check(osv.osv):
         'due_date_to':fields.function(lambda *a,**k:{}, method=True, type='date',string="结束日期"),
         'note':fields.text('附注'),
     }
-    _order = 'id desc'
+    _order = 'id asc'
     
     def button_view(self, cr, uid, ids, context=None):
         record = self.browse(cr, uid, ids)[0]

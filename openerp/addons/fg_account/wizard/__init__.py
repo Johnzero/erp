@@ -126,22 +126,91 @@ class reconcile_wizard(osv.osv_memory):
         
         return {'type': 'ir.actions.act_window_close'}
 
-class reconcile_view(osv.osv_memory):
+
+class reconcile_view_wizard(osv.osv_memory):
     _name = "fg_account.reconcile.view.wizard"
+    _description = "对账单查询"
     
     _columns = {
-        'partner_id': fields.many2one('res.partner', '客户'),
-        'date_start': fields.date('开始日期'),
-        'date_end': fields.date('结束日期'),
+        'partner_id': fields.many2one('res.partner', '客户', required=True),
+        'reconciled':fields.boolean('已对账'),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('结束日期', required=True),
     }
     
     _defaults = {
         'date_end': fields.date.context_today,
     }
     
-    def show_result(self, cr, uid, ids, context=None):
-        pass
+    def view(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        
+        #计算
+        statement = """
+        SELECT
+        	pc."t" AS T,
+        	SUM(pc.amount)AS total_amount
+        FROM
+        	fg_account_period_check pc
+        WHERE
+        	pc.reconciled = %s
+        AND pc.o_partner = %s
+        AND pc.o_date < to_date('%s', 'YYYY-MM-DD')
+        GROUP BY
+        	T
+        """
+        amount_dict = dict()
+        cr.execute(statement % (this.reconciled, this.partner_id.id, this.date_start))
+        for row in cr.fetchall():
+            amount_dict[row[0]] = row[1]
+        
+        sent = amount_dict.get(u'发货额', 0)
+        back = amount_dict.get(u'退回', 0)
+        cash_in = amount_dict.get(u'收现', 0)
+        bank_in = amount_dict.get(u'转帐', 0)
+        discount = amount_dict.get(u'让利', 0)
+        inital_amount = sent + back - cash_in - bank_in - discount
+        
+        # search and save the result to reconcile_item table.
+        period_check_obj = self.pool.get('fg_account.period.check')
+        reconcile_item_obj = self.pool.get('fg_account.reconcile.item')
+        item_ids = period_check_obj.search(cr, uid, [('reconciled','=',this.reconciled),('o_partner','=',this.partner_id.id),
+                ('o_date','>=',this.date_start),('o_date','<=',this.date_end)], order='ID ASC')
+        
+        
+        last_amount = inital_amount
+        ids = []
+        for item in period_check_obj.read(cr, uid, item_ids):
+            if item['t'] in [u'退回',u'发货额']:
+                last_amount = last_amount + item['amount']
+            else:
+                last_amount = last_amount - item['amount']
+            
+            id = reconcile_item_obj.create(cr, uid, {
+                'ref_doc':item['ref_doc'],
+                'o_date':item['o_date'],
+                'name':item['name'],
+                'o_partner':item['o_partner'][0],
+                't':item['t'],
+                'reconciled':item['reconciled'],
+                'cleared':item['cleared'],
+                'amount':item['amount'],
+                'balance':last_amount,
+                'note':item['note'],
+            })
+            ids.append(id)
+        
+        act_obj = self.pool.get('ir.actions.act_window')
+        mod_obj = self.pool.get('ir.model.data')
 
+        result = mod_obj.get_object_reference(cr, uid, 'fg_account', 'action_fg_account_reconcile_item_tree_view')
+
+        id = result and result[1] or False
+
+        result = act_obj.read(cr, uid, [id], context=context)[0]
+        result['domain'] = "[('id','in', ["+','.join(map(str, ids))+"])]"
+        return result
+        
 
 class reconcile_export(osv.osv_memory):
     _name = "fg_account.reconcile.export.wizard"
@@ -149,10 +218,10 @@ class reconcile_export(osv.osv_memory):
     
     
     _columns = {
-        'partner_id': fields.many2one('res.partner', '客户'),
+        'partner_id': fields.many2one('res.partner', '客户',  required=True),
         'reconciled':fields.boolean('已对账'),
-        'date_start': fields.date('开始日期'),
-        'date_end': fields.date('结束日期'),
+        'date_start': fields.date('开始日期',  required=True),
+        'date_end': fields.date('结束日期',  required=True),
         'name': fields.char('文件名', 16,),
         'data': fields.binary('文件',),
         'state': fields.selection( [('choose','choose'),   # choose
@@ -213,7 +282,7 @@ class reconcile_export(osv.osv_memory):
         AND o_partner = %s
         AND o_date >= to_date('%s', 'YYYY-MM-DD')
         AND o_date <= to_date('%s', 'YYYY-MM-DD')
-        ORDER BY o_date asc
+        ORDER BY id asc
         """
         
         

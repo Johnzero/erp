@@ -47,6 +47,36 @@
                 <field name="view_id" ref="view_fg_account_bill_wizard_import"/>
                 <field name="target">new</field>
             </record>
+            
+        <record id="view_fg_account_reconcile_view_wizard_import" model="ir.ui.view">
+            <field name="name">对账单明细</field>
+            <field name="model">fg_account.reconcile.view.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="请选择条件">
+                    <group>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="partner_id"/>
+                        <field name="reconciled"/>
+                    </group>
+                    <group colspan="4" col="6">
+                        <button  icon="gtk-close" special="cancel" string="关闭"/>
+                        <button icon="gtk-ok" name="view" string="确定" type="object"/>
+                    </group>
+            </form>
+            </field>
+        </record>
+        
+        <record id="action_fg_account_reconcile_item_view_wizard_import" model="ir.actions.act_window">
+                <field name="name">对账单明细</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">fg_account.reconcile.view.wizard</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="view_fg_account_reconcile_view_wizard_import"/>
+                <field name="target">new</field>
+            </record>
         
         <record model="ir.ui.view" id="fg_account_reconcile_export_wizard_form_view">
             <field name="name">fg_account.reconcile.export.wizard.form</field>
@@ -88,6 +118,7 @@
             <field name="target">new</field>
             <field name="view_id" ref="fg_account_reconcile_export_wizard_form_view"/>
         </record>
+        <menuitem id="menu_fg_account_reconcile_view_wizard" action="action_fg_account_reconcile_item_view_wizard_import" parent="menu_fg_account_period_check" sequence="1"/>
         
         <menuitem id="menu_fg_account_reconcile_export_wizard" action="action_fg_account_reconcile_export_wizard_tree_view" parent="menu_fg_account_period_check" sequence="10"/>
         <menuitem id="menu_fg_account_bill_import_wizard" parent="menu_fg_account_bill" action="action_fg_account_bill_wizard_import" sequence="10"/>
