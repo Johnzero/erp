@@ -171,6 +171,13 @@ openerp.web.list_editable = function (openerp) {
             
             switch (e.which) {
             case KEY_RETURN:
+                inputs = self.edition_form.$element.find('input:visible:not(disabled):not([readonly])')
+                idx = $.inArray(e.target, inputs);
+                if(idx < inputs.length-1){
+                    $('#'+inputs[idx+1].id).select();
+                    return;
+                }
+                
                 this.save_row().then(function (result) {
                     if (result.created) {
                         self.new_record();
