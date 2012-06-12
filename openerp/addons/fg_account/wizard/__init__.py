@@ -218,7 +218,7 @@ class reconcile_export(osv.osv_memory):
     
     
     _columns = {
-        'partner_id': fields.many2one('res.partner', '客户',  required=True),
+        'partner_ids': fields.many2many('res.partner', 'rel_partner_reconcile_export_wizard', 'wiz_id', 'partner_id', '客户',  required=True),
         'reconciled':fields.boolean('已对账'),
         'date_start': fields.date('开始日期',  required=True),
         'date_end': fields.date('结束日期',  required=True),
@@ -241,91 +241,93 @@ class reconcile_export(osv.osv_memory):
         
         this = self.browse(cr, uid, ids)[0]
         
-        #计算
-        statement = """
-        SELECT
-        	pc."t" AS T,
-        	SUM(pc.amount)AS total_amount
-        FROM
-        	fg_account_period_check pc
-        WHERE
-        	pc.reconciled = %s
-        AND pc.o_partner = %s
-        AND pc.o_date < to_date('%s', 'YYYY-MM-DD')
-        GROUP BY
-        	T
-        """
-        amount_dict = dict()
-        cr.execute(statement % (this.reconciled, this.partner_id.id, this.date_start))
-        for row in cr.fetchall():
-            amount_dict[row[0]] = row[1]
-        
-        sent = amount_dict.get(u'发货额', 0)
-        back = amount_dict.get(u'退回', 0)
-        cash_in = amount_dict.get(u'收现', 0)
-        bank_in = amount_dict.get(u'转帐', 0)
-        discount = amount_dict.get(u'让利', 0)
-        inital_amount = sent + back - cash_in - bank_in - discount
-        
-        sql = """
-        SELECT
-            o_date,
-        	name,
-        	t,
-        	reconciled,
-        	amount,
-        	note
-        FROM
-        	fg_account_period_check
-        WHERE
-        	reconciled = %s
-        AND o_partner = %s
-        AND o_date >= to_date('%s', 'YYYY-MM-DD')
-        AND o_date <= to_date('%s', 'YYYY-MM-DD')
-        ORDER BY id asc
-        """
-        
-        
-        sheet1 = book.add_sheet(this.partner_id.name)
-        sheet1.write(0, 0, '客户: %s' % this.partner_id.name)
-        sheet1.write(0, 1, '开始日期: %s' % this.date_start)
-        sheet1.write(0, 2, '截止日期: %s' % this.date_end)
-        
-        sources = ['日期','单号','发货额','退回','收现','备注','转账','让利','余额','是否对账']
-        c_i = 0
-        for c in sources:
-            sheet1.write(1, c_i, c)
-            c_i = c_i + 1
-        sheet1.write(0, 7, '期初余额: %s' % inital_amount)
-        
-        i = 2
-        last_amount = inital_amount
-        
-        cr.execute(sql % (this.reconciled, this.partner_id.id, this.date_start, this.date_end))
-        for p in cr.fetchall():
-            sheet1.write(i, 0, p[0])
-            sheet1.write(i, 1, p[1])
-            sheet1.write(i, 9, p[3] and '是' or '否')
-            sheet1.write(i, 5, p[5])
-            if p[2] == '发货额':
-                last_amount = last_amount + p[4]
-                sheet1.write(i, 2, p[4])
-            elif p[2] == '退回':
-                last_amount = last_amount + p[4]
-                sheet1.write(i, 3, p[4])
-            elif p[2] == '收现':
-                last_amount = last_amount - p[4]
-                sheet1.write(i, 4, p[4])
-            elif p[2] == '转账':
-                last_amount = last_amount - p[4]
-                sheet1.write(i, 6, p[4])
-            elif p[2] == '让利':
-                last_amount = last_amount - p[4]
-                sheet1.write(i, 7, p[4])
-                
-            sheet1.write(i, 8, last_amount)
+        for partner in this.partner_ids:
             
-            i = i + 1
+            #计算
+            statement = """
+            SELECT
+                    pc."t" AS T,
+                    SUM(pc.amount)AS total_amount
+            FROM
+                    fg_account_period_check pc
+            WHERE
+                    pc.reconciled = %s
+            AND pc.o_partner = %s
+            AND pc.o_date < to_date('%s', 'YYYY-MM-DD')
+            GROUP BY
+                    T
+            """
+            amount_dict = dict()
+            cr.execute(statement % (this.reconciled, partner.id, this.date_start))
+            for row in cr.fetchall():
+                amount_dict[row[0]] = row[1]
+            
+            sent = amount_dict.get(u'发货额', 0)
+            back = amount_dict.get(u'退回', 0)
+            cash_in = amount_dict.get(u'收现', 0)
+            bank_in = amount_dict.get(u'转帐', 0)
+            discount = amount_dict.get(u'让利', 0)
+            inital_amount = sent + back - cash_in - bank_in - discount
+            
+            sql = """
+            SELECT
+                o_date,
+                    name,
+                    t,
+                    reconciled,
+                    amount,
+                    note
+            FROM
+                    fg_account_period_check
+            WHERE
+                    reconciled = %s
+            AND o_partner = %s
+            AND o_date >= to_date('%s', 'YYYY-MM-DD')
+            AND o_date <= to_date('%s', 'YYYY-MM-DD')
+            ORDER BY id asc
+            """
+            
+            
+            sheet1 = book.add_sheet(partner.name)
+            sheet1.write(0, 0, '客户: %s' % partner.name)
+            sheet1.write(0, 1, '开始日期: %s' % this.date_start)
+            sheet1.write(0, 2, '截止日期: %s' % this.date_end)
+            
+            sources = ['日期','单号','发货额','退回','收现','备注','转账','让利','余额','是否对账']
+            c_i = 0
+            for c in sources:
+                sheet1.write(1, c_i, c)
+                c_i = c_i + 1
+            sheet1.write(0, 7, '期初余额: %s' % inital_amount)
+            
+            i = 2
+            last_amount = inital_amount
+            
+            cr.execute(sql % (this.reconciled, partner.id, this.date_start, this.date_end))
+            for p in cr.fetchall():
+                sheet1.write(i, 0, p[0])
+                sheet1.write(i, 1, p[1])
+                sheet1.write(i, 9, p[3] and '是' or '否')
+                sheet1.write(i, 5, p[5])
+                if p[2] == '发货额':
+                    last_amount = last_amount + p[4]
+                    sheet1.write(i, 2, p[4])
+                elif p[2] == '退回':
+                    last_amount = last_amount + p[4]
+                    sheet1.write(i, 3, p[4])
+                elif p[2] == '收现':
+                    last_amount = last_amount - p[4]
+                    sheet1.write(i, 4, p[4])
+                elif p[2] == '转账':
+                    last_amount = last_amount - p[4]
+                    sheet1.write(i, 6, p[4])
+                elif p[2] == '让利':
+                    last_amount = last_amount - p[4]
+                    sheet1.write(i, 7, p[4])
+                    
+                sheet1.write(i, 8, last_amount)
+                
+                i = i + 1
         
         buf=cStringIO.StringIO()
         book.save(buf)

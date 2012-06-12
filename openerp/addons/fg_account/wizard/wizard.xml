@@ -87,8 +87,9 @@
                     <group states="choose">
                         <field name="date_start"/>
                         <field name="date_end"/>
-                        <field name="partner_id"/>
                         <field name="reconciled"/>
+                        <newline/>
+                        <field name="partner_ids" widget="many2many" colspan="4"/>
                         <field invisible="1" name="state"/>
                     </group>
                     <group colspan="4" col="6" states="choose">
