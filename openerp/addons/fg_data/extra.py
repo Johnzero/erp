@@ -27,7 +27,9 @@ class product_product(osv.osv):
     _inherit = 'product.product'
     _columns = {
         'fullnum': fields.char('num', size=40),
-        'source':fields.char('事业部', size=40, required=True),
+        'source':fields.selection([(u'塑胶事业部',u'塑胶事业部'), (u'安全帽事业部',u'安全帽事业部'), 
+                (u'玻璃事业部',u'玻璃事业部'), (u'真空事业部',u'真空事业部'),(u'塑胶制品',u'塑胶制品'), (u'财务部',u'财务部'),
+                (u'其他',u'其他')],'事业部', required=True),
     }
     
 class product_category(osv.osv):
@@ -40,6 +42,7 @@ class fg_report_horizontal(osv.osv_memory):
     _name = "fg_data.report.horizontal"
 
     _columns = {
-        'name':fields.char('统计项', size=40),
+        'name':fields.char('项目', size=40),
+        'desc':fields.char('说明', size=40),
         'value': fields.float('数据', digits=(12, 2)),
     }

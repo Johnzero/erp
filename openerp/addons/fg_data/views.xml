@@ -47,6 +47,7 @@
                 <tree string="统计结果">
                     <field name="name"/>
                     <field name="value" sum="共计"/>
+                    <field name="desc"/>
                 </tree>
             </field>
         </record>

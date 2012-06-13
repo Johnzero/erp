@@ -22,23 +22,24 @@ class sale_report_by_day(osv.osv):
            tools.drop_view_if_exists(cr, 'fg_sale_order_report_daily')
            cr.execute("""
                create or replace view fg_sale_order_report_daily as (
-               SELECT
-                        MIN (line. ID) AS ID,
-                        o.date_confirm AS DATE,
-                        product."source",
-                        o.partner_id,
-                        SUM (line.subtotal_amount) AS amount
-                FROM
-                        fg_sale_order_line line
-                JOIN fg_sale_order o ON o."id" = line.order_id
-                JOIN product_product product ON product."id" = line.product_id
-                JOIN res_partner partner ON partner."id" = o.partner_id
-                WHERE
-                        o."state" = 'done'
-                GROUP BY
-                        product."source",
-                        o.partner_id,
-                        o.date_confirm
+                   SELECT
+                   	MIN(line."id")AS "id",
+                   	o.partner_id,
+                   	product."source",
+                   	o.date_confirm as date,
+                   	SUM(line.subtotal_amount)AS amount
+                   FROM
+                   	fg_sale_order_line line
+                   INNER JOIN fg_sale_order o ON line.order_id = o. ID
+                   INNER JOIN product_product product ON line.product_id = product."id"
+                   WHERE
+                   	o."state" = 'done'
+                   GROUP BY
+                   	o.partner_id,
+                   	o.date_confirm,
+                   	product."source"
+                   ORDER BY
+                   	o.partner_id ASC
                )
                """)
                

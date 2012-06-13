@@ -2,7 +2,7 @@
 <openerp>
 <data>
     
-    <!--<record model="ir.ui.view" id="fg_sale_order_report_daily_tree_view">
+    <record model="ir.ui.view" id="fg_sale_order_report_daily_tree_view">
         <field name="name">fg_sale.order.report.daily.tree</field>
         <field name="model">fg_sale.order.report.daily</field>
         <field name="type">tree</field>
@@ -15,6 +15,7 @@
             </tree>
         </field>
     </record>
+    
     <record model="ir.actions.act_window" id="action_fg_sale_order_report_daily_view">
         <field name="name">每日销售统计</field>
         <field name="type">ir.actions.act_window</field>
@@ -22,8 +23,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="fg_sale_order_report_daily_tree_view"/>
-    </record>-->
-    
+    </record>
     
 
     <record id="view_fg_sale_order_report_monthly_tree" model="ir.ui.view">

@@ -85,10 +85,10 @@
                 <form string="客户销量统计">
                     <field name="date_start"/>
                     <field name="date_end"/>
-                    <field name="partner_id"/>
+                    <field name="source"/>
                     <group colspan="4" col="6">
                         <button  icon="gtk-close" special="cancel" string="关闭"/>
-                        <button icon="gtk-ok" name="show_result" string="生成" type="object"/>
+                        <button icon="gtk-ok" name="show_result" string="显示" type="object"/>
                     </group>
                 </form>
             </field>

@@ -10,7 +10,7 @@ class amount_by_partner_wizard(osv.osv_memory):
     _columns = {
         'date_start': fields.date('开始日期', required=True),
         'date_end': fields.date('截止日期', required=True),
-        'partner_id':fields.many2one('res.partner', '客户', required=True),
+        'source':fields.boolean('分事业部统计'),
     }
     _defaults = {
         'date_end': fields.date.context_today,
@@ -18,26 +18,43 @@ class amount_by_partner_wizard(osv.osv_memory):
     
     def show_result(self, cr, uid, ids, context=None):
         this = self.browse(cr, uid, ids)[0]
-        
         sql = """
         SELECT
-                "source",
-                SUM (amount)
+        	P . NAME,
+        	SUM(amount)
         FROM
-                fg_sale_order_report_daily
+        	fg_sale_order_report_daily d
+        JOIN res_partner P ON P ."id" = d.partner_id
         WHERE
-                DATE >= to_date('%s', 'YYYY-MM-DD')
-        AND DATE <= to_date('%s', 'YYYY-MM-DD')
-        AND partner_id = %s
+        	d."date" >= to_date('%s', 'YYYY-MM-DD')
+        AND d."date" <= to_date('%s', 'YYYY-MM-DD')
         GROUP BY
-                "source"
+        	P . NAME
         """
+        if this.source:
+            sql = """
+            SELECT
+            	P . NAME,
+            	SUM(amount),
+            	source
+            FROM
+            	fg_sale_order_report_daily d
+            JOIN res_partner P ON P ."id" = d.partner_id
+            WHERE
+            	d."date" >= to_date('%s', 'YYYY-MM-DD')
+            AND d."date" <= to_date('%s', 'YYYY-MM-DD')
+            GROUP BY
+            	P . NAME,
+            	source
+             ORDER BY
+            	p."name"
+            """
         
-        cr.execute(sql % (this.date_start, this.date_end, this.partner_id.id))
+        cr.execute(sql % (this.date_start, this.date_end))
         
         report_obj = self.pool.get('fg_data.report.horizontal')
         
-        ids = [report_obj.create(cr, uid, {'name':p[0], 'value':p[1]}) for p in cr.fetchall()]
+        ids = [report_obj.create(cr, uid, {'name':p[0], 'value':p[1], 'desc':(len(p)==3) and p[2] or ''}) for p in cr.fetchall()]
         
         act_obj = self.pool.get('ir.actions.act_window')
         mod_obj = self.pool.get('ir.model.data')
