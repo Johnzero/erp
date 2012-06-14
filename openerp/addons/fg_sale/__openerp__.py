@@ -16,6 +16,7 @@
         'wizard/report.xml',
         'report/sale_report_views.xml',
         'fg_sale_view.xml',
+        'sale_plan_view.xml',
         'fg_sale_sequence.xml',
     ],
     'demo_xml': [],
