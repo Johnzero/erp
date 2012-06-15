@@ -5,6 +5,23 @@ import tools
 from osv import fields, osv
 
 
+class sale_report_by_partner_source_month(osv.osv):
+    _name = "fg_sale.order.report.partner.source.month"
+    _auto = False
+    _rec_name = 'date'
+    
+    _columns = {
+        'date': fields.char('月份', size=12, readonly=True),
+        'year': fields.char('年份', size=12, readonly=True),
+        'month': fields.char('月份', size=12, readonly=True),
+        'plastic': fields.float('金额'),
+        'glass': fields.float('金额'),
+        'vacuume': fields.float('金额'),
+        'partner_id':fields.many2one('res.partner', '客户'),
+    }
+    _order = 'date asc'
+    
+
 class sale_report_by_day(osv.osv):
     _name = "fg_sale.order.report.daily"
     _auto = False
