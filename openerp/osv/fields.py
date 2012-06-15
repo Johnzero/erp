@@ -273,6 +273,10 @@ class date(_column):
             tools.DEFAULT_SERVER_DATE_FORMAT)
 
     @staticmethod
+    def context_this_month(model, cr, uid, context=None, timestamp=None):
+        return DT.date.today().strftime('%Y-%m')
+
+    @staticmethod
     def context_today(model, cr, uid, context=None, timestamp=None):
         """Returns the current date as seen in the client's timezone
            in a format fit for date fields.

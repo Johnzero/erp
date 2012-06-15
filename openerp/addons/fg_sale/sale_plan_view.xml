@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="fg_sale_annual_plan_form_view">
-            <field name="name">fg_sale.annual.plan.form</field>
-            <field name="model">fg_sale.annual.plan</field>
+        <record model="ir.ui.view" id="fg_sale_monthly_plan_form_view">
+            <field name="name">fg_sale.monthly.plan.form</field>
+            <field name="model">fg_sale.monthly.plan</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="年度计划">
+                <form string="月度计划">
                     <group col="6" colspan="4">
                         <field name="name" select="1"/>
                         <field name="date_plan"/>
@@ -40,9 +40,9 @@
             </field>
         </record>
         
-        <record model="ir.ui.view" id="fg_sale_annual_plan_tree_view">
-            <field name="name">fg_sale.annual.plan.tree</field>
-            <field name="model">fg_sale.annual.plan</field>
+        <record model="ir.ui.view" id="fg_sale_monthly_plan_tree_view">
+            <field name="name">fg_sale.monthly.plan.tree</field>
+            <field name="model">fg_sale.monthly.plan</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="年度计划">
@@ -53,16 +53,16 @@
             </field>
         </record>
         
-        <record model="ir.actions.act_window" id="action_fg_sale_annual_plan_tree_view">
+        <record model="ir.actions.act_window" id="action_fg_sale_monthly_plan_tree_view">
             <field name="name">年度计划</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_sale.annual.plan</field>
+            <field name="res_model">fg_sale.monthly.plan</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="fg_sale_annual_plan_tree_view"/>
+            <field name="view_id" ref="fg_sale_monthly_plan_tree_view"/>
         </record>
-        <menuitem id="fg_sale_annual_plan_menu" name="年度计划" parent="menu_fg_sale"  sequence="2"/>
-        <menuitem id="fg_sale_annual_plan_menu_all" name="年度计划" parent="fg_sale_annual_plan_menu" action="action_fg_sale_annual_plan_tree_view"  sequence="0"/>
+        <menuitem id="fg_sale_monthly_plan_menu" name="年度计划" parent="menu_fg_sale"  sequence="2"/>
+        <menuitem id="fg_sale_monthly_plan_menu_all" name="年度计划" parent="fg_sale_monthly_plan_menu" action="action_fg_sale_monthly_plan_tree_view"  sequence="0"/>
         
     </data>
 </openerp>
