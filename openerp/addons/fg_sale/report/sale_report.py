@@ -5,8 +5,8 @@ import tools
 from osv import fields, osv
 
 
-class sale_report_by_partner_source_month(osv.osv):
-    _name = "fg_sale.order.report.partner.source.month"
+class sale_report_sale_progress_month(osv.osv):
+    _name = "fg_sale.progress.report.month"
     _auto = False
     _rec_name = 'date'
     
@@ -20,7 +20,20 @@ class sale_report_by_partner_source_month(osv.osv):
         'partner_id':fields.many2one('res.partner', '客户'),
     }
     _order = 'date asc'
-    
+
+"""
+SELECT 
+	sum(CASE WHEN source='塑胶事业部' THEN amount ELSE 0 END) AS plastic,
+	sum(CASE WHEN source='玻璃事业部' THEN amount ELSE 0 END) AS glass,
+	sum(CASE WHEN source='真空事业部' THEN amount ELSE 0 END) AS vacuume
+FROM
+"public".fg_sale_order_report_daily
+Where partner_id = 2
+GROUP BY 
+partner_id
+
+
+"""
 
 class sale_report_by_day(osv.osv):
     _name = "fg_sale.order.report.daily"
