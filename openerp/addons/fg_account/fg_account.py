@@ -37,7 +37,7 @@ class account_bill(osv.osv):
         'user_id': fields.many2one('res.users', '录入', select=True, readonly=True),
         'date_paying': fields.date('收款日期', select=True),
         'checker_id': fields.many2one('res.users', '检查人', select=True, readonly=True),
-        'date_check': fields.date('检查日期', readonly=True, select=True),
+        'date_check': fields.date('检查日期',readonly=False, required=True,states={'done': [('readonly', True)]}, select=True),
         'category_id':fields.many2one('fg_account.bill.category', '分类', required=True,readonly=False, states={'done': [('readonly', True)]}, select=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=False, states={'done': [('readonly', True)]}, select=True),
         'amount': fields.float('金额', digits=(16,4),required=True,readonly=False, states={'done': [('readonly', True)]},),
@@ -85,7 +85,7 @@ class account_bill(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'check', 
             'checker_id': uid, 
-            'date_check': fields.date.context_today(self, cr, uid, context=context),
+            #'date_check': fields.date.context_today(self, cr, uid, context=context),
             }
         )
 
