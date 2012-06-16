@@ -35,7 +35,7 @@ class account_bill(osv.osv):
     _columns = {
         'name': fields.char('单号', size=64, select=True, readonly=True),
         'user_id': fields.many2one('res.users', '录入', select=True, readonly=True),
-        'date_paying': fields.date('收款日期', select=True),
+        'date_paying': fields.date('收款日期', select=True, readonly=True),
         'checker_id': fields.many2one('res.users', '检查人', select=True, readonly=True),
         'date_check': fields.date('检查日期',readonly=False, required=True,states={'done': [('readonly', True)]}, select=True),
         'category_id':fields.many2one('fg_account.bill.category', '分类', required=True,readonly=False, states={'done': [('readonly', True)]}, select=True),
