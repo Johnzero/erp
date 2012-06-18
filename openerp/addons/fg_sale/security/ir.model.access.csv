@@ -14,5 +14,3 @@
 "fg_sale_user_partner","group_fg_sale_user res_partner","base.model_res_partner","fg_sale.group_fg_sale_user",1,1,1,0
 "fg_sale_user_partner_address","group_fg_sale_user res_partner_address","base.model_res_partner_address","fg_sale.group_fg_sale_user",1,1,1,0
 
-"fg_sale_annual_plan_manager","group_fg_sale_manager fg_sale_annual_plan","model_fg_sale_annual_plan","fg_sale.group_fg_sale_manager",1,1,1,0
-"fg_sale_annual_plan_line_manager","group_fg_sale_manager fg_sale_annual_plan_line","model_fg_sale_annual_plan_line","fg_sale.group_fg_sale_manager",1,1,1,1

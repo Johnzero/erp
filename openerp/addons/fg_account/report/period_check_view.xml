@@ -37,8 +37,10 @@
                     <field name="note"/>
                     <field name="cleared" groups="fg_account.group_fg_account_manager" />
                     <button name="button_view" string="单据" icon="STOCK_JUMP_TO" type="object"/>
-                    <button name="button_clear" groups="fg_account.group_fg_account_manager" confirm="是否确认清账?" string="清" type="object" icon="shou" 
+                    <button name="button_clear" groups="fg_account.group_fg_account_manager" confirm="是否清账?" string="清账" type="object" icon="shou" 
                         attrs="{'invisible':[('cleared','=',True)]}"/>
+                    <button name="button_unclear" groups="fg_account.group_fg_account_manager" confirm="是否反清账?" string="反清账" type="object" icon="STOCK_DIALOG_WARNING" 
+                        attrs="{'invisible':[('cleared','=',False)]}"/>
                 </tree>
             </field>
         </record>

@@ -87,6 +87,15 @@ class period_check(osv.osv):
         order_obj.write(cr, uid, ids, {'clear':True})
 
         return True
+
+    def button_unclear(self, cr, uid, ids, context=None):
+        order_obj = self.pool.get('fg_sale.order')
+        #this should all be order.
+        #check_record's id IS the id of order.
+        order_obj.write(cr, uid, ids, {'clear':False})
+
+        return True
+
     
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'fg_account_period_check')

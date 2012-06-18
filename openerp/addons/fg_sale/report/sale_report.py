@@ -5,35 +5,35 @@ import tools
 from osv import fields, osv
 
 
-class sale_report_sale_progress_month(osv.osv):
-    _name = "fg_sale.progress.report.month"
-    _auto = False
-    _rec_name = 'date'
-    
-    _columns = {
-        'date': fields.char('月份', size=12, readonly=True),
-        'year': fields.char('年份', size=12, readonly=True),
-        'month': fields.char('月份', size=12, readonly=True),
-        'plastic': fields.float('金额'),
-        'glass': fields.float('金额'),
-        'vacuume': fields.float('金额'),
-        'partner_id':fields.many2one('res.partner', '客户'),
-    }
-    _order = 'date asc'
-
-"""
-SELECT 
-	sum(CASE WHEN source='塑胶事业部' THEN amount ELSE 0 END) AS plastic,
-	sum(CASE WHEN source='玻璃事业部' THEN amount ELSE 0 END) AS glass,
-	sum(CASE WHEN source='真空事业部' THEN amount ELSE 0 END) AS vacuume
-FROM
-"public".fg_sale_order_report_daily
-Where partner_id = 2
-GROUP BY 
-partner_id
-
-
-"""
+# class sale_report_sale_progress_month(osv.osv):
+#     _name = "fg_sale.progress.report.month"
+#     _auto = False
+#     _rec_name = 'date'
+#     
+#     _columns = {
+#         'date': fields.char('月份', size=12, readonly=True),
+#         'year': fields.char('年份', size=12, readonly=True),
+#         'month': fields.char('月份', size=12, readonly=True),
+#         'plastic': fields.float('金额'),
+#         'glass': fields.float('金额'),
+#         'vacuume': fields.float('金额'),
+#         'partner_id':fields.many2one('res.partner', '客户'),
+#     }
+#     _order = 'date asc'
+# 
+# """
+# SELECT 
+#   sum(CASE WHEN source='塑胶事业部' THEN amount ELSE 0 END) AS plastic,
+#   sum(CASE WHEN source='玻璃事业部' THEN amount ELSE 0 END) AS glass,
+#   sum(CASE WHEN source='真空事业部' THEN amount ELSE 0 END) AS vacuume
+# FROM
+# "public".fg_sale_order_report_daily
+# Where partner_id = 2
+# GROUP BY 
+# partner_id
+# 
+# 
+# """
 
 class sale_report_by_day(osv.osv):
     _name = "fg_sale.order.report.daily"
@@ -56,17 +56,17 @@ class sale_report_by_day(osv.osv):
                    	MIN(line."id")AS "id",
                    	o.partner_id,
                    	product."source",
-                   	o.date_confirm as date,
+                   	o.date_order as date,
                    	SUM(line.subtotal_amount)AS amount
                    FROM
                    	fg_sale_order_line line
                    INNER JOIN fg_sale_order o ON line.order_id = o. ID
                    INNER JOIN product_product product ON line.product_id = product."id"
                    WHERE
-                   	o."state" = 'done'
+                   	(o."state" = 'done' or o.minus = TRUE)
                    GROUP BY
                    	o.partner_id,
-                   	o.date_confirm,
+                   	o.date_order,
                    	product."source"
                    ORDER BY
                    	o.partner_id ASC
