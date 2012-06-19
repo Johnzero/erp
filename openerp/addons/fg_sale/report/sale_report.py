@@ -8,10 +8,40 @@ from osv import fields, osv
 class sale_report_sale_progress_month(osv.osv):
     _name = "fg_sale.progress.report.month"
     _auto = False
-    _rec_name = 'date'
+    _rec_name = 'plan_month'
+    
+    def _plastic_progress(self, cr, uid, ids, field_names, args, context=None):
+        report_obj = self.pool.get('fg_sale.progress.report.month')
+        res = {}
+        
+        for r in self.browse(cr, uid, ids, context=context):
+            progress = 0.0
+            res[r.id] = {'plastic_progress' : (r.plastic_plan/r.plastic*100)}
+        
+        return res
+    
+    def _glass_progress(self, cr, uid, ids, field_names, args, context=None):
+        report_obj = self.pool.get('fg_sale.progress.report.month')
+        res = {}
+        
+        for r in self.browse(cr, uid, ids, context=context):
+            progress = 0.0
+            res[r.id] = {'glass_progress' : (r.glass_plan/r.glass*100)}
+        
+        return res
+    
+    def _vacuume_progress(self, cr, uid, ids, field_names, args, context=None):
+        report_obj = self.pool.get('fg_sale.progress.report.month')
+        res = {}
+        
+        for r in self.browse(cr, uid, ids, context=context):
+            progress = 0.0
+            res[r.id] = {'vacuume_progress' : (r.vacuume_plan/r.vacuume*100)}
+        
+        return res
     
     _columns = {
-        'plan_month': fields.char('月份', size=12, readonly=True),
+        'plan_month': fields.date('月份'),
         'partner_id':fields.many2one('res.partner', '客户'),
         'plastic': fields.float('塑胶事业部计划'),
         'plastic_plan':fields.float('塑胶事业部完成'),
@@ -19,58 +49,63 @@ class sale_report_sale_progress_month(osv.osv):
         'glass_plan':fields.float('玻璃事业部完成'),
         'vacuume': fields.float('真空事业部计划'),
         'vacuume_plan': fields.float('真空事业部完成'),
+        'plastic_progress': fields.function(_plastic_progress, string='完成度 (%)', store=False),
+        'glass_progress': fields.function(_glass_progress, string='完成度 (%)', store=False),
+        'vacuume_progress': fields.function(_vacuume_progress, string='完成度 (%)', store=False),
     }
-    _order = 'date asc'
-    
+    _order = 'plan_month asc'
+
     def init(self, cr):
            tools.drop_view_if_exists(cr, 'fg_sale_progress_report_month')
+
            cr.execute("""
                create or replace view fg_sale_progress_report_month as (
                    SELECT
-                   	date_trunc('month', plan.date_plan) as plan_month,
-                   	line.partner_id,
-                   	line.vacuume,
-                   	line.plastic,
-                   	line.glass,
-                   	SUM(
-                   		CASE
-                   		WHEN daily. SOURCE = '塑胶事业部' THEN
-                   			daily.amount
-                   		ELSE
-                   			0
-                   		END
-                   	)AS plastic_plan,
-                   	SUM(
-                   		CASE
-                   		WHEN daily. SOURCE = '玻璃事业部' THEN
-                   			daily.amount
-                   		ELSE
-                   			0
-                   		END
-                   	)AS glass_plan,
-                   	SUM(
-                   		CASE
-                   		WHEN daily. SOURCE = '真空事业部' THEN
-                   			daily.amount
-                   		ELSE
-                   			0
-                   		END
-                   	)AS vacuume_plan
-                   FROM
-                   	fg_sale_monthly_plan_line line
-                   JOIN fg_sale_monthly_plan plan ON plan."id" = line.plan_id
-                   JOIN fg_sale_order_report_daily daily ON daily.partner_id = line.partner_id
-                   WHERE
-                   	date_trunc('month', plan.date_plan)= date_trunc('month', daily."date")
-                   GROUP BY
-                   	plan.date_plan,
-                   	line.partner_id,
-                   	line.vacuume,
-                   	line.plastic,
-                   	line.glass
-               )"""
-           )
-    
+                       min(line.id) as id,
+                      	date_trunc('month', plan.date_plan) as plan_month,
+                      	line.partner_id,
+                      	line.vacuume,
+                      	line.plastic,
+                      	line.glass,
+                      	SUM(
+                      		CASE
+                      		WHEN daily. SOURCE = '塑胶事业部' THEN
+                      			daily.amount
+                      		ELSE
+                      			0
+                      		END
+                      	)AS plastic_plan,
+                      	SUM(
+                      		CASE
+                      		WHEN daily. SOURCE = '玻璃事业部' THEN
+                      			daily.amount
+                      		ELSE
+                      			0
+                      		END
+                      	)AS glass_plan,
+                      	SUM(
+                      		CASE
+                      		WHEN daily. SOURCE = '真空事业部' THEN
+                      			daily.amount
+                      		ELSE
+                      			0
+                      		END
+                      	)AS vacuume_plan
+                      FROM
+                      	fg_sale_monthly_plan_line line
+                      JOIN fg_sale_monthly_plan plan ON plan."id" = line.plan_id
+                      JOIN fg_sale_order_report_daily daily ON daily.partner_id = line.partner_id
+                      WHERE
+                      	date_trunc('month', plan.date_plan)= date_trunc('month', daily."date")
+                      GROUP BY
+                      	plan.date_plan,
+                      	line.partner_id,
+                      	line.vacuume,
+                      	line.plastic,
+                      	line.glass
+               )
+               """)
+
 
 class sale_report_by_day(osv.osv):
     _name = "fg_sale.order.report.daily"
