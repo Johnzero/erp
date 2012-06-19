@@ -4,6 +4,170 @@ import tools, base64
 from osv import fields, osv
 import xlwt, cStringIO
 
+
+class amount_by_fga_product(osv.osv_memory):
+    _name = "fg_sale.fga.product.export.wizard"
+    _description = "FGA产品销量统计"
+    
+    _columns = {
+        'name': fields.char('文件名', 16, readonly=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': 'report.xls',
+    }
+    
+    
+    def export_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        
+        sql = """
+        SELECT
+                product.name_template,
+                product.default_code,
+                SUM (line.subtotal_amount) AS amount
+        FROM
+                fg_sale_order_line line
+        JOIN fg_sale_order o ON o."id" = line.order_id
+        JOIN product_product product ON product."id" = line.product_id
+        WHERE
+                (
+                        o."state" = 'done'
+                        OR o.minus = TRUE
+                )
+        AND (
+                product.default_code LIKE 'FS%s'
+                OR product.default_code LIKE 'FB%s'
+                OR product.default_code LIKE 'FZ%s'
+        )
+        AND o.date_order >= to_date('%s', 'YYYY-MM-DD')
+        AND o.date_order <= to_date('%s', 'YYYY-MM-DD')
+        GROUP BY
+                product.name_template,
+                product.default_code
+        """
+        
+        cr.execute(sql % ('%', '%', '%', this.date_start, this.date_end))
+        
+        book = xlwt.Workbook(encoding='utf-8')
+        sheet1 = book.add_sheet(u'统计')
+        
+        r = 0
+        for p in cr.fetchall():
+            c = 0
+            for x in p:
+                sheet1.write(r, c, x)
+                c = c + 1
+            
+            r = r + 1
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+        
+        out=base64.encodestring(buf.getvalue())
+        
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
+        
+
+class amount_by_fga_partner(osv.osv_memory):
+    _name = "fg_sale.fga.partner.export.wizard"
+    _description = "FGA客户销量统计"
+    
+    _columns = {
+        'name': fields.char('文件名', 16, readonly=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'source':fields.boolean('分事业部统计'),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': 'report.xls',
+    }
+    
+    
+    def export_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        
+        sql = """
+        SELECT
+                p."name",
+                SUM (amount)
+        FROM
+                fg_sale_order_report_daily d
+        JOIN res_partner P ON P ."id" = d.partner_id
+        JOIN res_partner_category_rel rel ON rel.partner_id = P ."id"
+        JOIN res_partner_category cate ON cate."id" = rel.category_id
+        WHERE
+                cate."id" = 4
+        AND d."date" >= to_date('%s', 'YYYY-MM-DD')
+        AND d."date" <= to_date('%s', 'YYYY-MM-DD')
+        GROUP BY
+                p."name",
+                d.partner_id
+        ORDER BY
+                d.partner_id
+        
+        """
+        if this.source:
+            sql = """
+                SELECT
+                        p."name",
+                        d."source",
+                        SUM (amount)
+                FROM
+                        fg_sale_order_report_daily d
+                JOIN res_partner P ON P ."id" = d.partner_id
+                JOIN res_partner_category_rel rel ON rel.partner_id = P ."id"
+                JOIN res_partner_category cate ON cate."id" = rel.category_id
+                WHERE
+                        cate."id" = 4
+                AND d."date" >= to_date('%s', 'YYYY-MM-DD')
+                AND d."date" <= to_date('%s', 'YYYY-MM-DD')
+                GROUP BY
+                        p."name",
+                        d.partner_id,
+                        d."source"
+                ORDER BY
+                        d.partner_id
+                
+                """
+        
+        cr.execute(sql % (this.date_start, this.date_end))
+        
+        book = xlwt.Workbook(encoding='utf-8')
+        sheet1 = book.add_sheet(u'统计')
+        
+        r = 0
+        for p in cr.fetchall():
+            c = 0
+            for x in p:
+                sheet1.write(r, c, x)
+                c = c + 1
+            
+            r = r + 1
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+        
+        out=base64.encodestring(buf.getvalue())
+        
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
+        
+
+
+
 class amount_by_partner_wizard(osv.osv_memory):
     _name = "fg_sale.amount.parnter.wizard"
     _description = "客户销量统计"
@@ -20,34 +184,34 @@ class amount_by_partner_wizard(osv.osv_memory):
         this = self.browse(cr, uid, ids)[0]
         sql = """
         SELECT
-        	P . NAME,
-        	SUM(amount)
+                P . NAME,
+                SUM(amount)
         FROM
-        	fg_sale_order_report_daily d
+                fg_sale_order_report_daily d
         JOIN res_partner P ON P ."id" = d.partner_id
         WHERE
-        	d."date" >= to_date('%s', 'YYYY-MM-DD')
+                d."date" >= to_date('%s', 'YYYY-MM-DD')
         AND d."date" <= to_date('%s', 'YYYY-MM-DD')
         GROUP BY
-        	P . NAME
+                P . NAME
         """
         if this.source:
             sql = """
             SELECT
-            	P . NAME,
-            	SUM(amount),
-            	source
+                P . NAME,
+                SUM(amount),
+                source
             FROM
-            	fg_sale_order_report_daily d
+                fg_sale_order_report_daily d
             JOIN res_partner P ON P ."id" = d.partner_id
             WHERE
-            	d."date" >= to_date('%s', 'YYYY-MM-DD')
+                d."date" >= to_date('%s', 'YYYY-MM-DD')
             AND d."date" <= to_date('%s', 'YYYY-MM-DD')
             GROUP BY
-            	P . NAME,
-            	source
+                P . NAME,
+                source
              ORDER BY
-            	p."name"
+                p."name"
             """
         
         cr.execute(sql % (this.date_start, this.date_end))

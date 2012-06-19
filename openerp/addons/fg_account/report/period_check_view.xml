@@ -105,7 +105,7 @@
         
         <menuitem id="menu_fg_account_period_check" parent="menu_fg_account" name="对账单" sequence="2" groups="fg_account.group_fg_account_checker,fg_account.group_fg_account_manager"/>
         
-        <menuitem id="menu_fg_account_period_check_all" action="action_fg_account_period_check_tree_view" parent="menu_fg_account_period_check" name="对账" sequence="2"/>
+        <menuitem id="menu_fg_account_period_check_all" parent="menu_fg_account_period_check" name="对账" sequence="2"/>
         <menuitem id="menu_fg_account_period_check_reconciled" action="action_fg_account_period_check_reconciled_tree_view" parent="menu_fg_account_period_check_all" sequence="0"/>
         <menuitem id="menu_fg_account_period_check_unreconciled" action="action_fg_account_period_check_unreconciled_tree_view" parent="menu_fg_account_period_check_all" sequence="1"/>
         

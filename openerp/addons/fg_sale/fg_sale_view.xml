@@ -167,15 +167,17 @@
         <menuitem id="menu_fg_sale_order_new" parent="menu_fg_sale_order" action="action_fg_sale_order_new" sequence="1"/>
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all" sequence="2" groups="fg_sale.group_fg_sale_manager"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my" sequence="3"/>
-        <menuitem id="menu_fg_sale_chart" name="报表" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" sequence="1"/>
+        <menuitem id="menu_fg_sale_chart" name="报表" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart,fg_sale.group_fg_sale_fga" sequence="1"/>
         <menuitem id="menu_fg_sale_admin" name="管理" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager" sequence="5"/>
         
-        <menuitem id="menu_fg_sale_chart_by_month" parent="menu_fg_sale_chart" action="action_fg_sale_report_by_month" sequence="0"/>
-        <menuitem id="menu_fg_sale_amount_partner_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_parnter_wizard" sequence="1"/>
-        <menuitem id="menu_fg_sale_amount_resource_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_resource_wizard" sequence="2"/>
+        <menuitem id="menu_fg_sale_chart_by_month" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_report_by_month" sequence="0"/>
+        <menuitem id="menu_fg_sale_amount_partner_wizard" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_parnter_wizard" sequence="1"/>
+        <menuitem id="menu_fg_sale_amount_resource_wizard" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_resource_wizard" sequence="2"/>
+        <menuitem id="menu_fg_sale_fga_partner_export_wizard" groups="fg_sale.group_fg_sale_fga" parent="menu_fg_sale_chart" action="action_fg_sale_report_fga_partner_export_wizard" sequence="3"/>
+        <menuitem id="menu_fg_sale_fga_product_export_wizard" groups="fg_sale.group_fg_sale_fga" parent="menu_fg_sale_chart" action="action_fg_sale_report_fga_product_export_wizard" sequence="4"/>
         
-        <menuitem id="menu_fg_sale_report_export_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_report_export_wizard" sequence="10"/>
-        <menuitem id="menu_fg_sale_report_order_export_wizard" parent="menu_fg_sale_chart" action="action_fg_sale_report_order_export_wizard" sequence="11"/>
+        <menuitem id="menu_fg_sale_report_export_wizard" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_report_export_wizard" sequence="10"/>
+        <menuitem id="menu_fg_sale_report_order_export_wizard" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_report_order_export_wizard" sequence="11"/>
         
         <!-- <menuitem id="menu_fg_sale_customer_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_customer_wizard_import"/>
         <menuitem id="menu_fg_sale_user_wizard_import" parent="menu_fg_sale_admin" action="action_fg_sale_user_wizard_import"/>
