@@ -18,7 +18,7 @@
     
     <record model="ir.ui.view" id="fg_sale_progress_report_month_tree_view">
         <field name="name">fg_sale.progress.report.month.tree</field>
-        <field name="model">fg_sale.progress.report.month</field>
+        <field name="model">fg_sale.plan.progress.month</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="销售计划">
@@ -30,9 +30,6 @@
                 <field name="glass_plan"/>
                 <field name="vacuume"/>
                 <field name="vacuume_plan"/>
-                <field name="plastic_progress" widget="progressbar"/>
-                <field name="glass_progress" widget="progressbar"/>
-                <field name="vacuume_progress" widget="progressbar"/>
             </tree>
         </field>
     </record>
@@ -40,7 +37,7 @@
     <record model="ir.actions.act_window" id="action_fg_sale_progress_report_month_tree_view">
         <field name="name">月度计划跟踪</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">fg_sale.progress.report.month</field>
+        <field name="res_model">fg_sale.plan.progress.month</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="fg_sale_progress_report_month_tree_view"/>
