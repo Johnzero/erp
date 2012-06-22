@@ -13,6 +13,12 @@
 	    <record id="group_fg_sale_fga" model="res.groups">
 	        <field name="name">业务开单系统 / FGA组</field>
 	    </record>
+	    <record id="group_fg_sale_sale_user" model="res.groups">
+	        <field name="name">业务开单系统 / 销售部业务员组</field>
+	    </record>
+	     <record id="group_fg_sale_sale_manager" model="res.groups">
+    	        <field name="name">业务开单系统 / 销售部经理组</field>
+    	    </record>
 	    <record id="fg_sale_fga_strict" model="ir.rule">
 	         <field name="name">fga fg_order</field>
              <field name="model_id" ref="model_fg_sale_order"/>
