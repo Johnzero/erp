@@ -61,7 +61,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="fg_sale_monthly_plan_tree_view"/>
         </record>
-        <menuitem id="fg_sale_monthly_plan_menu" name="年度计划" parent="menu_fg_sale"  sequence="2"/>
+        <menuitem id="fg_sale_monthly_plan_menu" name="年度计划" parent="menu_fg_sale"  sequence="3"/>
         <menuitem id="fg_sale_monthly_plan_menu_all" name="年度计划" parent="fg_sale_monthly_plan_menu" action="action_fg_sale_monthly_plan_tree_view"  sequence="0"/>
         <menuitem id="fg_sale_monthly_plan_report_menu" name="计划完成度" parent="fg_sale_monthly_plan_menu" action="action_fg_sale_progress_report_month_tree_view"  sequence="1"/>
         

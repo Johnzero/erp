@@ -267,10 +267,10 @@ class cust_order(osv.osv):
         'contact':fields.char('联系人', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'phone':fields.char('联系电话', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'date_delivery':fields.date('交货日期', readonly=True, states={'draft': [('readonly', False)]}),
-        'delivery_delivery':fields.char('交货地址', size=128, readonly=True, states={'draft': [('readonly', False)]}),
+        'delivery_addr':fields.char('交货地址', size=128, readonly=True, states={'draft': [('readonly', False)]}),
         'amount_paid': fields.float('已付金额', digits=(10,2), readonly=True, states={'draft': [('readonly', False)]}),
         'invoice_type':fields.char('发票类型',size=64, readonly=True, states={'draft': [('readonly', False)]}),
-        'amount_left': fields.char('余额支付说明', size=64, readonly=True, states={'draft': [('readonly', False)]}),
+        'amount_left_info': fields.char('余额支付说明', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'delivery_method':fields.char('交货方式', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'delivery_fee':fields.char('运费承担方', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         
@@ -294,7 +294,7 @@ class cust_order(osv.osv):
     
 
 class cust_order_line(osv.osv):
-    _name = "fg_sale.cust.order"
+    _name = "fg_sale.cust.order.line"
     _description = "富光销售部定制杯清单"
 
     _columns = {
