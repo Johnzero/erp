@@ -15,7 +15,7 @@
         </record>
         
         <record id="seq_type_fg_sale_cust_order" model="ir.sequence.type">
-            <field name="name">Fuguang Sale CUst Order</field>
+            <field name="name">Fuguang Sale Cust Order</field>
             <field name="code">fg_sale.cust.order</field>
         </record>
         <record id="seq_fg_sale_cust_order" model="ir.sequence">
@@ -25,4 +25,17 @@
             <field name="padding">4</field>
             <field name="implementation">no_gap</field>
         </record>
+        
+        <record id="seq_type_fg_sale_price_protection" model="ir.sequence.type">
+            <field name="name">Fuguang Sale Price Protection</field>
+            <field name="code">fg_sale.price.protection</field>
+        </record>
+        <record id="seq_fg_sale_price_protection" model="ir.sequence">
+            <field name="name">Fuguang Sale Price Protection</field>
+            <field name="code">fg_sale.price.protection</field>
+            <field name="prefix">FGSPP-%(year)s%(month)s%(day)s</field>
+            <field name="padding">1</field>
+            <field name="implementation">no_gap</field>
+        </record>
+        
     </data></openerp>

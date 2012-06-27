@@ -281,11 +281,25 @@ class cust_order(osv.osv):
         'note': fields.text('备注'),
     }
     
+    
+    def create(self, cr, uid, vals, context=None):
+        if not vals.has_key('name'):
+            obj_sequence = self.pool.get('ir.sequence')
+            vals['name'] = obj_sequence.get(cr, uid, 'fg_sale.cust.order')
+            
+            
+        id = super(cust_order, self).create(cr, uid, vals, context)
+        
+        return id
+    
     _defaults = {
         'date_order': fields.date.context_today,
         'state': 'draft',
         'user_id': lambda obj, cr, uid, context: uid,
     }
+    
+    def copy(self, cr, uid, id, default={}, context=None):
+        raise osv.except_osv('不允许复制', '订单不允许复制.')
 
     _sql_constraints = [
         ('name_uniq', 'unique(name)', '订单编号不能重复!'),
@@ -310,5 +324,55 @@ class cust_order_line(osv.osv):
 class sale_order(osv.osv):
     _inherit = 'fg_sale.order'
     _columns = {
-        'cust_order_id': fields.float('比率', digit=2),
+        'cust_order_id': fields.float('比率', digit=2, required=False),
     }
+
+class price_protection(osv.osv):
+    _name = "fg_sale.price.protection"
+    _description = "价格保护申请单"
+    
+    _columns = {
+        'name': fields.char('单号', size=64, select=True, readonly=True),
+        'date': fields.date('日期', required=True, readonly=True, select=True),
+        'due_date_from': fields.date('开始日期', required=True, select=True),
+        'due_date_to':fields.date('结束日期', required=True, select=True),
+        'user_id': fields.many2one('res.users', '制单人', select=True, readonly=True),
+        'partner_id': fields.many2one('res.partner', '申请经销商', required=True, change_default=True, select=True),
+        'customer': fields.char('客户', size=64, select=True),
+        'product_id': fields.many2one('product.product', '产品', required=True, domain=[('sale_ok', '=', True)], change_default=True),
+        'product_uom_qty': fields.float('数量(只)', required=True, digits=(16,0)),
+        'unit_price': fields.float('价格', required=True, digits=(16,4)),
+    }
+    
+    def create(self, cr, uid, vals, context=None):
+        if not vals.has_key('name'):
+            obj_sequence = self.pool.get('ir.sequence')
+            vals['name'] = obj_sequence.get(cr, uid, 'fg_sale.price.protection')
+            
+            
+        id = super(price_protection, self).create(cr, uid, vals, context)
+        
+        return id
+    
+    def copy(self, cr, uid, id, default={}, context=None):
+        raise osv.except_osv('不允许复制', '订单不允许复制.')
+    
+    def product_id_change(self, cr, uid, ids, product_id, context=None):
+        if not product_id:
+            return {'value':{'unit_price':0}}
+        result = {}
+        product_obj = self.pool.get('product.product')
+
+        product = product_obj.browse(cr, uid, product_id, context=context)
+        result['unit_price'] = product.lst_price
+
+        return {'value': result}
+    
+    
+    _defaults = {
+        'date': fields.date.context_today,
+        'due_date_from':fields.date.context_today,
+        'user_id': lambda obj, cr, uid, context: uid,
+    }
+
+    _order = 'name desc'
