@@ -74,10 +74,8 @@ class sale_order(osv.osv):
             count = res and res[0] or 0
             
             vals['sub_name'] = "FGSO-%s-%s" % ( initial, count+1 )
-            
-        id = super(sale_order, self).create(cr, uid, vals, context)
-        
-        return id
+
+        return super(sale_order, self).create(cr, uid, vals, context)
     
     
     def onchange_partner_id(self, cr, uid, ids, part):
@@ -321,11 +319,11 @@ class cust_order_line(osv.osv):
         'note': fields.char('附注', size=100),
     }
 
-class sale_order(osv.osv):
-    _inherit = 'fg_sale.order'
-    _columns = {
-        'cust_order_id': fields.float('比率', digit=2, required=False),
-    }
+# class sale_order(osv.osv):
+#     _inherit = 'fg_sale.order'
+#     _columns = {
+#         'cust_order_id': fields.float('比率', digit=2, required=False),
+#     }
 
 class price_protection(osv.osv):
     _name = "fg_sale.price.protection"
