@@ -5,6 +5,44 @@ import tools
 from osv import fields, osv
 
 
+class sale_report_source_day(osv.osv):
+    _name = "fg_sale.order.report.daily.source"
+    _auto = False
+    _rec_name = 'date'
+    
+    _columns = {
+        'date': fields.date('日期'),
+        'amount': fields.float('金额'),
+        'source':fields.char('事业部', size=10),
+    }
+    _order = 'date asc'
+    
+    def init(self, cr):
+           tools.drop_view_if_exists(cr, 'fg_sale_order_report_daily_source')
+           cr.execute("""
+               create or replace view fg_sale_order_report_daily_source as (
+                   SELECT
+                   	MIN(line."id")AS "id",
+                   	product."source",
+                   	o.date_order AS DATE,
+                   	SUM(line.subtotal_amount)AS amount
+                   FROM
+                   	fg_sale_order_line line
+                   INNER JOIN fg_sale_order o ON line.order_id = o. ID
+                   INNER JOIN product_product product ON line.product_id = product."id"
+                   WHERE
+                   	(o."state" = 'done' OR o.minus = TRUE)
+                   AND(
+                   	o.date_order > CURRENT_DATE - INTERVAL '3 months'
+                   )
+                   GROUP BY
+                   	o.date_order,
+                   	product."source"
+                   ORDER BY
+                   	o.date_order ASC
+               )
+               """)
+
 
 class sale_report_by_day(osv.osv):
     _name = "fg_sale.order.report.daily"
@@ -44,7 +82,6 @@ class sale_report_by_day(osv.osv):
                )
                """)
                
-
 
 class sale_plan_progress(osv.osv):
     _name = "fg_sale.plan.progress.month"
