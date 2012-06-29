@@ -5,9 +5,67 @@ import time, xlrd, base64
 from tools import DEFAULT_SERVER_DATE_FORMAT
 import xlwt, cStringIO
 
+class cash_bill_import(osv.osv_memory):
+    _name = "fg_account.cash_bill.import.wizard"
+    _description = "导入现金账单明细"
+    
+    _columns = {
+        'excel': fields.binary('excel文件', filters='*.xls'),
+    }
+    
+    
+    def import_bill(self, cr, uid, ids, context=None):
+        result = {'type': 'ir.actions.act_window_close'}
+        for wiz in self.browse(cr,uid,ids):
+            if not wiz.excel: continue
+            excel = xlrd.open_workbook(file_contents=base64.decodestring(wiz.excel))
+            sh = excel.sheet_by_index(0)
+            
+            bill_obj = self.pool.get('fg_account.bill')
+            act_obj = self.pool.get('ir.actions.act_window')
+            mod_obj = self.pool.get('ir.model.data')
+            partner_obj = self.pool.get('res.partner')
+            
+            new_ids = []
+            for rx in range(sh.nrows):
+                #如果第一个单元格是日期，则解析.
+                date_s = sh.cell(rx, 0).value
+                cash_in = sh.cell(rx, 3).value
+
+                if not cash_in: continue
+                
+                try:
+                    date = time.strptime(date_s.strip(),'%Y.%m.%d')
+                except:
+                    continue
+                
+                data = {
+                    'user_id':uid,
+                    'date_paying':time.strftime(DEFAULT_SERVER_DATE_FORMAT, date),
+                    'category_id':1,
+                    'amount':float(cash_in),
+                }
+                #check for partner_id
+                partner_name = sh.cell(rx, 2).value.strip()
+                if partner_name:
+                    partner_list = partner_obj.search(cr, uid, [('name','=',partner_name)])
+                    if partner_list:
+                        data['partner_id'] = partner_list[0]
+
+                id = bill_obj.create(cr, uid, data)
+                new_ids.append(id)
+            
+            result = mod_obj.get_object_reference(cr, uid, 'fg_account', 'action_fg_account_bill_all')
+            id = result and result[1] or False
+            result = act_obj.read(cr, uid, [id], context=context)[0]
+            result['domain'] = "[('id','in', ["+','.join(map(str, new_ids))+"])]"
+            
+        return result
+            
+            
 class bank_bill_import(osv.osv_memory):
     _name = "fg_account.bank_bill.import.wizard"
-    _description = "导入账单明细"
+    _description = "导入银行账单明细"
     
     _columns = {
         'excel': fields.binary('excel文件', filters='*.xls'),
