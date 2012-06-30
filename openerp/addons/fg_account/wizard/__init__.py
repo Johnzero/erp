@@ -43,6 +43,7 @@ class cash_bill_import(osv.osv_memory):
                     'user_id':uid,
                     'date_paying':time.strftime(DEFAULT_SERVER_DATE_FORMAT, date),
                     'category_id':1,
+                    'note':sh.cell(rx, 1).value,
                     'amount':float(cash_in),
                 }
                 #check for partner_id

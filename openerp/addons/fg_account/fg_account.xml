@@ -95,9 +95,10 @@
                     <field name="user_id"/>
                     <field name="date_paying"/>
                     <field name="partner_id"/>
-                    <field name="note"/>
                     <field name="amount"/>
+                    <field name="category_id"/>
                     <field name="state"/>
+                    <field name="note"/>
                     <button name="button_done" states="check" groups="fg_account.group_fg_account_manager" confirm="确认后,将不能再次修改, 是否确认?" string="收" type="object" icon="shou"/>
                 </tree>
             </field>
