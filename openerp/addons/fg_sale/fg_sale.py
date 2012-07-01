@@ -226,11 +226,10 @@ class sale_order_line(osv.osv):
             factor = 1
             if uoms:
                 factor = uoms[0].factor
-
             if product:
                 price = unit_price_new * factor * qty
                 
-                return {'value': {'subtotal_amount':price, 'aux_qty':product.uom_id.factor * qty}}
+                return {'value': {'subtotal_amount':price, 'aux_qty':factor * qty}}
         return {'value':{}}
 
 

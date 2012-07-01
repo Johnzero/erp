@@ -305,10 +305,10 @@ class report_order(osv.osv_memory):
         sheet1 = book.add_sheet(u'总体统计')
         
         order_list = order_obj.search(cr, uid, [
-                ('date_confirm','>=', this.date_start),
-                ('date_confirm','<=', this.date_end),
-                ('state','=','done')
-            ], order='date_confirm asc')
+                ('date_order','>=', this.date_start),
+                ('date_order','<=', this.date_end),
+                '|',('state','=','done'), ('minus','=', True)
+            ], order='date_order asc')
         cols = ['日期','发票号码','产品名称','规格型号','购货单位','单位','数量','数量/只','单价','金额','事业部','摘要']
         i = 0
         for c in cols:
