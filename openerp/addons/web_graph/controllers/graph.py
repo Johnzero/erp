@@ -26,7 +26,7 @@ class GraphView(View):
         field_x = fields[1]
         field_y = fields[2]
         field_z = (len(fields)==4) and fields[3] or ''
-        print domain
+
         ids = obj.search(domain)
             
         if ids:

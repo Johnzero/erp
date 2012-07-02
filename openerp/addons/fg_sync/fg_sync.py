@@ -39,7 +39,8 @@ class fg_sync_scheduler(osv.osv):
         partner_obj = self.pool.get('res.parnter')
         
         partners = partner_obj.search(cr, uid, [('ratio','<', 1), ('ratio','!=', 0)])
-        
+        for p in partners:
+            partner = partner_obj.read(cr, uid, [p])[0]
         
         
     
