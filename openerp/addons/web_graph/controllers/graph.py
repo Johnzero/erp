@@ -26,8 +26,8 @@ class GraphView(View):
         field_x = fields[1]
         field_y = fields[2]
         field_z = (len(fields)==4) and fields[3] or ''
-        
-        ids = obj.search([])
+        print domain
+        ids = obj.search(domain)
             
         if ids:
             records = obj.read(ids)
@@ -47,7 +47,7 @@ class GraphView(View):
                         
                     if r[field_z] not in groups:
                         groups.append(r[field_z])
-    
+                    
                     data_set[r[field_x]+r[field_z]] = r[field_y]
                 
                 #transform data
@@ -72,6 +72,7 @@ class GraphView(View):
     
     @openerpweb.jsonrequest
     def data_get(self, req, model=None, domain=[], group_by=[], view_id=False, context={}, **kwargs):
+
         obj = req.session.model(model)
         xml = obj.fields_view_get(view_id, 'graph')
         graph_xml = etree.fromstring(xml['arch'])

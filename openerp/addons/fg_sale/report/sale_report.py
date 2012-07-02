@@ -14,6 +14,8 @@ class sale_report_source_day(osv.osv):
         'date': fields.date('日期'),
         'amount': fields.float('金额'),
         'source':fields.char('事业部', size=10),
+        'due_date_from':fields.function(lambda *a,**k:{}, method=True, type='date',string="开始日期"),
+        'due_date_to':fields.function(lambda *a,**k:{}, method=True, type='date',string="结束日期"),
     }
     _order = 'date asc'
     
@@ -23,9 +25,9 @@ class sale_report_source_day(osv.osv):
                create or replace view fg_sale_order_report_daily_source as (
                    SELECT
                    	MIN(line."id")AS "id",
-                   	product."source",
                    	o.date_order AS DATE,
-                   	SUM(line.subtotal_amount)AS amount
+                   	SUM(line.subtotal_amount)AS amount,
+                        COALESCE(product.source, '未知来源') as source
                    FROM
                    	fg_sale_order_line line
                    INNER JOIN fg_sale_order o ON line.order_id = o. ID
@@ -64,7 +66,7 @@ class sale_report_by_day(osv.osv):
                    SELECT
                         MIN(line."id")AS "id",
                         o.partner_id,
-                        product."source",
+                        COALESCE(product.source, '未知来源') as source,
                         o.date_order as date,
                         SUM(line.subtotal_amount)AS amount
                    FROM
@@ -205,7 +207,7 @@ class sale_report_by_month(osv.osv):
               to_char(s.date_order, 'YYYY') as year,
               to_char(s.date_order, 'MM') as month,
               sum(l.subtotal_amount) as amount,
-              p.source as source
+              COALESCE(p.source, '未知来源') as source
             FROM 
               public.fg_sale_order_line l 
             left join product_product p on (l.product_id=p.id) 

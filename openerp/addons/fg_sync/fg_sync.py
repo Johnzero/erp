@@ -34,6 +34,15 @@ class fg_sync_scheduler(osv.osv):
         'server_port': lambda *args: 8069
     }
     
+    def do_init_ratio(self, cr, uid, ids, model):
+        """div all local lines which are un-synced. make it sync."""
+        partner_obj = self.pool.get('res.parnter')
+        
+        partners = partner_obj.search(cr, uid, [('ratio','<', 1), ('ratio','!=', 0)])
+        
+        
+        
+    
     def do_push(self, cr, uid, ids, model):
         pass
 
@@ -52,6 +61,7 @@ class fg_sync_scheduler(osv.osv):
             context = {}
         
         
+        
         #
         # for sync orders only.
         # if we come across 
@@ -61,3 +71,5 @@ class fg_sync_scheduler(osv.osv):
         
         
         return True
+    
+    

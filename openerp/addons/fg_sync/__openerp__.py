@@ -4,7 +4,8 @@
     'name': 'db view',
     'version': '1.0',
     'category' : 'utils',
-    'description': """db view""",
+    'description': """db view.
+    Do not install this on Master Name!!!!!""",
     'author': 'openerp',
     'website': 'http://www.openerp.org',
     'depends': ['base', 'fg_sale'],
