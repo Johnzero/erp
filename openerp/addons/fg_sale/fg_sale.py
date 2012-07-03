@@ -176,8 +176,8 @@ class sale_order_line(osv.osv):
         'sequence': fields.integer('Sequence'),
         'product_id': fields.many2one('product.product', '产品', required=True, domain=[('sale_ok', '=', True)], change_default=True),
         'product_uom': fields.many2one('product.uom', ' 单位', required=True),
-        'product_uom_qty': fields.float('数量', required=True, digits=(16,0)),
-        'aux_qty': fields.float('只数', required=True, digits=(16,0)),
+        'product_uom_qty': fields.float('数量', required=True, digits=(16,4)),
+        'aux_qty': fields.float('只数', required=True, digits=(16,4)),
         'unit_price': fields.float('单价', required=True, digits=(16,4)),
         'subtotal_amount': fields.float('小计', digits=(16,4)),
         'note': fields.char('附注', size=100),
@@ -337,7 +337,7 @@ class price_protection(osv.osv):
         'partner_id': fields.many2one('res.partner', '申请经销商', required=True, change_default=True, select=True),
         'customer': fields.char('客户', size=64, select=True),
         'product_id': fields.many2one('product.product', '产品', required=True, domain=[('sale_ok', '=', True)], change_default=True),
-        'product_uom_qty': fields.float('数量(只)', required=True, digits=(16,0)),
+        'product_uom_qty': fields.float('数量(只)', required=True, digits=(16,4)),
         'unit_price': fields.float('价格', required=True, digits=(16,4)),
     }
     
