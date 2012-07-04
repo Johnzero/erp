@@ -37,10 +37,10 @@
                             <field name="contact"/>
                             <field name="phone"/>
                             <field name="date_delivery"/>
+                            <field name="date_arrival_req"/>
                             <field name="delivery_addr"/>
                             <field name="delivery_method"/>
                             <field name="delivery_fee"/>
-                            <field name="invoice_type"/>
                             
                             <field colspan="4" name="order_line" nolabel="1" widget="one2many_list">
                                 <form string="销售明细">
@@ -48,20 +48,24 @@
                                     <field name="product_uom_qty"/>
                                     <field name="unit_price"/>
                                     <field name="cust_price"/>
-                                    <field name="cust_price"/>
+                                    <field name="extra_amount"/>
                                     <field name="subtotal_amount"/>
                                     <field name="note"/>
                                 </form>
-                                <tree string="定制杯清单">
+                                <tree string="定制杯清单" editable="bottom">
                                     <field name="product_id"/>
                                     <field name="product_uom_qty"/>
                                     <field name="unit_price"/>
                                     <field name="cust_price"/>
-                                    <field name="cust_price"/>
+                                    <field name="extra_amount"/>
                                     <field name="subtotal_amount"/>
                                     <field name="note"/>
                                 </tree>
                             </field>
+                        </page>
+                        <page string="发票信息">
+                            <field name="invoice_type"/>
+                            <field name="invoice_title"/>
                         </page>
                         <page string="备注">
                             <field name="note" nolabel="1"/>

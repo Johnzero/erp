@@ -33,9 +33,13 @@ class cust_order(osv.osv):
         'contact':fields.char('联系人', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'phone':fields.char('联系电话', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'date_delivery':fields.date('交货日期', readonly=True, states={'draft': [('readonly', False)]}),
+        'date_arrival_req':fields.date('要求到货日期', readonly=True, states={'draft': [('readonly', False)]}),
         'delivery_addr':fields.char('交货地址', size=128, readonly=True, states={'draft': [('readonly', False)]}),
         'amount_paid': fields.float('已付金额', digits=(10,2), readonly=True, states={'draft': [('readonly', False)]}),
-        'invoice_type':fields.char('发票类型',size=64, readonly=True, states={'draft': [('readonly', False)]}),
+        
+        'invoice_type':fields.selection([('none','不开票'),('common','普通发票'),('va','增值税发票')], '发票类型', readonly=True, states={'draft': [('readonly', False)]}),
+        'invoice_title':fields.char('发票抬头', size=64, readonly=True, states={'draft': [('readonly', False)]}),
+        
         'amount_left_info': fields.char('余额支付说明', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'delivery_method':fields.char('交货方式', size=64, readonly=True, states={'draft': [('readonly', False)]}),
         'delivery_fee':fields.char('运费承担方', size=64, readonly=True, states={'draft': [('readonly', False)]}),
@@ -83,6 +87,7 @@ class cust_order_line(osv.osv):
         'product_uom_qty': fields.float('数量', required=True, digits=(16,0)),
         'unit_price': fields.float('开票价', required=True, digits=(16,4)),
         'cust_price': fields.float('版费', required=True, digits=(16,4)),
+        'extra_amount':fields.float('附加费用', digits=(16,4)),
         'subtotal_amount': fields.float('小计', digits=(16,4)),
         'note': fields.char('附注', size=100),
     }
