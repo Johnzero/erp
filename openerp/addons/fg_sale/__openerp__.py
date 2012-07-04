@@ -15,6 +15,7 @@
         'wizard/order_import.xml',
         'wizard/report.xml',
         'report/sale_report_views.xml',
+        'cust_order_view.xml',
         'fg_sale_view.xml',
         'sale_plan_view.xml',
         'fg_sale_sequence.xml',

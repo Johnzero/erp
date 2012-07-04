@@ -24,24 +24,24 @@ class sale_report_source_day(osv.osv):
            cr.execute("""
                create or replace view fg_sale_order_report_daily_source as (
                    SELECT
-                   	MIN(line."id")AS "id",
-                   	o.date_order AS DATE,
-                   	SUM(line.subtotal_amount)AS amount,
+                        MIN(line."id")AS "id",
+                        o.date_order AS DATE,
+                        SUM(line.subtotal_amount)AS amount,
                         COALESCE(product.source, '未知来源') as source
                    FROM
-                   	fg_sale_order_line line
+                        fg_sale_order_line line
                    INNER JOIN fg_sale_order o ON line.order_id = o. ID
                    INNER JOIN product_product product ON line.product_id = product."id"
                    WHERE
-                   	(o."state" = 'done' OR o.minus = TRUE)
+                        (o."state" = 'done' OR o.minus = TRUE)
                    AND(
-                   	o.date_order > CURRENT_DATE - INTERVAL '3 months'
+                        o.date_order > CURRENT_DATE - INTERVAL '3 months'
                    )
                    GROUP BY
-                   	o.date_order,
-                   	product."source"
+                        o.date_order,
+                        product."source"
                    ORDER BY
-                   	o.date_order ASC
+                        o.date_order ASC
                )
                """)
 

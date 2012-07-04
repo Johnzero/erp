@@ -281,16 +281,6 @@
             <field name="view_mode">form,tree</field>
         </record>
         
-        <record model="ir.actions.act_window" id="action_fg_sale_cust_order_tree_view">
-            <field name="name">定制杯清单</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_sale.cust.order</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="fg_sale_cust_order_tree_view"/>
-        </record>
-        
-        
         <report auto="False" id="report_fg_sale_order_html" model="fg_sale.order"
                 name="fg_sale.order.html" rml="fg_sale/report/order.html"
                 string="打印产品清单" report_type="mako2html" />

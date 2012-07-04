@@ -32,7 +32,8 @@ class amount_by_fga_product(osv.osv_memory):
         SELECT
                 product.name_template,
                 product.default_code,
-                SUM (line.subtotal_amount) AS amount
+                SUM (line.subtotal_amount) AS amount,
+                SUM (line.aux_qty) AS qty
         FROM
                 fg_sale_order_line line
         JOIN fg_sale_order o ON o."id" = line.order_id
