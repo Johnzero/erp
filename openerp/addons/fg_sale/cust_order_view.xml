@@ -26,6 +26,7 @@
                         <field name="date_order"/>
                         <field name="user_id"/>
                         <field name="date_confirm"/>
+                        <field name="type"/>
                         <field name="confirmer_id"/>
                         <field name="amount_paid"/>
                         <field name="amount_left_info"/>
@@ -33,7 +34,8 @@
                     </group>
                     <notebook colspan="5">
                         <page string="定制杯清单">
-                            <field name="partner_id"/>
+                            <field name="partner_id" attrs="{'invisible' : [('type', '=','common')] }"/>
+                            <field name="client" attrs="{'invisible' : [('type', '=','partner')] }"/>
                             <field name="contact"/>
                             <field name="phone"/>
                             <field name="date_delivery"/>
@@ -67,6 +69,9 @@
                             <field name="invoice_type"/>
                             <field name="invoice_title"/>
                         </page>
+                        <page string="流程跟踪">
+                            <field name="logs" nolabel="1" widget="one2many_list"/>
+                        </page>
                         <page string="备注">
                             <field name="note" nolabel="1"/>
                         </page>
@@ -74,8 +79,7 @@
                     <group col="6" colspan="4">
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
                         <button name="button_dummy" states="draft" string="计算价格" type="object" icon="gtk-execute"/>
-                        <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=','draft')] }"/>
-                        <button name="button_cancel" confirm="确认取消?" string="取消" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                        <button name="button_review" confirm="一旦提交以后,将不能再修改, 确认提交?" string="提交" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=','draft')] }"/>
                     </group>
                 </form>
             </field>
