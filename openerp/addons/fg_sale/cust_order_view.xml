@@ -79,7 +79,8 @@
                     <group col="6" colspan="4">
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
                         <button name="button_dummy" states="draft" string="计算价格" type="object" icon="gtk-execute"/>
-                        <button name="button_review" confirm="一旦提交以后,将不能再修改, 确认提交?" string="提交" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=','draft')] }"/>
+                        <button name="button_submit" confirm="一旦提交以后,将不能再修改, 确认提交?" string="提交" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=','draft'),('state', '!=','review')] }"/>
+                        <button name="button_reset" confirm="确认打回?" string="打回" type="object" icon="gtk-go-backward" attrs="{'invisible' : [('state', '!=','draft'),('state', '!=','review')] }"/>
                     </group>
                 </form>
             </field>

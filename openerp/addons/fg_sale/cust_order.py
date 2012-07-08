@@ -63,7 +63,7 @@ class cust_order(osv.osv):
         'order_line': fields.one2many('fg_sale.cust.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'logs':fields.function(_get_logs, type="one2many", readonly=True, relation="res.log"),
         
-        'state': fields.selection([('draft', '未审核'), ('done', '已提交')], '订单状态', readonly=True, select=True),
+        'state': fields.selection([('draft', '未审核'), ('submit', '已提交'), ('review', '已审核'),], '订单状态', readonly=True, select=True),
         'note': fields.text('备注'),
         'ref_order_id':fields.many2one('fg_sale.order', 'Ref Order ID', required=False),
     }
@@ -90,6 +90,7 @@ class cust_order(osv.osv):
         return super(cust_order, self).write(cr, uid, ids, vals, context)
     
     
+    
     _defaults = {
         'date_order': fields.date.context_today,
         'state': 'draft',
@@ -100,9 +101,25 @@ class cust_order(osv.osv):
     def copy(self, cr, uid, id, default={}, context=None):
         raise osv.except_osv('不允许复制', '订单不允许复制.')
 
+
+    def button_dummy(self, cr, uid, ids, context=None):
+        return True
+
+    def button_submit(self, cr, uid, ids, context=None):
+        #create a sale order.
+        #and its lines.
+        
+        return True
+
+    def button_reset(self, cr, uid, ids, context=None):
+        
+        
+        return True
+
     _sql_constraints = [
         ('cust_order_name_uniq', 'unique(name)', '订单编号不能重复!'),
     ]
+
     _order = 'id desc'
 
 
