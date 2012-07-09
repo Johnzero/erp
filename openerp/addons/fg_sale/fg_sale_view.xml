@@ -223,7 +223,7 @@
         <menuitem id="menu_fg_sale_order_all" parent="menu_fg_sale_order" action="action_fg_sale_order_all" sequence="2" groups="fg_sale.group_fg_sale_manager"/>
         <menuitem id="menu_fg_sale_order_my" parent="menu_fg_sale_order" action="action_fg_sale_order_my" sequence="3"/>
         <menuitem id="menu_fg_sale_chart" name="报表" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart,fg_sale.group_fg_sale_fga" sequence="2"/>
-        <menuitem id="menu_fg_sale_cust_order" name="销售部定制单" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_sale_user,fg_sale.group_fg_sale_sale_manager" sequence="1"/>
+        <menuitem id="menu_fg_sale_cust_order" name="销售部定制单" parent="menu_fg_sale" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_sale_user,fg_sale.group_fg_sale_user,fg_sale.group_fg_sale_sale_manager" sequence="1"/>
         
         
         <menuitem id="menu_fg_sale_chart_by_month" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_report_by_month" sequence="0"/>
@@ -236,7 +236,14 @@
         <menuitem id="menu_fg_sale_report_export_wizard" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_report_export_wizard" sequence="10"/>
         <menuitem id="menu_fg_sale_report_order_export_wizard" parent="menu_fg_sale_chart" groups="fg_sale.group_fg_sale_manager,fg_sale.group_fg_sale_chart" action="action_fg_sale_report_order_export_wizard" sequence="11"/>
         
-        <menuitem id="fg_sale_cust_order_menu" parent="menu_fg_sale_cust_order" action="action_fg_sale_cust_order_tree_view" sequence="0"/>
+        
+        <menuitem id="fg_sale_cust_order_menu_new" parent="menu_fg_sale_cust_order" action="action_fg_sale_cust_order_new" sequence="0"/>
+        <menuitem id="fg_sale_cust_order_menu_draft" parent="menu_fg_sale_cust_order" action="action_fg_sale_cust_order_tree_view_draft" sequence="1"/>
+        <menuitem id="fg_sale_cust_order_menu_submit" parent="menu_fg_sale_cust_order" action="action_fg_sale_cust_order_tree_view_submit" sequence="2"/>
+        <menuitem id="fg_sale_cust_order_menu_review" parent="menu_fg_sale_cust_order" action="action_fg_sale_cust_order_tree_view_review" sequence="3"/>
+        <menuitem id="fg_sale_cust_order_menu_reset" parent="menu_fg_sale_cust_order" action="action_fg_sale_cust_order_tree_view_reset" sequence="4"/>
+        
+        
         <menuitem id="menu_fg_sale_price_protection" name="价格保护" parent="menu_fg_sale" sequence="5"/>
         <menuitem id="fg_sale_price_protection_tree_menu" parent="menu_fg_sale_price_protection" action="action_fg_sale_price_protection_tree_view" sequence="0"/>
         <menuitem id="fg_sale_price_protection_all_tree_menu" parent="menu_fg_sale_price_protection" action="action_fg_sale_price_protection_all_tree_view" sequence="1"/>

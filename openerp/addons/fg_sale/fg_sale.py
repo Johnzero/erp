@@ -97,8 +97,7 @@ class sale_order(osv.osv):
             'date_confirm': fields.date.context_today(self, cr, uid, context=context),
             }
         )
-        for i in ids:
-            self.log(cr, uid, id, '取消了订单.')
+
         return True
     
     def button_review(self, cr, uid, ids, context=None):

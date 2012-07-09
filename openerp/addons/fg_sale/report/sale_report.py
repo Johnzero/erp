@@ -90,37 +90,6 @@ class sale_plan_progress(osv.osv):
     _auto = False
     _rec_name = 'plan_month'
 
-
-    def _plastic_progress(self, cr, uid, ids, field_names, args, context=None):
-        report_obj = self.pool.get('fg_sale.plan.progress.month')
-        res = {}
-        
-        for r in self.browse(cr, uid, ids, context=context):
-            progress = 0.0
-            res[r.id] = {'plastic_progress' : (r.plastic_plan/r.plastic*100)}
-        
-        return res
-    
-    def _glass_progress(self, cr, uid, ids, field_names, args, context=None):
-        report_obj = self.pool.get('fg_sale.plan.progress.month')
-        res = {}
-        
-        for r in self.browse(cr, uid, ids, context=context):
-            progress = 0.0
-            res[r.id] = {'glass_progress' : (r.glass_plan/r.glass*100)}
-        
-        return res
-    
-    def _vacuume_progress(self, cr, uid, ids, field_names, args, context=None):
-        report_obj = self.pool.get('fg_sale.plan.progress.month')
-        res = {}
-        
-        for r in self.browse(cr, uid, ids, context=context):
-            progress = 0.0
-            res[r.id] = {'vacuume_progress' : (r.vacuume_plan/r.vacuume*100)}
-        
-        return res
-
     _columns = {
         'plan_month': fields.char('月份', size=24),
         'partner_id':fields.many2one('res.partner', '客户'),
