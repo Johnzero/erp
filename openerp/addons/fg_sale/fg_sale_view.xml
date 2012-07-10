@@ -88,7 +88,7 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,done" statusbar_colors='{"draft":"red","done":"blue"}'/>
                         <button name="button_dummy" states="draft" string="计算价格" type="object" icon="gtk-execute"/>
                         <button name="button_review" confirm="一旦审核以后,将不能被修改, 确认审核?" string="审核" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=','draft')] }"/>
-                        <button name="button_cancel" confirm="确认取消?" string="取消" type="object" icon="gtk-go-forward" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
+                        <button name="button_cancel" confirm="确认取消?" string="取消" type="object" icon="STOCK_CANCEL" attrs="{'invisible' : [('state', '!=', 'draft')] }"/>
                     </group>
                 </form>
             </field>

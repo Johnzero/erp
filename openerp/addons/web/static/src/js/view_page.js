@@ -180,7 +180,7 @@ openerp.web.page = function (openerp) {
                             res_id: self.value[0],
                             context: self.build_context(),
                             views: [[false, 'page'], [false, 'form']],
-                            target: 'current'
+                            target: 'new'
                         });
                         return false;
                      });
