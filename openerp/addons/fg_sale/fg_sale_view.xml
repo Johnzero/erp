@@ -16,7 +16,6 @@
         </record>
         
         
-        
         <record model="ir.ui.view" id="fg_sale_order_tree_view">
             <field name="name">fg_sale.order.tree</field>
             <field name="model">fg_sale.order</field>
@@ -76,6 +75,9 @@
                                     <field name="note"/>
                                 </tree>
                             </field>
+                        </page>
+                        <page string="关联定制单" attrs="{'invisible' : [('cust_order_id', '!=', True)] }">
+                            <field name="cust_order_id"/>
                         </page>
                         <page string="摘要">
                             <field name="note" nolabel="1"/>

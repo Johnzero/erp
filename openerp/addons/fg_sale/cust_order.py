@@ -65,7 +65,7 @@ class cust_order(osv.osv):
         
         'state': fields.selection([('draft', '未审核'), ('submit', '已提交'), ('review', '已审核'),], '订单状态', readonly=True, select=True),
         'note': fields.text('备注'),
-        'ref_order_id':fields.many2one('fg_sale.order', 'Ref Order ID', required=False),
+        'cust_orders':fields.one2many('fg_sale.order', 'cust_order_id', '关联业务单', required=False),
         'reset':fields.boolean('是否打回'),
     }
     
@@ -170,7 +170,7 @@ class cust_order(osv.osv):
                     'note':line.note or '',
                 }
                 
-                line_data['subtotal_amount'] = line.unit_price * line.product_uom_qty + extra_amount
+                line_data['subtotal_amount'] = line.unit_price * line.product_uom_qty + line.extra_amount
                 if line.extra_amount:
                     print line_data['note']
                     line_data['note'] = line_data['note'] + ('. 包含附加费 %s' % line.extra_amount)
@@ -246,15 +246,15 @@ class cust_order_line(osv.osv):
         product_obj = self.pool.get('product.product')
         product = product_obj.browse(cr, uid, product_id, context=context)
         if unit_price>0 and unit_price < product.lst_price:
-            return {'warning':{'title':'价格警告', 'message':'输入的开票价低于出厂价, 请仔细检查。'}}
+            #return {'warning':{'title':'价格警告', 'message':'输入的开票价低于出厂价, 请仔细检查。'}}
+            raise osv.except_osv('价格警告', '输入的开票价低于出厂价, 请仔细检查。.')
         
         subtotal_amount = unit_price * product_uom_qty + cust_price + extra_amount
 
         return {'domain': {}, 'value':{'subtotal_amount':subtotal_amount}}
-    
 
 class sale_order(osv.osv):
     _inherit = 'fg_sale.order'
     _columns = {
-        'cust_order_id': fields.one2many('fg_sale.cust.order', 'ref_order_id', '原定制单', required=False),
+        'cust_order_id': fields.many2one('fg_sale.cust.order', '原定制单', required=False),
     }

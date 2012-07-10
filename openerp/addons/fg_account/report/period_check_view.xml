@@ -61,6 +61,22 @@
             </field>
         </record>
         
+        <record id="view_fg_account_period_clear_filter" model="ir.ui.view">
+            <field name="name">fg_account.period.check.list.select</field>
+            <field name="model">fg_account.period.check</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="过滤对账单">
+                    <filter icon="terp-document-new" string="未清账" domain="[('cleared','=',False)]"/>
+                    <filter icon="terp-check" string="已清账" domain="[('cleared','=',True)]"/>
+                    <separator orientation="vertical"/>
+                    <field name="o_partner"/>
+                    <field name="due_date_from" filter_domain="[('o_date','&gt;=',self)]"/>
+                    <field name="due_date_to" filter_domain="[('o_date','&lt;=',self)]"/>
+                </search>
+            </field>
+        </record>
+        
         <record model="ir.actions.act_window" id="action_fg_account_reconcile_item_tree_view">
             <field name="name">对账单明细</field>
             <field name="type">ir.actions.act_window</field>
