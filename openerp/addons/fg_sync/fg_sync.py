@@ -43,6 +43,12 @@ class fg_sync_scheduler(osv.osv):
             partner = partner_obj.read(cr, uid, [p])[0]
         
         
+        pool1 = RPCProxy(server)
+        
+        partner_obj = pool1.get('res.partner')
+        id = partner_obj.create({})
+        
+        
     
     def do_push(self, cr, uid, ids, model):
         pass

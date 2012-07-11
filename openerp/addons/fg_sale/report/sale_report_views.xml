@@ -80,16 +80,16 @@
     </record>
     
     <record id="fg_sale_order_report_daily_source__filter_view" model="ir.ui.view">
-            <field name="name">fg_sale.order.report.daily.source.select</field>
-            <field name="model">fg_sale.order.report.daily.source</field>
-            <field name="type">search</field>
-            <field name="arch" type="xml">
-                <search string="统计范围">
-                    <field name="due_date_from" filter_domain="[('date','&gt;=',self)]"/>
-                    <field name="due_date_to" filter_domain="[('date','&lt;=',self)]"/>
-                </search>
-            </field>
-        </record>
+        <field name="name">fg_sale.order.report.daily.source.select</field>
+        <field name="model">fg_sale.order.report.daily.source</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="统计范围">
+                <field name="due_date_from" filter_domain="[('date','&gt;=',self)]"/>
+                <field name="due_date_to" filter_domain="[('date','&lt;=',self)]"/>
+            </search>
+        </field>
+    </record>
     
     <record model="ir.actions.act_window" id="action_fg_sale_order_report_daily_source_tree_view">
         <field name="name">每日事业部销售统计(3个月)</field>
@@ -99,6 +99,16 @@
         <field name="view_mode">graph,tree</field>
         <field name="view_id" ref="fg_sale_order_report_daily_source_graph_view"/>
         <field name="search_view_id" ref="fg_sale_order_report_daily_source__filter_view"/>
+    </record>
+    
+    <record model="ir.actions.act_window" id="action_fg_sale_order_report_daily_source_tree_view_2">
+        <field name="name">10天销售统计</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">fg_sale.order.report.daily.source</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">graph</field>
+        <field name="domain">[('date','&gt;=',(datetime.date.today()-relativedelta(days=10)).strftime('%Y-%m-%d'))]</field>
+        <field name="view_id" ref="fg_sale_order_report_daily_source_graph_view"/>
     </record>
     
 

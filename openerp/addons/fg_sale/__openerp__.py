@@ -19,6 +19,7 @@
         'fg_sale_view.xml',
         'sale_plan_view.xml',
         'fg_sale_sequence.xml',
+        'board.xml',
     ],
     'demo_xml': [],
     'installable': True,
