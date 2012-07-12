@@ -22,6 +22,16 @@ class RPCProxy(object):
         self.server = server
     def get(self, ressource):
         return RPCProxyOne(self.server, ressource)
+        
+
+class Config(object):
+    def __init__(self, su, sp, sd, lo, ps):
+        self.server_url = su
+        self.server_port = sp
+        self.server_db = sd
+        self.login = lo
+        self.password = ps
+
 
 class fg_sync_scheduler(osv.osv):
     _name = "fg_sync.scheduler"
@@ -67,13 +77,16 @@ class fg_sync_scheduler(osv.osv):
         if context is None:
             context = {}
         
-        
-        
         #
-        # for sync orders only.
-        # if we come across 
-        #pool = pooler.get_pool(cr.dbname)
-        #pool1 = RPCProxy(server)
+        #pool1 = RPCProxy(Config('localhost', 8069, 'FG', 'admin','zaq1@WSX'))
+        #
+        #user_obj = pool1.get('res.users')
+        #user_ids = user_obj.search(cr, uid, [])
+        #
+        #
+        #
+        #for user in user_obj.read(cr, uid, user_ids, ['id','name']):
+        #    print user
         
         
         

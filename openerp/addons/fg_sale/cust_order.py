@@ -105,6 +105,7 @@ class cust_order(osv.osv):
 
 
     def button_dummy(self, cr, uid, ids, context=None):
+
         return True
 
     def button_submit(self, cr, uid, ids, context=None):
