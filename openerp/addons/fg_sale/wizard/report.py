@@ -324,7 +324,7 @@ class report_order(osv.osv_memory):
                         if this.source != line.product_id.source:
                             continue
                     if _first:
-                        sheet1.write(i, 0, order.date_confirm)
+                        sheet1.write(i, 0, order.date_order)
                         sheet1.write(i, 1, order.name)
                         _first = False
                     
@@ -405,9 +405,9 @@ class report_product(osv.osv_memory):
         JOIN fg_sale_order o ON o."id" = line.order_id
         WHERE
                 product."source" IS NOT NULL
-        AND o."state" = 'done'
-        AND o.date_confirm >= to_date('%s', 'YYYY-MM-DD')
-        AND o.date_confirm <= to_date('%s', 'YYYY-MM-DD')
+        AND (o."state" = 'done' OR o."minus" = TRUE )
+        AND o.date_order >= to_date('%s', 'YYYY-MM-DD')
+        AND o.date_order <= to_date('%s', 'YYYY-MM-DD')
         GROUP BY
             product.id,
                 product.name_template,
