@@ -1422,6 +1422,8 @@ class Binary(openerpweb.Controller):
             filename = '%s_%s' % (model.replace('.', '_'), id)
             if filename_field:
                 filename = res.get(filename_field, '') or filename
+            
+            if isinstance(filename, unicode): filename=filename.encode('utf8')
             return req.make_response(filecontent,
                 [('Content-Type', 'application/octet-stream'),
                  ('Content-Disposition', 'attachment; filename="%s"' % filename)])
@@ -1452,6 +1454,9 @@ class Binary(openerpweb.Controller):
             filename = '%s_%s' % (model.replace('.', '_'), id)
             if filename_field:
                 filename = res.get(filename_field, '') or filename
+            
+            if isinstance(filename, unicode): filename=filename.encode('utf8')
+            
             return req.make_response(filecontent,
                 headers=[('Content-Type', 'application/octet-stream'),
                         ('Content-Disposition', 'attachment; filename="%s"' % filename)],
