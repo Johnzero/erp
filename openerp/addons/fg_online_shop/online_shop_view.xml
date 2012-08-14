@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <menuitem id="menu_fg_online_shop" name="网络渠道" web_icon_hover="images/icon.png" web_icon="images/icon.png"/>
+        
+    </data>
+</openerp>

@@ -1,0 +1,9 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"group_fg_online_shop_user_company","group_fg_online_shop_user fg_online_shop.company","model_fg_online_shop_company","fg_online_shop.group_fg_online_shop_user",1,1,1,0
+"group_fg_online_shop_manager_company","group_fg_online_shop_manager fg_online_shop.company","model_fg_online_shop_company","fg_online_shop.group_fg_online_shop_manager",1,1,1,0
+
+"group_fg_online_shop_user_shop","group_fg_online_shop_user fg_online_shop.shop","model_fg_online_shop_shop","fg_online_shop.group_fg_online_shop_user",1,1,1,0
+"group_fg_online_shop_manager_shop","group_fg_online_shop_manager fg_online_shop.shop","model_fg_online_shop_shop","fg_online_shop.group_fg_online_shop_manager",1,1,1,0
+
+"group_fg_online_shop_user_violation","group_fg_online_shop_user fg_online_shop.violation","model_fg_online_shop_violation","fg_online_shop.group_fg_online_shop_user",1,1,1,0
+"group_fg_online_shop_manager_violation","group_fg_online_shop_manager fg_online_shop.violation","model_fg_online_shop_violation","fg_online_shop.group_fg_online_shop_manager",1,1,1,0
