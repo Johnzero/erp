@@ -65,6 +65,8 @@
 		<dict>
 			<key>filename</key>
 			<string>README</string>
+			<key>lastUsed</key>
+			<date>2012-08-16T12:01:34Z</date>
 		</dict>
 		<dict>
 			<key>filename</key>
@@ -81,6 +83,8 @@
 		<dict>
 			<key>filename</key>
 			<string>setup.py</string>
+			<key>lastUsed</key>
+			<date>2012-08-16T12:01:32Z</date>
 		</dict>
 		<dict>
 			<key>name</key>

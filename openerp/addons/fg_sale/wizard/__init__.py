@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from osv import osv
-import pyodbc
+#import pyodbc
 from tools import DEFAULT_SERVER_DATETIME_FORMAT,get_initial
 import report
 

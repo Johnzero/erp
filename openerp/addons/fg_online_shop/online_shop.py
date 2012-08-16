@@ -22,7 +22,7 @@ class fg_online_shop_company(osv.osv):
         'email':fields.char('Email',size=64),
         'fax': fields.char('Fax', size=64),
         'is_entity': fields.selection([('True','是'),('False','否')],'是否有实体店铺'),
-        'manager':fields.char('该店负责人',size=64),
+        'manager':fields.char('负责人',size=64),
         
         'company_scale':fields.integer('公司规模'),
         'shops':fields.one2many('fg_online_shop.shop', 'company_id', '网店'),

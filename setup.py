@@ -114,6 +114,7 @@ setuptools.setup(
           'vobject',
           'werkzeug',
           'xlwt',
+          'xlrd',
           'zsi',
       ],
       extras_require = {
