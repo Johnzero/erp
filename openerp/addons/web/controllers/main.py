@@ -28,6 +28,7 @@ except ImportError:
     xlwt = None
 
 from .. import common
+
 openerpweb = common.http
 
 #----------------------------------------------------------
@@ -243,7 +244,6 @@ class WebClient(openerpweb.Controller):
             return werkzeug.wrappers.Response(status=304)
 
         content, checksum = concat_files(files, intersperse=';')
-
         return self.make_conditional(
             req, req.make_response(content, [('Content-Type', 'application/javascript')]),
             last_modified, checksum)

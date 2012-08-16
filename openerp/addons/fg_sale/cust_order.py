@@ -173,7 +173,7 @@ class cust_order(osv.osv):
                 
                 line_data['subtotal_amount'] = line.unit_price * line.product_uom_qty + line.extra_amount
                 if line.extra_amount:
-                    print line_data['note']
+                    #print line_data['note']
                     line_data['note'] = line_data['note'] + ('. 包含附加费 %s' % line.extra_amount)
                 
                 order_line_obj.create(cr, uid, line_data)

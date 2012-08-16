@@ -1,7 +1,200 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem id="menu_fg_online_shop" name="网络渠道" web_icon_hover="images/icon.png" web_icon="images/icon.png"/>
+        <menuitem id="menu_fg_online_shop" name="网络渠道" web_icon_hover="images/icon_hover.png" web_icon="images/icon.png"
+                  groups="fg_online_shop.group_fg_online_shop_user,fg_online_shop.group_fg_online_shop_manager" />
+        
+        <record id="seq_type_fg_online_shop_violation" model="ir.sequence.type">
+            <field name="name">Fuguang Online Shop Violation</field>
+            <field name="code">fg_online_shop.violation</field>
+        </record>
+        <record id="seq_fg_online_shop_violation" model="ir.sequence">
+            <field name="name">Fuguang Online Shop Violation</field>
+            <field name="code">fg_online_shop.violation</field>
+            <field name="prefix">FGAB-%(year)s%(month)s%(day)s</field>
+            <field name="padding">0</field>
+            <field name="implementation">no_gap</field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="fg_online_shop_violation_form_view">
+            <field name="name">fg_online_shop.violation.form</field>
+            <field name="model">fg_online_shop.violation</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="违规记录">
+                    <field name="name"/>
+                    <field name="shop_id"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="url" widget="url"/>
+                    <field name="product_model"/>
+                    <notebook colspan="4">
+                        <page string="截图">
+                            <field name="screenshot" widget="image"/>
+                        </page>
+                        <page string="备注">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fg_online_shop_violation_tree_view">
+            <field name="name">fg_online_shop.shop.tree</field>
+            <field name="model">fg_online_shop.violation</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="违规记录">
+                    <field name="name"/>
+                    <field name="shop_id"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="url" widget="url"/>
+                    <field name="product_model"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="fg_online_shop_shop_form_view">
+            <field name="name">fg_online_shop.shop.form</field>
+            <field name="model">fg_online_shop.shop</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="网店">
+                    <field name="name"/>
+                    <field name="manager"/>
+                    <field name="auth_num"/>
+                    <field name="date_auth_to"/>
+                    
+                    <notebook colspan="4">
+                        <page string="常规">
+                            <field name="date_started"/>
+                            <field name="phone"/>
+                            <field name="url"/>
+                            <field name="level"/>
+                            <field name="platform"/>
+                            <field name="brand"/>
+                            <field name="sale_amount"/>
+                        </page>
+                        <page string="违规记录">
+                            <field name="violations" nolabel="1"/>
+                        </page>
+                        <page string="备注">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fg_online_shop_shop_tree_view">
+            <field name="name">fg_online_shop.shop.tree</field>
+            <field name="model">fg_online_shop.shop</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="网店">
+                    <field name="name"/>
+                    <field name="manager"/>
+                    <field name="auth_num"/>
+                    <field name="date_auth_to"/>
+                    <field name="url" widget="url"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="fg_online_shop_company_form_view">
+            <field name="name">fg_online_shop.company.form</field>
+            <field name="model">fg_online_shop.company</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="经销商">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="company_name"/>
+                    <field name="phone"/>
+                    <notebook colspan="4">
+                        <page string="常规">
+                            <field name="license"/>
+                            <field name="idc_number"/>
+                            <field name="address"/>
+                            <field name="tel"/>
+                            <field name="qq"/>
+                            <field name="email"/>
+                            <field name="fax"/>
+                            <field name="date_created"/>
+                            <field name="is_entity"/>
+                            <field name="manager"/>
+                            <field name="company_scale"/>
+                            <field name="website"/>
+                        </page>
+                        <page string="网店">
+                            <field name="shops" nolabel="1"/>
+                        </page>
+                        <page string="备注">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fg_online_shop_company_tree_view">
+            <field name="name">fg_online_shop.company.tree</field>
+            <field name="model">fg_online_shop.company</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="经销商">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="company_name"/>
+                    <field name="phone"/>
+                    <field name="is_entity"/>
+                    <field name="qq"/>
+                    <field name="manager"/>
+                    <field name="website" widget="url"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="action_fg_online_shop_company" model="ir.actions.act_window">
+            <field name="name">网络经销商</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_online_shop.company</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            
+        </record>
+        
+        <record id="action_fg_online_shop_shop" model="ir.actions.act_window">
+            <field name="name">网店</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_online_shop.shop</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            
+        </record>
+        
+        
+        <record id="action_fg_online_shop_violation" model="ir.actions.act_window">
+            <field name="name">违规记录</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_online_shop.violation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            
+        </record>
+        
+        <menuitem id="menu_fg_online_shop_list" parent="menu_fg_online_shop" sequence="0" name="经销商店铺管理"/>
+        <menuitem id="menu_fg_online_shop_company" action="action_fg_online_shop_company" parent="menu_fg_online_shop_list" sequence="0" />
+        <menuitem id="menu_fg_online_shop_shop" action="action_fg_online_shop_shop" parent="menu_fg_online_shop_list" sequence="1" />
+        <menuitem id="menu_fg_online_shop_violation" action="action_fg_online_shop_violation" parent="menu_fg_online_shop_list" sequence="2" />
         
     </data>
 </openerp>
