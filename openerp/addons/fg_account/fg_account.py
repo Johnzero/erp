@@ -85,7 +85,7 @@ class account_bill(osv.osv):
         self.write(cr, uid, ids, { 
             'state': 'check', 
             'checker_id': uid, 
-            #'date_check': fields.date.context_today(self, cr, uid, context=context),
+            'date_check': fields.date.context_today(self, cr, uid, context=context),
             }
         )
 

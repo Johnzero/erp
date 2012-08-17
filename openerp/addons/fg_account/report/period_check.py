@@ -95,7 +95,6 @@ class period_check(osv.osv):
         order_obj.write(cr, uid, ids, {'clear':False})
 
         return True
-
     
     def init(self, cr):
         tools.drop_view_if_exists(cr, 'fg_account_period_check')
@@ -156,7 +155,7 @@ class period_check(osv.osv):
             			(bill."id"+ 1000000000) AS ID,
             			bill.name as name,
             			'fg_account.bill,' || bill."id" AS ref_doc,
-            			bill.date_check AS o_date,
+            			bill.date_paying AS o_date,
             			bill.partner_id AS o_parnter,
             			cate."name" AS T,
             			bill.reconciled AS reconciled,

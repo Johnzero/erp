@@ -84,7 +84,7 @@
                         <field name="date_start"/>
                         <field name="date_end"/>
                         <field name="partner_id"/>
-                        <field name="reconciled"/>
+                        <!-- <field name="reconciled"/> -->
                     </group>
                     <group colspan="4" col="6">
                         <button  icon="gtk-close" special="cancel" string="关闭"/>

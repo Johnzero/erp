@@ -188,11 +188,11 @@ class reconcile_wizard(osv.osv_memory):
 
 class reconcile_view_wizard(osv.osv_memory):
     _name = "fg_account.reconcile.view.wizard"
-    _description = "对账单查询"
+    _description = "对账单明细"
     
     _columns = {
         'partner_id': fields.many2one('res.partner', '客户', required=True),
-        'reconciled':fields.boolean('已对账'),
+        #'reconciled':fields.boolean('已对账'),
         'date_start': fields.date('开始日期', required=True),
         'date_end': fields.date('结束日期', required=True),
     }
@@ -204,7 +204,7 @@ class reconcile_view_wizard(osv.osv_memory):
     def view(self, cr, uid, ids, context=None):
         this = self.browse(cr, uid, ids)[0]
         
-        #计算
+        #计算之前的汇总
         statement = """
         SELECT
         	pc."t" AS T,
@@ -212,14 +212,14 @@ class reconcile_view_wizard(osv.osv_memory):
         FROM
         	fg_account_period_check pc
         WHERE
-        	pc.reconciled = %s
-        AND pc.o_partner = %s
+        	pc.o_partner = %s
         AND pc.o_date < to_date('%s', 'YYYY-MM-DD')
         GROUP BY
         	T
         """
         amount_dict = dict()
-        cr.execute(statement % (this.reconciled, this.partner_id.id, this.date_start))
+        cr.execute(statement % (this.partner_id.id, this.date_start))
+
         for row in cr.fetchall():
             amount_dict[row[0]] = row[1]
         
@@ -228,14 +228,16 @@ class reconcile_view_wizard(osv.osv_memory):
         cash_in = amount_dict.get(u'收现', 0)
         bank_in = amount_dict.get(u'转帐', 0)
         discount = amount_dict.get(u'让利', 0)
+        
+        #期初余额
         inital_amount = sent + back - cash_in - bank_in - discount
+
         
         # search and save the result to reconcile_item table.
         period_check_obj = self.pool.get('fg_account.period.check')
         reconcile_item_obj = self.pool.get('fg_account.reconcile.item')
-        item_ids = period_check_obj.search(cr, uid, [('reconciled','=',this.reconciled),('o_partner','=',this.partner_id.id),
+        item_ids = period_check_obj.search(cr, uid, [('o_partner','=',this.partner_id.id),
                 ('o_date','>=',this.date_start),('o_date','<=',this.date_end)], order='ID ASC')
-        
         
         last_amount = inital_amount
         ids = []
