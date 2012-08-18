@@ -11,10 +11,62 @@
         <record id="seq_fg_online_shop_violation" model="ir.sequence">
             <field name="name">Fuguang Online Shop Violation</field>
             <field name="code">fg_online_shop.violation</field>
-            <field name="prefix">FGAB-%(year)s%(month)s%(day)s</field>
+            <field name="prefix">FGOSV-%(year)s%(month)s%(day)s</field>
             <field name="padding">0</field>
             <field name="implementation">no_gap</field>
         </record>
+        
+        <record id="seq_type_fg_online_shop_score" model="ir.sequence.type">
+            <field name="name">Fuguang Online Shop Score</field>
+            <field name="code">fg_online_shop.score</field>
+        </record>
+        <record id="seq_fg_online_shop_score" model="ir.sequence">
+            <field name="name">Fuguang Online Shop Score</field>
+            <field name="code">fg_online_shop.score</field>
+            <field name="prefix">FGOSS-%(year)s%(month)s%(day)s</field>
+            <field name="padding">0</field>
+            <field name="implementation">no_gap</field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="fg_online_shop_score_form_view">
+            <field name="name">fg_online_shop.score.form</field>
+            <field name="model">fg_online_shop.score</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="加分记录">
+                    <field name="name"/>
+                    <field name="shop_id"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="point"/>
+                    <notebook colspan="4">
+                        <page string="加分原因">
+                            <field name="reason"/>
+                        </page>
+                        <page string="备注">
+                            <field name="note" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="fg_online_shop_score_tree_view">
+            <field name="name">fg_online_shop.score.tree</field>
+            <field name="model">fg_online_shop.score</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="违规记录">
+                    <field name="name"/>
+                    <field name="shop_id"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="point"/>
+                </tree>
+            </field>
+        </record>
+        
         
         
         <record model="ir.ui.view" id="fg_online_shop_violation_form_view">
@@ -42,7 +94,7 @@
         </record>
         
         <record model="ir.ui.view" id="fg_online_shop_violation_tree_view">
-            <field name="name">fg_online_shop.shop.tree</field>
+            <field name="name">fg_online_shop.violation.tree</field>
             <field name="model">fg_online_shop.violation</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
@@ -81,6 +133,9 @@
                         </page>
                         <page string="违规记录">
                             <field name="violations" nolabel="1"/>
+                        </page>
+                        <page string="加分记录">
+                            <field name="scores" nolabel="1"/>
                         </page>
                         <page string="备注">
                             <field name="note" nolabel="1"/>
@@ -167,7 +222,6 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{}</field>
-            
         </record>
         
         <record id="action_fg_online_shop_shop" model="ir.actions.act_window">
@@ -191,10 +245,22 @@
             
         </record>
         
+        
+        <record id="action_fg_online_shop_score" model="ir.actions.act_window">
+            <field name="name">加分记录</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_online_shop.score</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            
+        </record>
+        
         <menuitem id="menu_fg_online_shop_list" parent="menu_fg_online_shop" sequence="0" name="经销商店铺管理"/>
         <menuitem id="menu_fg_online_shop_company" action="action_fg_online_shop_company" parent="menu_fg_online_shop_list" sequence="0" />
         <menuitem id="menu_fg_online_shop_shop" action="action_fg_online_shop_shop" parent="menu_fg_online_shop_list" sequence="1" />
         <menuitem id="menu_fg_online_shop_violation" action="action_fg_online_shop_violation" parent="menu_fg_online_shop_list" sequence="2" />
+        <menuitem id="menu_fg_online_shop_score" action="action_fg_online_shop_score" parent="menu_fg_online_shop_list" sequence="3" />
         
     </data>
 </openerp>

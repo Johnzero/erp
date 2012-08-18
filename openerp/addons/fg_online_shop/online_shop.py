@@ -42,23 +42,23 @@ class fg_online_shop_shop(osv.osv):
     _description = "网店"
     
     _columns = {
-        'company_id': fields.many2one('fg_online_shop.company','经销商',select=True),
-        'name': fields.char("网店名称",size=64,select=True),
-        'manager':fields.char('责任人',size=64),
+        'company_id': fields.many2one('fg_online_shop.company','经销商',select=True, required=True),
+        'name': fields.char("网店名称",size=64,select=True, required=True),
+        'manager':fields.char('责任人',size=64, required=True),
         'date_started':fields.char('经营年限',size=64),
-        'url':fields.char('网店网址',size=128),
-        'phone':fields.char('法定代表人手机号',size=64),
+        'url':fields.char('网店网址',size=128, required=True),
+        'phone':fields.char('法定代表人手机号',size=64, required=True),
         
         'level':fields.char('店铺等级',size=32),
         'platform':fields.selection([('taobao', '淘宝店'), ('tmall', '天猫商城'), ('360buy', '京东商城'),
-            ('amazon', '亚马逊'), ('paipai', '拍拍'), ('independent', '独立'), ('etc', '其他')], '平台'),
-        'brand':fields.char('经营品牌',size=128, help='包括非富光的请详细写清楚'),
-        'sale_amount':fields.integer('年销售规模'),
+            ('amazon', '亚马逊'), ('paipai', '拍拍'), ('independent', '独立'), ('etc', '其他')], '平台', required=True),
+        'brand':fields.char('经营品牌',size=128, help='包括非富光的请详细写清楚', required=True),
+        'sale_amount':fields.char('年销售规模', size=64),
         'note':fields.text('附注'),
         "violations":fields.one2many("fg_online_shop.violation","shop_id","违规记录"),
-        "auth_num":fields.char("授权书编号",size=64,select=True),
-        "date_auth_to":fields.date("授权截止日期"),
-        
+        'scores':fields.one2many('fg_online_shop.score', 'shop_id', '加分记录'),
+        "auth_num":fields.char("授权书编号",size=64,select=True, required=True),
+        "date_auth_to":fields.date("授权截止日期", required=True),
     }
     
     _sql_constraints=[('name_unique','unique(name)','网店名称不能重复!')]
@@ -67,16 +67,18 @@ class fg_online_shop_shop(osv.osv):
 class fg_online_shop_violation(osv.osv):
     _name = "fg_online_shop.violation"
     _description = "违规记录"
-
+    
     _columns= {
         'name': fields.char('单号', size=64, select=True),
-        "shop_id":fields.many2one("fg_online_shop.shop", "违规网店", select=True, change_default=True),
+        "shop_id":fields.many2one("fg_online_shop.shop", "违规网店", select=True, change_default=True, required=True),
         "date":fields.date("记录时间"),
         "user_id":fields.many2one('res.users', '记录人', readonly=True),
         
-        "url":fields.text("页面URL地址",size=300),
-        "screenshot":fields.binary("违规页面截图"),
+        "url":fields.text("页面URL地址", required=True),
+        "screenshot":fields.binary("违规页面截图", required=True),
         "product_model":fields.char("货号",size=64,required=True),
+        "reason": fields.text('违规原因', required=True),
+        "point": fields.integer('扣分', required=True),
         'note':fields.text('附注'),
     }
 
@@ -84,4 +86,43 @@ class fg_online_shop_violation(osv.osv):
         'user_id': lambda obj, cr, uid, context: uid,
         'date':fields.date.context_today,
         'name': lambda self,cr,uid,ctx=None: self.pool.get('ir.sequence').get(cr, uid, 'fg_online_shop.violation', context=ctx),
+    }
+    
+class fg_online_shop_score(osv.osv):
+    _name = "fg_online_shop.score"
+    _description = "加分记录"
+    
+    _columns= {
+        "name": fields.char('单号', size=64, select=True),
+        "shop_id":fields.many2one("fg_online_shop.shop", "网店", select=True, change_default=True, required=True),
+        "user_id":fields.many2one('res.users', '记录人', readonly=True),
+        "date":fields.date("记录时间", required=True),
+        "reason": fields.text('加分原因', required=True),
+        "point": fields.integer('加分', required=True),
+        'note':fields.text('附注'),
+    }
+    
+    
+    _defaults={
+        'user_id': lambda obj, cr, uid, context: uid,
+        'date':fields.date.context_today,
+        'name': lambda self,cr,uid,ctx=None: self.pool.get('ir.sequence').get(cr, uid, 'fg_online_shop.score', context=ctx),
+    }
+
+class certificate(osv.osv):
+    _name = "fg_online_shop.certificate"
+    _description = "授权"
+    
+    
+    _columns= {
+        "name": fields.char('授权号', size=64, select=True),
+        "shop_id":fields.many2one("fg_online_shop.shop", "网店", select=True, change_default=True, required=True),
+        "user_id":fields.many2one('res.users', '记录人', readonly=True),
+        "date":fields.date("记录时间", required=True),
+        'note':fields.text('附注'),
+    }
+    
+    _defaults={
+        'user_id': lambda obj, cr, uid, context: uid,
+        'date':fields.date.context_today,
     }
