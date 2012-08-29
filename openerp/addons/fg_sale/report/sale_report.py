@@ -186,3 +186,59 @@ class sale_report_by_month(osv.osv):
             order by date asc 
             )""")
 
+class sale_report_fga_daily_partner_product(osv.osv):
+    _name = 'fg_sale.order.report.fga.daily.partner.product'
+    _auto = False
+    _rec_name = 'id'
+    
+    
+    _columns = {
+        'date': fields.date('日期'),
+        'partner_id':fields.many2one('res.partner', '客户'),
+        'default_code': fields.char('产品型号', size=12, readonly=True),
+        'name_template': fields.char('产品名称', size=12, readonly=True),
+        'aux_qty':fields.float('只数'),
+        'unit_price':fields.float('单价'),
+        'amount': fields.float('金额'),
+    }
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, 'fg_sale_order_report_fga_daily_partner_product')
+        cr.execute("""
+            create or replace view fg_sale_order_report_fga_daily_partner_product as (
+            SELECT
+                    MIN (line."id") AS "id",
+                    o.date_order AS DATE,
+                    partner."id" AS partner_id,
+                    product.default_code,
+                    product.name_template,
+                    line.aux_qty,
+                    line.unit_price,
+                    SUM (line.subtotal_amount) AS amount
+            FROM
+                    fg_sale_order_line line
+            INNER JOIN fg_sale_order o ON line.order_id = o. ID
+            INNER JOIN res_partner partner ON partner."id" = o.partner_id
+            INNER JOIN res_partner_category_rel rel ON rel.partner_id = partner."id"
+            INNER JOIN res_partner_category cate ON cate."id" = rel.category_id
+            INNER JOIN product_product product ON line.product_id = product."id"
+            WHERE
+                    cate."id" = 4
+            AND (
+                    o."state" = 'done'
+                    OR o.minus = TRUE
+            )
+            AND (
+                    o.date_order > CURRENT_DATE - INTERVAL '3 months'
+            )
+            AND product.default_code <> ''
+            GROUP BY
+                    o.date_order,
+                    product.default_code,
+                    product.name_template,
+                    partner."id",
+                    line.aux_qty,
+                    line.unit_price
+            ORDER BY
+                    o.date_order ASC
+            )""")

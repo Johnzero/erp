@@ -5,6 +5,72 @@ from osv import fields, osv
 import xlwt, cStringIO
 
 
+class amount_by_parter_product(osv.osv_memory):
+    _name = "fg_sale.fga.partner.product.export.wizard"
+    _description = "FGA根据客户的产品销量统计"
+
+    _columns = {
+        'name': fields.char('文件名', 16, readonly=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': 'report.xls',
+    }
+    
+    def export_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        sql = """
+        SELECT
+                pp. DATE,
+                P ."name",
+                pp.default_code,
+                pp.name_template,
+                pp.aux_qty,
+                pp.unit_price,
+                pp.amount
+        FROM
+                fg_sale_order_report_fga_daily_partner_product pp
+        JOIN res_partner P ON P ."id" = pp.partner_id
+        WHERE
+                pp. DATE >= to_date('%s', 'YYYY-MM-DD')
+        AND pp. DATE <= to_date('%s', 'YYYY-MM-DD')
+        """
+        
+        cr.execute(sql % (this.date_start, this.date_end))
+        
+        book = xlwt.Workbook(encoding='utf-8')
+        sheet1 = book.add_sheet(u'统计')
+        sheet1.write(0,0, u'日期')
+        sheet1.write(0,1, u'客户')
+        sheet1.write(0,2, u'产品型号')
+        sheet1.write(0,3, u'产品名称')
+        sheet1.write(0,4, u'只数')
+        sheet1.write(0,5, u'单价')
+        sheet1.write(0,6, u'金额')
+        r = 1
+        for p in cr.fetchall():
+            c = 0
+            for x in p:
+                sheet1.write(r, c, x)
+                c = c + 1
+            
+            r = r + 1
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+        
+        out=base64.encodestring(buf.getvalue())
+        
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
+
+
 class amount_by_fga_product(osv.osv_memory):
     _name = "fg_sale.fga.product.export.wizard"
     _description = "FGA产品销量统计"
