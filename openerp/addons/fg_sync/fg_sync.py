@@ -40,28 +40,15 @@ class fg_sync_scheduler(osv.osv):
     _columns = {
 
     }
-    _defaults = {
-        'server_port': lambda *args: 8069
-    }
-    
-    def do_init_ratio(self, cr, uid, ids, model):
-        """div all local lines which are un-synced. make it sync."""
-        partner_obj = self.pool.get('res.parnter')
-        
-        partners = partner_obj.search(cr, uid, [('ratio','<', 1), ('ratio','!=', 0)])
-        for p in partners:
-            partner = partner_obj.read(cr, uid, [p])[0]
-        
-        
-        pool1 = RPCProxy(server)
-        
-        partner_obj = pool1.get('res.partner')
-        id = partner_obj.create({})
-        
-        
     
     def do_push(self, cr, uid, ids, model):
-        pass
+        pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
+        order_obj = pool1.get('fg_sale.order')
+        order_line_obj = pool1.get('fg_sale.order.line')
+        
+        
+        
+        
 
     def do_pull(self, cr, uid, ids, model):
         pass
@@ -78,7 +65,7 @@ class fg_sync_scheduler(osv.osv):
             context = {}
         
         #
-        #pool1 = RPCProxy(Config('localhost', 8069, 'FG', 'admin','zaq1@WSX'))
+        #pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
         #
         #user_obj = pool1.get('res.users')
         #user_ids = user_obj.search(cr, uid, [])
