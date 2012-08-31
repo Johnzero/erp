@@ -43,12 +43,22 @@ class fg_sync_scheduler(osv.osv):
     
     def do_push(self, cr, uid, ids, model):
         pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
-        order_obj = pool1.get('fg_sale.order')
-        order_line_obj = pool1.get('fg_sale.order.line')
+        target_order_obj = pool1.get('fg_sale.order')
+        target_order_line_obj = pool1.get('fg_sale.order.line')
         
+        source_order_obj = self.pool.get('fg_sale.order')
+        source_order_line_obj = self.pool.get('fg_sale.order.line')
         
-        
-        
+        # get all that's not sync-ed
+        for order_id in source_order_obj.search(cr, uid, [('sync','=',False)]):
+            order = source_order_obj.browse(cr, uid, [order_id])[0]
+            
+            #save order first. get id
+            
+            # interate lines. create, don't forget ratio.
+            
+            # set both sync-ed
+            
 
     def do_pull(self, cr, uid, ids, model):
         pass
