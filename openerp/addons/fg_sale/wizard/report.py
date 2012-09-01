@@ -29,77 +29,76 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
         this = self.browse(cr, uid, ids)[0]
         sql = """
         SELECT
-            partner."name" AS parner_name,
+            partner."name",
             product.default_code,
             product.name_template,
             product."source",
-            line.aux_qty,
-            line.unit_price,
+            SUM (line.aux_qty) AS qty,
             SUM (line.subtotal_amount) AS amount
         FROM
-                fg_sale_order_line line
-        JOIN fg_sale_order o ON ((line.order_id = o. ID))
+            fg_sale_order_line line
+        JOIN fg_sale_order o ON line.order_id = o."id"
+        JOIN product_product product ON product."id" = line.product_id
         JOIN res_partner partner ON ((partner. ID = o.partner_id))
-        JOIN product_product product ON (line.product_id = product. ID)
         WHERE
-                partner."id" = %s
-        AND (o. STATE = 'done' OR o.minus)
-        AND product.default_code <> ''
-        AND o.date_order >= '%s'
-        AND o.date_order <= '%s'
+            (
+            o."state" = 'done'
+            OR o.minus = TRUE
+            )
+            AND product.default_code <> ''
+            AND o.partner_id = %s
+            AND o.date_order >= '%s'
+            AND o.date_order <= '%s'
         GROUP BY
-                o.date_order,
-                product.default_code,
+                line.product_id,
                 product.name_template,
-                partner. ID,
-                line.aux_qty,
-                line.unit_price,
+                product.default_code,
+                partner."name",
                 product."source"
         ORDER BY
-                o.date_order
+                product.default_code ASC
         """
         
         cr.execute(sql % (this.partner_id.id, this.date_start, this.date_end))
         
         book = xlwt.Workbook(encoding='utf-8')
         
-        sheet1 = book.add_sheet(u'总体统计')
-        sheet2 = book.add_sheet(u'塑胶事业部')
-        sheet3 = book.add_sheet(u'真空事业部')
-        sheet4 = book.add_sheet(u'玻璃事业部')
-        sheet5 = book.add_sheet(u'财务部')
-        sheet6 = book.add_sheet(u'安全帽事业部')
-        sheet7 = book.add_sheet(u'塑胶制品')
-        sheet8 = book.add_sheet(u'其他')
-        sources = ['总体统计', '塑胶事业部', '真空事业部', '玻璃事业部', '财务部', '安全帽事业部', '塑胶制品', '其他']
-        
-        for i in range(len(sources)):
-            book.get_sheet(i).write(0,0,'日期')
-            book.get_sheet(i).write(0,1,'客户')
-            book.get_sheet(i).write(0,2,'产品型号')
-            book.get_sheet(i).write(0,3,'产品名称')
-            book.get_sheet(i).write(0,4,'只数')
-            book.get_sheet(i).write(0,5,'单价')
-            book.get_sheet(i).write(0,6,'金额')
+        sheet_dict = {}
+        def _new_sheet(name):
+            sheet = book.add_sheet(name)
+            sheet_dict[name] = len(sheet_dict)
+            
+            sheet.write(0,0,'客户')
+            sheet.write(0,1,'产品型号')
+            sheet.write(0,2,'产品名称')
+            sheet.write(0,3,'事业部')
+            sheet.write(0,4,'只数')
+            sheet.write(0,5,'金额')
+            return sheet
 
-        def _write_cell(s, r, p):
-            s.write(r, 0, p[0])
-            s.write(r, 1, p[1])
-            s.write(r, 2, p[2])
-            s.write(r, 3, p[3])
-            s.write(r, 4, p[4])
-            s.write(r, 5, p[5])
-            s.write(r, 6, p[6])
+        def _get_or_create_sheet(name):
+            if not sheet_dict.has_key(name):
+                return _new_sheet(name)
+            else:
+                return book.get_sheet(sheet_dict[name])
         
-        i = 1
+        def _write_line(sheet, data):
+            i = 0
+            row_count = len(sheet.rows)
+            for item in data:
+                sheet.write(row_count, i, item)
+                i = i + 1
+
+        def _write_line(sheet, data):
+            i = 0
+            row_count = len(sheet.rows)
+            for item in data:
+                sheet.write(row_count, i, item)
+                i = i + 1
+        
         for p in cr.fetchall():
-            _write_cell(sheet1,i, p)
-            i = i + 1
-            if p[3] in sources:
-                sheet = book.get_sheet(sources.index(p[3]))
-                if sheet:
-                    row_count = len(sheet.rows)
-                    _write_cell(sheet, row_count, p)
+            sheet = _get_or_create_sheet(p[3])
+            _write_line(sheet, p)
         
         buf=cStringIO.StringIO()
         book.save(buf)
@@ -132,40 +131,72 @@ class amount_by_parter_product(osv.osv_memory):
         this = self.browse(cr, uid, ids)[0]
         sql = """
         SELECT
-                pp. DATE,
-                P ."name",
-                pp.default_code,
-                pp.name_template,
-                pp.aux_qty,
-                pp.unit_price,
-                pp.amount
+                partner."name",
+                product.default_code,
+                product.name_template,
+                product."source",
+                SUM (line.aux_qty) AS qty,
+                SUM (line.subtotal_amount) AS amount
         FROM
-                fg_sale_order_report_fga_daily_partner_product pp
-        JOIN res_partner P ON P ."id" = pp.partner_id
+                fg_sale_order_line line
+        JOIN fg_sale_order o ON line.order_id = o."id"
+        JOIN product_product product ON product."id" = line.product_id
+        JOIN res_partner partner ON ((partner. ID = o.partner_id))
+        JOIN res_partner_category_rel rel ON rel.partner_id = partner."id"
+        JOIN res_partner_category cate ON cate."id" = rel.category_id
         WHERE
-                pp. DATE >= to_date('%s', 'YYYY-MM-DD')
-        AND pp. DATE <= to_date('%s', 'YYYY-MM-DD')
+                (
+                        o."state" = 'done'
+                        OR o.minus = TRUE
+                )
+                AND product.default_code <> ''
+                AND cate."id" = 4
+                AND o.date_order >= '%s'
+                AND o.date_order <= '%s'
+        GROUP BY
+                partner."name",
+                line.product_id,
+                product.default_code,
+                product.name_template,
+                product."source"
+        ORDER BY
+                product.default_code ASC
         """
         
         cr.execute(sql % (this.date_start, this.date_end))
         
         book = xlwt.Workbook(encoding='utf-8')
-        sheet1 = book.add_sheet(u'统计')
-        sheet1.write(0,0, u'日期')
-        sheet1.write(0,1, u'客户')
-        sheet1.write(0,2, u'产品型号')
-        sheet1.write(0,3, u'产品名称')
-        sheet1.write(0,4, u'只数')
-        sheet1.write(0,5, u'单价')
-        sheet1.write(0,6, u'金额')
-        r = 1
-        for p in cr.fetchall():
-            c = 0
-            for x in p:
-                sheet1.write(r, c, x)
-                c = c + 1
+        
+        sheet_dict = {}
+        def _new_sheet(name):
+            sheet = book.add_sheet(name)
+            sheet_dict[name] = len(sheet_dict)
             
-            r = r + 1
+            sheet.write(0,0, u'客户')
+            sheet.write(0,2, u'产品型号')
+            sheet.write(0,3, u'产品名称')
+            sheet.write(0,4, u'事业部')
+            sheet.write(0,5, u'只数')
+            sheet.write(0,6, u'金额')
+            return sheet
+        
+        def _get_or_create_sheet(name):
+            if not sheet_dict.has_key(name):
+                return _new_sheet(name)
+            else:
+                return book.get_sheet(sheet_dict[name])
+        
+        def _write_line(sheet, data):
+            i = 0
+            row_count = len(sheet.rows)
+            for item in data:
+                sheet.write(row_count, i, item)
+                i = i + 1
+
+        for p in cr.fetchall():
+            sheet = _get_or_create_sheet(p[0])
+            _write_line(sheet, p)
+            
         
         buf=cStringIO.StringIO()
         book.save(buf)

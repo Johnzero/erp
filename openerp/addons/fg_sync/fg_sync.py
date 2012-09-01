@@ -53,34 +53,32 @@ class fg_sync_scheduler(osv.osv):
         if context is None:
             context = {}
         
+        try:
+            pool1 = RPCProxy(Config('192.168.0.200', 8069, 'FG', 'admin','zaq1@WSX'))
+            target_order_obj = pool1.get('fg_sale.order')
+            target_order_line_obj = pool1.get('fg_sale.order.line')
         
-        pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
-        target_order_obj = pool1.get('fg_sale.order')
-        target_order_line_obj = pool1.get('fg_sale.order.line')
-        
-        source_order_obj = self.pool.get('fg_sale.order')
-        source_order_line_obj = self.pool.get('fg_sale.order.line')
+            source_order_obj = self.pool.get('fg_sale.order')
+            source_order_line_obj = self.pool.get('fg_sale.order.line')
+        except:
+            print 'can not connect to slave....'
+            return True
         
         def do_pull():
-            pass
-        
-        def do_push():
             # get all that's not sync-ed
-            print 'do push......................'
-            for order_id in source_order_obj.search(cr, uid, [('sync','=',False),('state','=','done')]):
-                print order_id
-                #order = source_order_obj.copy_data(cr, uid, order_id)
-                ##save order first. get id
-                #id = target_order_obj.create(cr, uid, order)
-                #print id,'id'
-                ## interate lines. create, don't forget ratio.
-                #source_order_obj.write(cr, uid, [order_id], {'sync':True})
-                ## set both sync-ed
+            print 'do pull......................'
+            for order_id in source_order_obj.search(cr, uid, [('sync','=',False)]):
+                order_data = source_order_obj.copy_data(cr, uid, order_id)
+                order = source_order_obj.browse(cr, uid, [order_id])[0]
+                
+                order['sync'] = True
+                order['state'] = order.state
+                
+                #save order first. get id
+                id = target_order_obj.create(cr, order.user_id, order)
+                print id,' added.'
         
-        try:
-            do_push()
-        except:
-            print 'network error.......'
+        do_pull()
         
         return True
     

@@ -102,7 +102,7 @@ setuptools.setup(
           'mako',
           'psycopg2',
           'pydot',
-          'python-dateutil < 2',
+          'python-dateutil==1.5',
           'python-ldap',
           'python-openid',
           'pytz',
@@ -122,6 +122,5 @@ setuptools.setup(
       },
       **py2exe_options()
 )
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
