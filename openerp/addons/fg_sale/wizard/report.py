@@ -5,6 +5,110 @@ from osv import fields, osv
 import xlwt, cStringIO
 
 
+class fuguang_amount_by_partner_product(osv.osv_memory):
+    _name = "fg_sale.fuguang.partner.product.export.wizard"
+    _description = "根据客户的产品销量统计"
+    
+    _columns = {
+        'name': fields.char('文件名', 16, readonly=True),
+        'partner_id': fields.many2one('res.partner', '客户', required=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': 'report.xls',
+    }
+    
+    def export_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        sql = """
+        SELECT
+            partner."name" AS parner_name,
+            product.default_code,
+            product.name_template,
+            product."source",
+            line.aux_qty,
+            line.unit_price,
+            SUM (line.subtotal_amount) AS amount
+        FROM
+                fg_sale_order_line line
+        JOIN fg_sale_order o ON ((line.order_id = o. ID))
+        JOIN res_partner partner ON ((partner. ID = o.partner_id))
+        JOIN product_product product ON (line.product_id = product. ID)
+        WHERE
+                partner."id" = %s
+        AND (o. STATE = 'done' OR o.minus)
+        AND product.default_code <> ''
+        AND o.date_order >= '%s'
+        AND o.date_order <= '%s'
+        GROUP BY
+                o.date_order,
+                product.default_code,
+                product.name_template,
+                partner. ID,
+                line.aux_qty,
+                line.unit_price,
+                product."source"
+        ORDER BY
+                o.date_order
+        """
+        
+        cr.execute(sql % (this.partner_id.id, this.date_start, this.date_end))
+        
+        book = xlwt.Workbook(encoding='utf-8')
+        
+        sheet1 = book.add_sheet(u'总体统计')
+        sheet2 = book.add_sheet(u'塑胶事业部')
+        sheet3 = book.add_sheet(u'真空事业部')
+        sheet4 = book.add_sheet(u'玻璃事业部')
+        sheet5 = book.add_sheet(u'财务部')
+        sheet6 = book.add_sheet(u'安全帽事业部')
+        sheet7 = book.add_sheet(u'塑胶制品')
+        sheet8 = book.add_sheet(u'其他')
+        sources = ['总体统计', '塑胶事业部', '真空事业部', '玻璃事业部', '财务部', '安全帽事业部', '塑胶制品', '其他']
+        
+        for i in range(len(sources)):
+            book.get_sheet(i).write(0,0,'日期')
+            book.get_sheet(i).write(0,1,'客户')
+            book.get_sheet(i).write(0,2,'产品型号')
+            book.get_sheet(i).write(0,3,'产品名称')
+            book.get_sheet(i).write(0,4,'只数')
+            book.get_sheet(i).write(0,5,'单价')
+            book.get_sheet(i).write(0,6,'金额')
+
+        def _write_cell(s, r, p):
+            s.write(r, 0, p[0])
+            s.write(r, 1, p[1])
+            s.write(r, 2, p[2])
+            s.write(r, 3, p[3])
+            s.write(r, 4, p[4])
+            s.write(r, 5, p[5])
+            s.write(r, 6, p[6])
+        
+        i = 1
+        for p in cr.fetchall():
+            _write_cell(sheet1,i, p)
+            i = i + 1
+            if p[3] in sources:
+                sheet = book.get_sheet(sources.index(p[3]))
+                if sheet:
+                    row_count = len(sheet.rows)
+                    _write_cell(sheet, row_count, p)
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+        
+        out=base64.encodestring(buf.getvalue())
+        
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
+
+
 class amount_by_parter_product(osv.osv_memory):
     _name = "fg_sale.fga.partner.product.export.wizard"
     _description = "FGA根据客户的产品销量统计"

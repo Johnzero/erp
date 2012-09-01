@@ -41,27 +41,6 @@ class fg_sync_scheduler(osv.osv):
 
     }
     
-    def do_push(self, cr, uid, ids, model):
-        pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
-        target_order_obj = pool1.get('fg_sale.order')
-        target_order_line_obj = pool1.get('fg_sale.order.line')
-        
-        source_order_obj = self.pool.get('fg_sale.order')
-        source_order_line_obj = self.pool.get('fg_sale.order.line')
-        
-        # get all that's not sync-ed
-        for order_id in source_order_obj.search(cr, uid, [('sync','=',False)]):
-            order = source_order_obj.browse(cr, uid, [order_id])[0]
-            
-            #save order first. get id
-            
-            # interate lines. create, don't forget ratio.
-            
-            # set both sync-ed
-            
-
-    def do_pull(self, cr, uid, ids, model):
-        pass
     
     def do_run_scheduler(self, cr, uid, ids=None, context=None):
         """Scheduler for event reminder
@@ -74,18 +53,34 @@ class fg_sync_scheduler(osv.osv):
         if context is None:
             context = {}
         
-        #
-        #pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
-        #
-        #user_obj = pool1.get('res.users')
-        #user_ids = user_obj.search(cr, uid, [])
-        #
-        #
-        #
-        #for user in user_obj.read(cr, uid, user_ids, ['id','name']):
-        #    print user
         
+        pool1 = RPCProxy(Config('localhost', 8068, 'BAK', 'admin','zaq1@WSX'))
+        target_order_obj = pool1.get('fg_sale.order')
+        target_order_line_obj = pool1.get('fg_sale.order.line')
         
+        source_order_obj = self.pool.get('fg_sale.order')
+        source_order_line_obj = self.pool.get('fg_sale.order.line')
+        
+        def do_pull():
+            pass
+        
+        def do_push():
+            # get all that's not sync-ed
+            print 'do push......................'
+            for order_id in source_order_obj.search(cr, uid, [('sync','=',False),('state','=','done')]):
+                print order_id
+                #order = source_order_obj.copy_data(cr, uid, order_id)
+                ##save order first. get id
+                #id = target_order_obj.create(cr, uid, order)
+                #print id,'id'
+                ## interate lines. create, don't forget ratio.
+                #source_order_obj.write(cr, uid, [order_id], {'sync':True})
+                ## set both sync-ed
+        
+        try:
+            do_push()
+        except:
+            print 'network error.......'
         
         return True
     
