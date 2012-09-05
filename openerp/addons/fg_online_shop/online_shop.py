@@ -44,21 +44,21 @@ class fg_online_shop_shop(osv.osv):
     _columns = {
         'company_id': fields.many2one('fg_online_shop.company','经销商',select=True, required=True),
         'name': fields.char("网店名称",size=64,select=True, required=True),
-        'manager':fields.char('责任人',size=64, required=True),
+        'manager':fields.char('责任人',size=64, required=False),
         'date_started':fields.char('经营年限',size=64),
-        'url':fields.char('网店网址',size=128, required=True),
-        'phone':fields.char('法定代表人手机号',size=64, required=True),
+        'url':fields.char('网店网址',size=128, required=False),
+        'phone':fields.char('法定代表人手机号',size=64, required=False),
         
         'level':fields.char('店铺等级',size=32),
         'platform':fields.selection([('taobao', '淘宝店'), ('tmall', '天猫商城'), ('360buy', '京东商城'),
-            ('amazon', '亚马逊'), ('paipai', '拍拍'), ('independent', '独立'), ('etc', '其他')], '平台', required=True),
-        'brand':fields.char('经营品牌',size=128, help='包括非富光的请详细写清楚', required=True),
+            ('amazon', '亚马逊'), ('paipai', '拍拍'), ('independent', '独立'), ('etc', '其他')], '平台', required=False),
+        'brand':fields.char('经营品牌',size=128, help='包括非富光的请详细写清楚', required=False),
         'sale_amount':fields.char('年销售规模', size=64),
         'note':fields.text('附注'),
         "violations":fields.one2many("fg_online_shop.violation","shop_id","违规记录"),
         'scores':fields.one2many('fg_online_shop.score', 'shop_id', '加分记录'),
-        "auth_num":fields.char("授权书编号",size=64,select=True, required=True),
-        "date_auth_to":fields.date("授权截止日期", required=True),
+        "auth_num":fields.char("授权书编号",size=64,select=True, required=False),
+        "date_auth_to":fields.date("授权截止日期", required=False),
     }
     
     _sql_constraints=[('name_unique','unique(name)','网店名称不能重复!')]

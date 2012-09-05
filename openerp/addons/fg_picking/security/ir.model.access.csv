@@ -31,6 +31,3 @@
 "fuguang_delivery_line_user","group_fgp_user fuguang_delivery_line","model_fuguang_delivery_line","fg_picking.group_fgp_user",1,1,1,1
 "fuguang_delivery_line_admin","group_fgp_admin fuguang_delivery_line","model_fuguang_delivery_line","fg_picking.group_fgp_admin",1,1,1,1
 "fuguang_delivery_line_client","group_fgp_client fuguang_delivery_line","model_fuguang_delivery_line","fg_picking.group_fgp_client",0,0,0,0
-
-"fg_picking_delivery_import_wizard_user","group_fgp_user fg_picking_delivery_import_wizard","model_fg_picking_delivery_import_wizard","fg_picking.group_fgp_user",1,1,1,1
-"fg_picking_delivery_import_wizard_admin","group_fgp_admin fg_picking_delivery_import_wizard","model_fg_picking_delivery_import_wizard","fg_picking.group_fgp_admin",1,1,1,1

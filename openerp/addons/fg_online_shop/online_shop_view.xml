@@ -153,9 +153,10 @@
                 <tree string="网店">
                     <field name="name"/>
                     <field name="manager"/>
+                    <field name="phone"/>
                     <field name="auth_num"/>
                     <field name="date_auth_to"/>
-                    <field name="url" widget="url"/>
+                    <field name="platform"/>
                 </tree>
             </field>
         </record>
