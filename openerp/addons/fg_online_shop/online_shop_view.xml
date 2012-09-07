@@ -120,7 +120,7 @@
                     <field name="manager"/>
                     <field name="auth_num"/>
                     <field name="date_auth_to"/>
-                    
+                    <field name="company_id"/>
                     <notebook colspan="4">
                         <page string="常规">
                             <field name="date_started"/>
