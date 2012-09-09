@@ -224,7 +224,7 @@ class reconcile_view_wizard(osv.osv_memory):
             amount_dict[row[0]] = row[1]
         
         sent = amount_dict.get(u'发货额', 0)
-        back = amount_dict.get(u'退回', 0)
+        back = amount_dict.get(u'退回', 0)  #负数
         cash_in = amount_dict.get(u'收现', 0)
         bank_in = amount_dict.get(u'转帐', 0)
         discount = amount_dict.get(u'让利', 0)
@@ -376,7 +376,7 @@ class reconcile_export(osv.osv_memory):
                 elif p[2] == '退回':
                     last_amount = last_amount + p[4]
                     sheet1.write(i, 3, p[4])
-                elif p[2] == '收现':
+                elif p[2] == '现金':
                     last_amount = last_amount - p[4]
                     sheet1.write(i, 4, p[4])
                 elif p[2] == '转账':
