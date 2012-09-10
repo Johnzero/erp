@@ -8,6 +8,7 @@ class res_partner(osv.osv):
     _columns = {
         'ratio': fields.float('比率', digit=2),
     }
+    
 
 class sale_order(osv.osv):
     _name = "fg_sale.order"
@@ -36,7 +37,7 @@ class sale_order(osv.osv):
         'confirmer_id': fields.many2one('res.users', '审核人', select=True, readonly=True),
         'partner_id': fields.many2one('res.partner', '客户', readonly=True, states={'draft': [('readonly', False)]}, required=True, change_default=True, select=True),
         'partner_shipping_id': fields.many2one('res.partner.address', '送货地址', readonly=True, required=True, states={'draft': [('readonly', False)]}),
-        'amount_total': fields.function(_amount_all, string='金额', store=False, multi='sums'),
+        'amount_total': fields.function(_amount_all, string='金额', store=True, multi='sums'),
         #'amount_total': fields.float('金额', digits=(16,4)),
         'order_line': fields.one2many('fg_sale.order.line', 'order_id', '订单明细', readonly=True, states={'draft': [('readonly', False)]}),
         'state': fields.selection([('draft', '未审核'), ('done', '已审核'), ('cancel','已取消')], '订单状态', readonly=True, select=True),
