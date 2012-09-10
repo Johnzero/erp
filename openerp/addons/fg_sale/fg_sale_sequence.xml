@@ -9,7 +9,7 @@
         <record id="seq_fg_sale_order" model="ir.sequence">
             <field name="name">Fu Guang Order</field>
             <field name="code">fg_sale.order</field>
-            <field name="prefix">FGSO-%(year)s%(month)s%(day)s</field>
+            <field name="prefix">FGASO-%(year)s%(month)s%(day)s</field>
             <field name="padding">4</field>
             <field name="implementation">no_gap</field>
         </record>
@@ -21,7 +21,7 @@
         <record id="seq_fg_sale_cust_order" model="ir.sequence">
             <field name="name">Fu Guang Cust Order</field>
             <field name="code">fg_sale.cust.order</field>
-            <field name="prefix">FGSCO-%(year)s%(month)s%(day)s</field>
+            <field name="prefix">FGASCO-%(year)s%(month)s%(day)s</field>
             <field name="padding">4</field>
             <field name="implementation">no_gap</field>
         </record>
@@ -33,7 +33,7 @@
         <record id="seq_fg_sale_price_protection" model="ir.sequence">
             <field name="name">Fuguang Sale Price Protection</field>
             <field name="code">fg_sale.price.protection</field>
-            <field name="prefix">FGSPP-%(year)s%(month)s%(day)s</field>
+            <field name="prefix">FGASPP-%(year)s%(month)s%(day)s</field>
             <field name="padding">1</field>
             <field name="implementation">no_gap</field>
         </record>
