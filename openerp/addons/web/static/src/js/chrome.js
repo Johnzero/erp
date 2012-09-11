@@ -167,7 +167,7 @@ openerp.web.CrashManager = openerp.web.CallbackEnabled.extend({
     },
     on_managed_error: function(error) {
         $('<div>' + QWeb.render('CrashManagerWarning', {error: error}) + '</div>').dialog({
-            title: "富光ERP系统 " + _.str.capitalize(error.type),
+            title: "富光FGA业务系统 " + _.str.capitalize(error.type),
             buttons: [
                 {text: _t("Ok"), click: function() { $(this).dialog("close"); }}
             ]
@@ -200,7 +200,7 @@ openerp.web.CrashManager = openerp.web.CallbackEnabled.extend({
             };
         }
         var dialog = new openerp.web.Dialog(this, {
-            title: "富光ERP系统 " + _.str.capitalize(error.type),
+            title: "富光FGA业务系统 " + _.str.capitalize(error.type),
             width: '80%',
             height: '50%',
             min_width: '800px',

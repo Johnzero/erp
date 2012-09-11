@@ -47,3 +47,11 @@ OR default_code is NULL
 # update sequence of order.
 update fg_sale_order 
 set name = replace(name, 'FGSO', 'FGASO')
+
+
+
+delete from fg_account_bill
+where partner_id in (
+select id from res_partner where active=false
+)
+
