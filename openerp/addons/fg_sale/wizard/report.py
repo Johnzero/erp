@@ -29,34 +29,29 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
         this = self.browse(cr, uid, ids)[0]
         sql = """
         SELECT
-            partner."name",
-            product.default_code,
-            product.name_template,
-            product."source",
-            SUM (line.aux_qty) AS qty,
-            SUM (line.subtotal_amount) AS amount
-        FROM
-            fg_sale_order_line line
-        JOIN fg_sale_order o ON line.order_id = o."id"
-        JOIN product_product product ON product."id" = line.product_id
-        JOIN res_partner partner ON ((partner. ID = o.partner_id))
-        WHERE
-            (
-            o."state" = 'done'
-            OR o.minus = TRUE
-            )
-            AND product.default_code <> ''
-            AND o.partner_id = %s
-            AND o.date_order >= '%s'
-            AND o.date_order <= '%s'
-        GROUP BY
-                line.product_id,
                 product.name_template,
                 product.default_code,
-                partner."name",
+                product."source",
+                SUM(line.aux_qty) as aux_qty,
+                SUM(line.subtotal_amount) as amount
+        FROM
+                fg_sale_order_line line
+        JOIN fg_sale_order o ON o."id" = line.order_id
+        JOIN product_product product ON product. ID = line.product_id
+        WHERE
+                o.partner_id = %s
+        AND (
+            o."state" = 'done'
+            OR o.minus = TRUE
+        )
+
+        AND o.date_order >= '%s'
+        AND o.date_order <= '%s'
+        GROUP BY
+                line.product_id,
+                product.default_code,
+                product.name_template,
                 product."source"
-        ORDER BY
-                product.default_code ASC
         """
         
         cr.execute(sql % (this.partner_id.id, this.date_start, this.date_end))
@@ -68,12 +63,11 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
             sheet = book.add_sheet(name)
             sheet_dict[name] = len(sheet_dict)
             
-            sheet.write(0,0,'客户')
+            sheet.write(0,0,'产品名称')
             sheet.write(0,1,'产品型号')
-            sheet.write(0,2,'产品名称')
-            sheet.write(0,3,'事业部')
-            sheet.write(0,4,'只数')
-            sheet.write(0,5,'金额')
+            sheet.write(0,2,'事业部')
+            sheet.write(0,3,'只数')
+            sheet.write(0,4,'金额')
             return sheet
 
         def _get_or_create_sheet(name):
@@ -97,8 +91,10 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
                 i = i + 1
         
         for p in cr.fetchall():
-            sheet = _get_or_create_sheet(p[3])
+            sheet = _get_or_create_sheet(p[2])
             _write_line(sheet, p)
+        
+        # TODO: here, is cr did not fetch anything, xlwr will raise errors.
         
         buf=cStringIO.StringIO()
         book.save(buf)
