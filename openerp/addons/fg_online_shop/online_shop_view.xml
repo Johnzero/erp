@@ -103,27 +103,12 @@
                     <field name="shop_id"/>
                     <field name="date"/>
                     <field name="user_id"/>
+                    <field name="url" widget="url"/>
                     <field name="product_model"/>
                 </tree>
             </field>
         </record>
         
-        <record id="view_search" model="ir.ui.view">
-            <field name="name">fg_online_shop.shop.search</field>
-            <field name="model">fg_online_shop.shop</field>
-            <field name="type">search</field>
-            <field name="arch" type="xml">
-                <search string="搜索">
-                    <field name="company_id"/>
-                    <field name="name"/>
-                    <field name="manager"/>
-                    <separator orientation="vertical"/>
-                    <filter name="atu" icon="terp-check" string="已授权的" domain="[('auth_state','=','已授权')]"/>
-                    <separator orientation="vertical"/>
-                    <filter name="atu1" icon="stock_log" string="未授权的" domain="[('auth_state','!=','已授权')]" help="包括(授权到期,已注销,未授权)"/>
-                </search>
-            </field>
-        </record>
         
         <record model="ir.ui.view" id="fg_online_shop_shop_form_view">
             <field name="name">fg_online_shop.shop.form</field>
@@ -133,11 +118,9 @@
                 <form string="网店">
                     <field name="name"/>
                     <field name="manager"/>
+                    <field name="auth_num"/>
+                    <field name="date_auth_to"/>
                     <field name="company_id"/>
-                    <field name="auth_state"/>
-                    <field name="auth_num" attrs="{'invisible':[('auth_state','!=','已授权')]}"/>
-                    <field name="date_auth_start" attrs="{'invisible':[('auth_state','!=','已授权')]}"/>
-                    <field name="date_auth_to" attrs="{'invisible':[('auth_state','!=','已授权')]}"/>
                     <notebook colspan="4">
                         <page string="常规">
                             <field name="date_started"/>
@@ -171,8 +154,8 @@
                     <field name="name"/>
                     <field name="manager"/>
                     <field name="phone"/>
-                    <field name="auth_state"/>
                     <field name="auth_num"/>
+                    <field name="date_auth_to"/>
                     <field name="platform"/>
                 </tree>
             </field>
@@ -248,7 +231,6 @@
             <field name="res_model">fg_online_shop.shop</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name='search_view_id' ref="view_search"/>
             <field name="context">{}</field>
             
         </record>

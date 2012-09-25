@@ -24,7 +24,7 @@ class fg_online_shop_company(osv.osv):
         'is_entity': fields.selection([('True','是'),('False','否')],'是否有实体店铺'),
         'manager':fields.char('负责人',size=64),
         
-        'company_scale':fields.char('公司规模',size=64,),
+        'company_scale':fields.integer('公司规模'),
         'shops':fields.one2many('fg_online_shop.shop', 'company_id', '网店'),
         "website":fields.char("官网", size=64),
         'note':fields.text('备注'),
@@ -57,11 +57,8 @@ class fg_online_shop_shop(osv.osv):
         'note':fields.text('附注'),
         "violations":fields.one2many("fg_online_shop.violation","shop_id","违规记录"),
         'scores':fields.one2many('fg_online_shop.score', 'shop_id', '加分记录'),
-        'auth_state':fields.selection([(u'授权到期',u'授权到期'),(u'已授权',u'已授权'), (u'此店已注销',u'此店已注销'),(u'未授权',u'未授权')
-                                            ],'授权状态',),
         "auth_num":fields.char("授权书编号",size=64,select=True, required=False),
         "date_auth_to":fields.date("授权截止日期", required=False),
-        "date_auth_start":fields.date("授权开始日期", required=False),
     }
     
     _sql_constraints=[('name_unique','unique(name)','网店名称不能重复!')]
