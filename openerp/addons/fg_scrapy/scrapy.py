@@ -74,15 +74,18 @@ class scrapy(osv.osv):
         
         #D:\erp\openerp\addons\scrapyscheduled
         absdir = os.path.abspath('.')
-        if not 'fg_scrapy' in absdir:
-            absdir = os.path.abspath('.') + "\\openerp\\addons\\fg_scrapy"
-        elif 'getstore' in absdir:
-            absdir = absdir.replace('\getstore','')
-        absdir = absdir +'\\tutorial'
+        print absdir
+        if not '\\fg_scrapy' in absdir:
+                absdir = os.path.abspath('.') + "\\openerp\\addons\\fg_scrapy"
+        elif '\\getstore' in absdir:
+                absdir = absdir.replace('\\getstore','')
+        elif '\\tutorial' in absdir:
+                absdir = absdir.replace('\\tutorial','')
         xls = absdir + "\\tutorial\\updateitems.xls"
         orfile =  absdir + "\\tutorial\\items.json"     
         filedir = absdir + "\\tutorial\\datatable.json"
-        
+        print absdir,"!!!!"
+        absdir = absdir +'\\tutorial'
         #删除旧文件
         try :
             os.remove(filedir)
@@ -119,6 +122,9 @@ class scrapy(osv.osv):
             return True
         
         print absdir,"**********"
+        print filedir
+        print xls
+        print orfile
         
         cmd = 'scrapy crawl dmoz -o items.json -t json'
         try:
@@ -238,10 +244,12 @@ class scrapy_stores(osv.osv):
         ''' '''
         
         absdir = os.path.abspath('.')
-        if 'addons' not in absdir:
-            absdir = os.path.abspath('.')+"\\openerp\\addons\\fg_scrapy"
-        elif 'tutorial' in absdir:
-            absdir = absdir.replace('\tutorial','')
+        if not '\\fg_scrapy' in absdir:
+                absdir = os.path.abspath('.') + "\\openerp\\addons\\fg_scrapy"
+        elif '\\getstore' in absdir:
+                absdir = absdir.replace('\\getstore','')
+        elif '\\tutorial' in absdir:
+                absdir = absdir.replace('\\tutorial','')
             
         orfile =  absdir + "\\getstore\\importstore.json"
         adress =   absdir +'\\getstore'

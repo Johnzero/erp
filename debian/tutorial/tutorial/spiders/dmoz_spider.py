@@ -17,7 +17,6 @@ class DmozSpider(BaseSpider):
     name = "dmoz"
     allowed_domains = ["http://s.etao.com"]
     dirf = os.path.abspath(".")
-    print dirf
     wkb = xlrd.open_workbook(dirf+"\\updateitems.xls")
     sheet = wkb.sheets()[0]
     
@@ -29,8 +28,8 @@ class DmozSpider(BaseSpider):
     urls = []
     for product in itemname:
 	for num in range(4):
-	    urls.append("http://s.etao.com/search?&q="+product+"&sort=price-asc" +"&style=grid"+ "&s=" + str(num*40)) 
-    print urls	
+	    urls.append("http://s.etao.com/search?&q="+product+"&sort=price-asc" + "&s=" + str(num*40)) 
+		
     start_urls = [it for it in urls]
     
     def parse(self, response):

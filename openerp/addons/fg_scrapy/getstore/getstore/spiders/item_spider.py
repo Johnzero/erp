@@ -21,7 +21,6 @@ class ItemSpider(BaseSpider):
     sys.setdefaultencoding('utf8')
     
     dirf = os.path.abspath('.')
-    print dirf,"@@@@@@@"
     wkb = xlrd.open_workbook(dirf+"\\FGA.xls")
     sheet = wkb.sheets()[0]
     
@@ -33,7 +32,6 @@ class ItemSpider(BaseSpider):
     urls = []
     for i in itemname:
 	urls.append(append+i+'&style=grid')
-    print urls
     for url in urls:
 	try:
 	    request = urllib2.Request(urls[0],headers={"User-Agent":"Mozilla-Firefox5.0"})
