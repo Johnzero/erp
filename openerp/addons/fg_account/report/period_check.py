@@ -31,12 +31,14 @@ class reconcile_item(osv.osv_memory):
                 'view_mode': 'form',
                 'view_type': 'form',
                 'res_model': record.ref_doc._table_name,
-                'res_id': record.id,
+                'res_id': record.ref_doc.id,
                 'target': 'new',
                 'context': context,
             }
-        if record.ref_doc._table_name == 'fg_account.bill':
-            r['res_id'] = record.id - 1000000000
+        #if record.ref_doc._table_name == 'fg_account.bill':
+        #    r['res_id'] = record.id - 1000000000
+        #
+        #print r
         
         return r
 

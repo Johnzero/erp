@@ -270,6 +270,7 @@ class reconcile_view_wizard(osv.osv_memory):
 
         result = act_obj.read(cr, uid, [id], context=context)[0]
         result['domain'] = "[('id','in', ["+','.join(map(str, ids))+"])]"
+        result['limit'] = 1000
         return result
         
 
