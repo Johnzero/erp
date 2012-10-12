@@ -5,6 +5,62 @@ from osv import fields, osv
 import xlwt, cStringIO
 
 
+class fuguang_discount_product(osv.osv_memory):
+    _name = "fg_sale.fuguang.product.discount.wizard"
+    _description = "促销单品统计"
+    
+    _columns = {
+        'partner_id': fields.many2one('res.partner', '客户', required=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+    }
+    
+    _defaults = {
+        'date_end': fields.date.context_today,
+    }
+    
+    def show_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        sql = """
+        SELECT
+                product.name_template,
+                SUM (line.product_uom_qty) AS uom_qty,
+                SUM (line.aux_qty) AS aux_qty
+        FROM
+                product_product product
+        JOIN fg_sale_order_line line ON line.product_id = product."id"
+        JOIN fg_sale_order o ON line.order_id = o."id"
+        WHERE
+                (
+                        o."state" = 'done'
+                        OR o.minus = TRUE
+                )
+        AND o.note LIKE '%%促销%%'
+        AND o.partner_id = %s
+        AND o.date_order >= '%s'
+        AND o.date_order <= '%s'
+        GROUP BY
+                product.name_template
+        """
+        
+        cr.execute(sql % (this.partner_id.id, this.date_start, this.date_end))
+        report_obj = self.pool.get('fg_data.report.horizontal')
+        
+        ids = [report_obj.create(cr, uid, {'name':p[0], 'value':p[1], 'desc':('共 %s 只'%p[2])}) for p in cr.fetchall()]
+        
+        act_obj = self.pool.get('ir.actions.act_window')
+        mod_obj = self.pool.get('ir.model.data')
+        
+        result = mod_obj.get_object_reference(cr, uid, 'fg_data', 'action_fg_data_report_horizontal')
+        id = result and result[1] or False
+        
+        result = act_obj.read(cr, uid, [id], context=context)[0]
+        result['domain'] = "[('id','in', ["+','.join(map(str, ids))+"])]"
+        result['limit'] = 1000
+        return result
+        
+    
+
 class fuguang_amount_by_partner_product(osv.osv_memory):
     _name = "fg_sale.fuguang.partner.product.export.wizard"
     _description = "根据客户的产品销量统计"

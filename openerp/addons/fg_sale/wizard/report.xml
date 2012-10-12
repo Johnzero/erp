@@ -216,6 +216,33 @@
             </field>
         </record>
         
+        <record model="ir.ui.view" id="fg_sale_discount_product_wizard_form_view">
+            <field name="name">fg_sale.fuguang.product.discount.wizard.form</field>
+            <field name="model">fg_sale.fuguang.product.discount.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="促销单品统计">
+                     <field name="partner_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <group colspan="4" col="6">
+                        <button  icon="gtk-close" special="cancel" string="关闭"/>
+                        <button icon="gtk-ok" name="show_result" string="生成" type="object"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_fg_sale_discount_product_wizard">
+            <field name="name">促销单品统计</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_sale.fuguang.product.discount.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fg_sale_discount_product_wizard_form_view"/>
+            <field name="target">new</field>
+        </record>
+        
         
         <record model="ir.actions.act_window" id="action_fg_sale_parnter_wizard">
             <field name="name">客户销量统计</field>
@@ -259,7 +286,7 @@
             <field name="target">new</field>
         </record>
         
-        <record id="action_fg_sale_report_fga_partner_export_wizard" model="ir.actions.act_window">
+        <!--<record id="action_fg_sale_report_fga_partner_export_wizard" model="ir.actions.act_window">
             <field name="name">导出FGA客户销售统计</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">fg_sale.fga.partner.export.wizard</field>
@@ -287,7 +314,7 @@
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_fg_sale_report_fga_partner_product_export_wizard"/>
             <field name="target">new</field>
-        </record>
+        </record>-->
          
          <record id="action_fg_sale_report_fg_partner_product_export_wizard" model="ir.actions.act_window">
             <field name="name">导出客户产品销售汇总</field>
