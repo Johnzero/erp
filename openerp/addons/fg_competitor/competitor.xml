@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="fg_competitor_competitor_form">
+            <field name="name">fg_competitor.competitor.form</field>
+            <field name="model">fg_competitor.competitor</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="竞争对手">
+                    <field name="name" select="1"/>
+                    <field name="address" select="1"/>
+                    <field name="website" select="1"/>
+                    <newline/>
+                    <field colspan="4" mode="tree,form" name="brands" nolabel="1" widget="one2many_list"/>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="fg_competitor_competitor_tree">
+            <field name="name">fg_competitor.competitor.tree</field>
+            <field name="model">fg_competitor.competitor</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="竞争对手">
+                    <field name="name" select="1"/>
+                    <field name="address" select="1"/>
+                    <field name="website" select="1"/>
+                </tree>
+            </field>
+        </record>
+        
+        
+        
+        
+    </data>
+</openerp>

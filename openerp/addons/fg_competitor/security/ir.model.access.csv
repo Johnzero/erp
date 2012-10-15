@@ -1,0 +1,9 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+"fg_competiror_competitor_user","group_fg_competiror_user fg_competiror_competitor","model_fg_competiror_competitor","fg_competiror.group_fg_competitor_user",1,1,1,0
+"fg_competiror_competitor_manager","group_fg_competiror_manager fg_competiror_competitor","model_fg_competiror_competitor","fg_competiror.group_fg_competitor_manager",1,1,1,1
+
+"fg_competiror_brand_user","group_fg_competiror_user fg_competiror_brand","model_fg_competiror_brand","fg_competiror.group_fg_competitor_user",1,1,1,0
+"fg_competiror_brand_manager","group_fg_competiror_manager fg_competiror_brand","model_fg_competiror_brand","fg_competiror.group_fg_competitor_manager",1,1,1,1
+
+"fg_competiror_product_user","group_fg_competiror_user fg_competiror_product","model_fg_competiror_product","fg_competiror.group_fg_competitor_user",1,1,1,0
+"fg_competiror_product_manager","group_fg_competiror_manager fg_competiror_product","model_fg_competiror_product","fg_competiror.group_fg_competitor_manager",1,1,1,1
