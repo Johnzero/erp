@@ -10,12 +10,12 @@
     'depends': ['base', 'board'],
     'init_xml': [],
     'update_xml': [
-        'security/group.xml',
-        'security/ir.model.access.csv',
+        
         'competitor.xml',
     ],
     'demo_xml': [],
     'installable': True,
     'active': False,
     'application':True,
+    'css':['static/src/css/competitor.css']
 }
