@@ -2,6 +2,36 @@
 <openerp>
     <data>
         
+        <record id="view_fg_sale_report_product_sale_toplist_export_wizard" model="ir.ui.view">
+            <field name="name">单品销售排行</field>
+            <field name="model">fg_sale.fuguang.product.sale.toplist.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="导出统计">
+                 <group states="choose">
+                    <field name="product"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field invisible="1" name="state"/>
+                </group>
+                <group states="get">
+                    <separator string="导出完成, 点击'另存为'下载统计表." colspan="4"/>
+                    <field name="name" invisible="1"/>
+                    <field name="data" nolabel="1" readonly="1" filename="name" />
+                </group>
+                    <group colspan="4" col="6" states="choose">
+                        <button  icon="gtk-close" special="cancel" string="关闭"/>
+                        <button icon="gtk-ok" name="export_result" string="导出" type="object"/>
+                    </group>
+                    <group colspan="8" col="8" states="get">
+                        <separator string="" colspan="8"/>
+                        <label colspan="7" width="220"/>
+                        <button icon="gtk-close" name="button_cancel" special="cancel" string="关闭" type="object"/>
+                    </group>
+            </form>
+            </field>
+        </record>
+        
         <record id="view_fg_sale_report_fg_partner_product_export_wizard" model="ir.ui.view">
             <field name="name">导出客户产品销售汇总</field>
             <field name="model">fg_sale.fuguang.partner.product.export.wizard</field>
@@ -183,6 +213,7 @@
             </field>
         </record>
         
+        
         <record model="ir.ui.view" id="fg_sale_amount_resource_wizard_form_view">
             <field name="name">fg_sale.amount.source.wizard.form</field>
             <field name="model">fg_sale.amount.source.wizard</field>
@@ -323,6 +354,16 @@
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_fg_sale_report_fg_partner_product_export_wizard"/>
+            <field name="target">new</field>
+        </record>
+         
+         <record id="action_fg_sale_report_product_sale_toplist_export_wizard" model="ir.actions.act_window">
+            <field name="name">导出单品销售排行</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_sale.fuguang.product.sale.toplist.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_fg_sale_report_product_sale_toplist_export_wizard"/>
             <field name="target">new</field>
         </record>
         

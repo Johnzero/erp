@@ -5,6 +5,7 @@ from osv import fields, osv
 import xlwt, cStringIO
 
 
+
 class fuguang_discount_product(osv.osv_memory):
     _name = "fg_sale.fuguang.product.discount.wizard"
     _description = "促销单品统计"
@@ -59,7 +60,80 @@ class fuguang_discount_product(osv.osv_memory):
         result['limit'] = 1000
         return result
         
+
+
+class fuguang_product_sale_toplist(osv.osv_memory):
+    _name = "fg_sale.fuguang.product.sale.toplist.wizard"
+    _description = "单品销售排行"
     
+    _columns = {
+        'name': fields.char('文件名', 16, readonly=True),
+        'product': fields.many2one('product.product', '产品', required=True),
+        'date_start': fields.date('开始日期', required=True),
+        'date_end': fields.date('截止日期', required=True),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': '单品销售排行.xls',
+    }
+    
+    def export_result(self, cr, uid, ids, context=None):
+        this = self.browse(cr, uid, ids)[0]
+        sql = """
+        SELECT
+                P ."name",
+                product.name_template,
+                product.default_code,
+                SUM (line.aux_qty) AS qty
+        FROM
+                fg_sale_order_line line
+        JOIN product_product product ON product."id" = line.product_id
+        JOIN fg_sale_order o ON o."id" = line.order_id
+        JOIN res_partner P ON P ."id" = o.partner_id
+        WHERE
+                line.product_id = %s
+        AND (
+                o."state" = 'done'
+                OR o.minus = TRUE
+        )
+        AND o.date_order >= '%s'
+        AND o.date_order <= '%s'
+        GROUP BY
+                P ."name",
+                product.default_code,
+                product.name_template
+        ORDER BY
+                qty DESC
+        """
+        
+        cr.execute(sql % (this.product.id, this.date_start, this.date_end))
+        
+        book = xlwt.Workbook(encoding='utf-8')
+        sheet = book.add_sheet(u'排序')
+        
+        sheet.write(0,0,'客户')
+        sheet.write(0,1,'产品')
+        sheet.write(0,2,'货号')
+        sheet.write(0,3,'销售只数')
+        
+        for p in cr.fetchall():
+            c = 0
+            row_count = len(sheet.rows)
+            for x in p:
+                sheet.write(row_count, c, x)
+                c = c + 1
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+        
+        out=base64.encodestring(buf.getvalue())
+        
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
 
 class fuguang_amount_by_partner_product(osv.osv_memory):
     _name = "fg_sale.fuguang.partner.product.export.wizard"
@@ -75,6 +149,7 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
                                      ('get','get'),         # get the file
                                    ] ),
     }
+    
     _defaults = {
         'date_end': fields.date.context_today,
         'state': lambda *a: 'choose',
@@ -147,7 +222,7 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
                 i = i + 1
         
         for p in cr.fetchall():
-            sheet = _get_or_create_sheet(p[2])
+            sheet = _get_or_create_sheet(p[2] or '未知来源')
             _write_line(sheet, p)
         
         # TODO: here, is cr did not fetch anything, xlwr will raise errors.
