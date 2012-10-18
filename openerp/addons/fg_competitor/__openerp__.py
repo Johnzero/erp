@@ -10,7 +10,8 @@
     'depends': ['base', 'board'],
     'init_xml': [],
     'update_xml': [
-        
+        'security/groups.xml',
+        'security/ir.model.access.csv',
         'competitor.xml',
     ],
     'demo_xml': [],

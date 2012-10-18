@@ -118,29 +118,29 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="竞争对手产品">
-                    <label string="" colspan="4"/>
-                    <group col='6' colspan='4'>
+                    <group col="6" colspan="4">
                         <field name="brand_id"/>
                         <field name="name"/>
                         <field name="model"/>
-                        <label string="" colspan="6"/>
-                        <field name="year"/>
-                        <field name="meterial"/>
-                        <field name="style"/>
-                        <label string="" colspan="6"/>
-                        <field name="color"/>
-                        <field name="price"/>
-                        <field name="capacity"/>
                     </group>
-                    <field name="tag" widget="many2many_list" colspan="4" invisible='1'/>
-                    <newline/>
-                    <label string="" colspan="4"/>
-                    <field name="url" string="产品链接" colspan='4' widget="url"/>
-                    <newline/>
-                    <label string="" colspan="4"/>
-                    <label string="" colspan="4"/>
-                    <field name="photo" widget="image" colspan='4'/>
-                    <newline/>
+                    <notebook colspan="6">
+                        <page string="常规">
+                            <field name="year"/>
+                            <field name="meterial"/>
+                            <field name="style"/>
+                            <field name="color"/>
+                            <field name="price"/>
+                            <field name="capacity"/>
+                        </page>
+                        <page string="链接">
+                            <field name="url" string="产品链接" colspan='4' widget="url"/>
+                            <newline/>
+                            <field name="photo" widget="image" colspan='4'/>
+                        </page>
+                        <page string="标签">
+                            <field name="tags" widget="many2many_list" colspan="4"/>
+                        </page>
+                    </notebook>
                 </form>
             </field>
         </record>
@@ -187,11 +187,11 @@
             <field name="limit">300</field>
         </record>
         
-        <menuitem id='fg_competitor' name='竞争对手分析'  web_icon="icon/project.png" web_icon_hover="icon/project-hover.png"/>
+        <menuitem id='fg_competitor' name='竞争对手分析' groups="fg_competitor.group_fg_competitor_user,fg_competitor.group_fg_competitor_manager" web_icon="icon/project.png" web_icon_hover="icon/project-hover.png"/>
         <menuitem id="fg_competitor_menu" name="竞争对手" parent="fg_competitor" />
         <menuitem id="fg_competitor_menu2" name="公司信息" parent="fg_competitor_menu" action="action_fg_competitor" sequence="1"/>
         <menuitem id='fg_competitor_brand' name="旗下品牌" parent='fg_competitor_menu' action="action_fg_competitor_brand" sequence="10"/>
-        <menuitem id="fg_competitor_product" name="产品展示" parent="fg_competitor" action="action_fg_competitor_product"/>
+        <menuitem id="fg_competitor_product" name="对手产品" parent="fg_competitor_menu" action="action_fg_competitor_product"/>
         <menuitem id="fg_competitor_analysis" name="竞品分析" parent="fg_competitor"/>
         
     </data>

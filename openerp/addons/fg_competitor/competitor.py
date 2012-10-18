@@ -75,16 +75,17 @@ class product(osv.osv):
         
         'url':fields.char('链接', size=128),
         
-        'tag':fields.many2many('fg_competitor.product','fg_competitor_producttag','name','tag','标签'),
+        'tags':fields.many2many('fg_competitor.product.tag','ref_fg_competitor_product_tag','product_id','tag_id','标签'),
         
         'photo':fields.binary('图片'),
+        
         
     
     }
 
 class product_tag(osv.osv):
     
-    _name = "fg_competitor.producttag"
+    _name = "fg_competitor.product.tag"
     _description = "product_tag"
     
     _columns = {
