@@ -346,7 +346,7 @@ class reconcile_export(osv.osv_memory):
             AND o_partner = %s
             AND o_date >= to_date('%s', 'YYYY-MM-DD')
             AND o_date <= to_date('%s', 'YYYY-MM-DD')
-            ORDER BY id asc
+            ORDER BY o_date asc
             """
             
             
@@ -355,7 +355,7 @@ class reconcile_export(osv.osv_memory):
             sheet1.write(0, 1, '开始日期: %s' % this.date_start)
             sheet1.write(0, 2, '截止日期: %s' % this.date_end)
             
-            sources = ['日期','单号','发货额','退回','收现','备注','转账','让利','余额','是否对账']
+            sources = ['日期','单号','发货额','退货','收现','备注','转账','让利','余额','是否对账']
             c_i = 0
             for c in sources:
                 sheet1.write(1, c_i, c)
@@ -371,20 +371,21 @@ class reconcile_export(osv.osv_memory):
                 sheet1.write(i, 1, p[1])
                 sheet1.write(i, 9, p[3] and '是' or '否')
                 sheet1.write(i, 5, p[5])
+                
                 if p[2] == '发货额':
                     last_amount = last_amount + p[4]
                     sheet1.write(i, 2, p[4])
-                elif p[2] == '退回':
+                elif p[2] == '退货':
                     last_amount = last_amount + p[4]
                     sheet1.write(i, 3, p[4])
                 elif p[2] == '现金':
-                    last_amount = last_amount - p[4]
+                    last_amount = last_amount + p[4]
                     sheet1.write(i, 4, p[4])
                 elif p[2] == '转账':
-                    last_amount = last_amount - p[4]
+                    last_amount = last_amount + p[4]
                     sheet1.write(i, 6, p[4])
                 elif p[2] == '让利':
-                    last_amount = last_amount - p[4]
+                    last_amount = last_amount + p[4]
                     sheet1.write(i, 7, p[4])
                     
                 sheet1.write(i, 8, last_amount)

@@ -27,7 +27,7 @@
             <field name="model">fg_account.period.check</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="对账单" colors="red:t == '退回'">
+                <tree string="对账单" colors="red:amount &lt; 0">
                     <field name="name"/>
                     <field name="o_date"/>
                     <field name="o_partner"/>
@@ -57,6 +57,7 @@
                     <field name="o_partner"/>
                     <field name="due_date_from" filter_domain="[('o_date','&gt;=',self)]"/>
                     <field name="due_date_to" filter_domain="[('o_date','&lt;=',self)]"/>
+					<field name="t"/>
                 </search>
             </field>
         </record>
@@ -73,6 +74,7 @@
                     <field name="o_partner"/>
                     <field name="due_date_from" filter_domain="[('o_date','&gt;=',self)]"/>
                     <field name="due_date_to" filter_domain="[('o_date','&lt;=',self)]"/>
+					<field name="t"/>
                 </search>
             </field>
         </record>
