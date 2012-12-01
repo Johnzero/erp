@@ -33,7 +33,7 @@
                     <field name="o_partner"/>
                     <field name="t"/>
                     <field name="reconciled"/>
-                    <field name="amount"/>
+                    <field name="amount" sum="本页总额"/>
                     <field name="note"/>
                     <field name="cleared" groups="fg_account.group_fg_account_manager" />
                     <button name="button_view" string="单据" icon="STOCK_JUMP_TO" type="object"/>
