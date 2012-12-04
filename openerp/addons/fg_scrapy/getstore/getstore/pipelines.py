@@ -8,53 +8,89 @@ import sys
 import json
 import re
 import datetime
-
+import os
+cdate = datetime.date.today().strftime("%Y-%m-%d")
 class GetstorePipeline(object):
     
     def __init__(self):
+        
         self.file = open('importstore.json', 'wb')
+    
     def process_item(self, item, spider):
         
         reload(sys)
         sys.setdefaultencoding('utf8')
-        
-        if len(item["link"])<1500:
-            return item
-        reg1 = 'class="seller">(.*)</a>'
-        st = re.findall(reg1,item["link"])
-        reg2 = 'href="(\S*)".*>(.*)'
-        st2 = re.findall(reg2,st[0])
-        
-        reg3 = 'class="summary"(.*)</a>'
-        st3 = re.findall(reg3,item["link"])
-        reg4 = 'href="(\S*)".*title="(.*?)">'
-        st4 = re.findall(reg4,st3[0])
-        string = str(st4[0][0]).replace('amp;','')
-        
-        reg5 = 'class="loc">(.*?)<'
-        st5 = re.findall(reg5,item["link"])
-        if not st5:
-            reg5 = 'class="place">(.*?)<'
-            st5 = re.findall(reg5,item["link"])
-
-        reg6 = 'class="price"><em>(.*)</em>'
-        st6 = re.findall(reg6,item["link"])
-        
-        #reg7 = 'person-count>(.*)</span>'
-        #st7 = re.findall(reg7,item["link"])
-        reg7 = 'class="price.*?<span>(.*)</span>'
-        st7  = re.findall(reg7,item["link"])
-        
-        cdate = datetime.date.today().strftime("%Y-%m-%d")
-        
-        self.file.write('"href":'+'"'+st2[0][0]+'"'+','+
-                        '"name":'+'"'+st2[0][1]+'"'+','+
-                        '"title":'+'"'+st4[0][1]+'"'+','+
-                        '"itemHref":'+'"'+string+'"'+','+
-                        '"place":'+'"'+st5[0]+'"'+','+
-                        '"price":'+'"'+st6[0]+'"'+','+
-                        '"sale":'+'"'+st7[0]+'"'+','+
-                        '"date":'+'"'+cdate+'"'+"\n")
-        
-        
+        dirv = os.path.abspath("")
+        #taobao
+        if 'list-count' in item['title']:
+            
+            reg2 = 'class="buy-count".*?<span>(.*)</span>'
+            sale = re.findall(reg2,item['title'])
+            if sale:
+                sale = sale[0].replace('<b>','')
+                sale =sale.replace('</b>','')
+                sale = sale.replace(' ','')
+            else:sale = ''
+            
+            reg3 = '<h4><a href="(.*?)"'
+            href = re.findall(reg3,item['title'])
+            
+            reg6 = 'class="list-place".*?<span>(.*)</span>'
+            place = re.findall(reg6,item['title'])
+            if not place:place = ['']
+            
+            reg7 = '<h4>.*?target="_blank".*?>(.*?)</a>'
+            name = re.findall(reg7,item['title'])
+            name = name[0].replace('<span class="H">','')
+            name = name.replace('</span>','')
+            name = name.strip()
+            
+            reg8 = '<a target="_blank" href=.*?>(.*?)</a>'
+            owner = re.findall(reg8,item['title'])
+            
+            if 'mall-icon' in item['title']:
+                itemStoreName = u'\u5929\u732b'
+            else :itemStoreName = u'\u6dd8\u5b9d\u7f51'
+            price = ['']
+            title = ''
+            
+        #else  
+        else:
+            
+            reg = 'class="label-m-info".*?>(.*)</a>'
+            ie = re.findall(reg,item['link'])
+            if not ie:itemStoreName = ''
+            reg4 = '\S+\s+(\S+)'
+            itemStoreName = re.findall(reg4,ie[0])
+            if not itemStoreName:
+                itemStoreName = re.findall(reg,item['link'])
+                name = itemStoreName[0].replace(' ','')
+            else:name = itemStoreName[0].strip()
+            reg5 = '(\S+)\s+'
+            itemStoreName = re.findall(reg5,ie[0])
+            itemStoreName = itemStoreName[0]
+            owner = ['']
+            place = ['']
+            reg9 = "itemHref':'(.*?)',"
+            href = re.findall(reg9,item['title'])
+            sale = ''
+            reg10 = "itemPrice':'(.*?)',"
+            price = re.findall(reg10,item['title'])
+            reg11 = 'title="(.*?)"'
+            title = re.findall(reg11,item['title'])
+            title = title[0].replace('</span>','')
+            title = title.replace('"','')
+            title = title.replace(' ','')
+           
+           
+        self.file.write("'href':" +'"' + href[0] + '"'+ ','+
+                        '"place":' + '"' +place[0] +'"' +',' +
+                        '"owner":' + '"' +owner[0] +'"' +',' +
+                        '"name":' + '"' +name +'"' +',' +
+                        '"itemStoreName":' + '"' +itemStoreName +'"' +','
+                        '"date":' + '"' +cdate +'"' +',' +
+                        '"title":' + '"' +title +'"' +',' +
+                        '"price":' + '"' +price[0] +'"' +',' +
+                        '"sale":' + '"' +sale +'"' +',' +'\n')
+            
         return item

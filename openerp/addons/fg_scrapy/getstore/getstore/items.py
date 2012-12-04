@@ -10,3 +10,4 @@ class GetstoreItem(Item):
     # name = Field()
     title = Field()
     link = Field()
+    place = Field()

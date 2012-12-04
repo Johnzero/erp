@@ -9,12 +9,11 @@
     "website": "www.fuguang.com",
     "depends": ["base","fg_picking"],
     "init_xml": [],
-    "update_xml": ["service_view.xml",
-                   
+    "update_xml": [
                 "security/group.xml",
                 "security/ir.model.access.csv",
-                
-                "wizard/change_name.xml",],
+                "wizard/change_name.xml",
+                "service_view.xml",],
     "demo_xml": [],
     "installable": True,
     "active": False,

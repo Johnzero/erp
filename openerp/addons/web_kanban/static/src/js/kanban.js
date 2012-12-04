@@ -1,4 +1,4 @@
-openerp.web_kanban = function (openerp) {
+﻿openerp.web_kanban = function (openerp) {
 
 var _t = openerp.web._t,
    _lt = openerp.web._lt;
@@ -32,7 +32,7 @@ openerp.web_kanban.KanbanView = openerp.web.View.extend({
         this.has_been_loaded = $.Deferred();
         this.search_domain = this.search_context = this.search_group_by = null;
         this.currently_dragging = {};
-        this.limit = options.limit || 80;
+        this.limit = options.limit || 100;
     },
     start: function() {
         this._super();
@@ -83,7 +83,8 @@ openerp.web_kanban.KanbanView = openerp.web.View.extend({
             case 'button':
             case 'a':
                 var type = node.attrs.type || '';
-                if (_.indexOf('action,object,edit,delete,color'.split(','), type) !== -1) {
+                
+                if (_.indexOf('action,object,edit,page,delete,color'.split(','), type) !== -1) {
                     _.each(node.attrs, function(v, k) {
                         if (_.indexOf('icon,type,name,args,string,context,states,kanban_states'.split(','), k) != -1) {
                             node.attrs['data-' + k] = v;
@@ -130,9 +131,10 @@ openerp.web_kanban.KanbanView = openerp.web.View.extend({
             }
         }
     },
+    //创建新的记录
     do_add_record: function() {
         this.dataset.index = null;
-        this.do_switch_view('form');
+        this.do_switch_view('form');// 创建按钮转到form 
     },
     do_search: function(domain, context, group_by) {
         var self = this;
@@ -260,7 +262,7 @@ openerp.web_kanban.KanbanView = openerp.web.View.extend({
         return this._super();
     }
 });
-
+var array = new Array;
 openerp.web_kanban.KanbanGroup = openerp.web.OldWidget.extend({
     template: 'KanbanView.group_header',
     init: function (parent, records, group, dataset) {
@@ -290,7 +292,6 @@ openerp.web_kanban.KanbanGroup = openerp.web.OldWidget.extend({
                 self.aggregates[value] = group.aggregates[key];
             });
         }
-
         if (this.title === false) {
             this.title = _t('Undefined');
             this.undefined_title = true;
@@ -308,17 +309,25 @@ openerp.web_kanban.KanbanGroup = openerp.web.OldWidget.extend({
         this.$has_been_started.then(function() {
             self.do_add_records(records);
         });
+        //新增
+        array.push(this.title)
+        if (this.title){
+                self.do_toggle_fold();
+            }
+
     },
     start: function() {
         var self = this,
             def = this._super();
         this.$records = $(QWeb.render('KanbanView.group_records_container', { widget : this}));
         this.$records.appendTo(this.view.$element.find('.oe_kanban_groups_records'));
+        //点击缩小button
         this.$element.find(".oe_kanban_fold_icon").click(function() {
             self.do_toggle_fold();
             self.view.compute_groups_width();
             return false;
         });
+        //show_more button
         this.$records.find('.oe_kanban_show_more').click(this.do_show_more);
         if (this.state.folded) {
             this.do_toggle_fold();
@@ -474,6 +483,7 @@ openerp.web_kanban.KanbanRecord = openerp.web.OldWidget.extend({
             });
         }
     },
+    //按钮点击事件
     do_action_edit: function($action) {
         var self = this;
         if ($action.attr('target') === 'dialog') {
@@ -483,6 +493,21 @@ openerp.web_kanban.KanbanRecord = openerp.web.OldWidget.extend({
         } else {
             if (self.view.dataset.select_id(this.id)) {
                 this.view.do_switch_view('form');
+            } else {
+                this.do_warn("Kanban: could not find id#" + id);
+            }
+        }
+    },
+    //新增
+    do_action_page: function($action) {
+        var self = this;
+        if ($action.attr('target') === 'dialog') {
+            this.view.form_dialog.select_id(this.id).then(function() {
+                self.view.form_dialog.open();
+            });
+        } else {
+            if (self.view.dataset.select_id(this.id)) {
+                this.view.do_switch_view('page');
             } else {
                 this.do_warn("Kanban: could not find id#" + id);
             }

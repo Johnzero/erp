@@ -81,6 +81,8 @@
                     <field name="user_id"/>
                     <field name="url" widget="url"/>
                     <field name="product_model"/>
+                    <field name="starandprice"/>
+                    <field name="price"/>
                     <notebook colspan="4">
                         <page string="截图">
                             <field name="screenshot" widget="image"/>

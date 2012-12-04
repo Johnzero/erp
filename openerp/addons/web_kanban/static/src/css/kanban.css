@@ -34,13 +34,13 @@
     -o-transform: rotate(90deg);
     -ms-transform: rotate(90deg);
     transform: rotate(90deg);
-    width: 30px;
+    width: 17px;
     height: 20px;
-    font-size: 24px;
+    font-size: 20px;
     white-space: nowrap;
     display: none;
     position: absolute;
-    top: 10px;
+    top: 2px;
 }
 .openerp .oe_kanban_show_more {
     clear: both;

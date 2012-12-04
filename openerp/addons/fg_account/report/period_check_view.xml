@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
         
@@ -27,13 +27,13 @@
             <field name="model">fg_account.period.check</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="对账单" colors="red:t == '退回'">
+                <tree string="对账单" colors="red:amount &lt; 0">
                     <field name="name"/>
                     <field name="o_date"/>
                     <field name="o_partner"/>
                     <field name="t"/>
                     <field name="reconciled"/>
-                    <field name="amount"/>
+                    <field name="amount" sum="本页总额"/>
                     <field name="note"/>
                     <field name="cleared" groups="fg_account.group_fg_account_manager" />
                     <button name="button_view" string="单据" icon="STOCK_JUMP_TO" type="object"/>
@@ -57,6 +57,7 @@
                     <field name="o_partner"/>
                     <field name="due_date_from" filter_domain="[('o_date','&gt;=',self)]"/>
                     <field name="due_date_to" filter_domain="[('o_date','&lt;=',self)]"/>
+					<field name="t"/>
                 </search>
             </field>
         </record>
@@ -73,6 +74,7 @@
                     <field name="o_partner"/>
                     <field name="due_date_from" filter_domain="[('o_date','&gt;=',self)]"/>
                     <field name="due_date_to" filter_domain="[('o_date','&lt;=',self)]"/>
+					<field name="t"/>
                 </search>
             </field>
         </record>
@@ -114,7 +116,7 @@
             <field name="res_model">fg_account.period.check</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
-            <field name="domain">[('o_date','&gt;=','2012-06-01'),('t','in',['发货额','退回'])]</field>
+            <field name="domain">[('o_date','&gt;=','2012-06-01'),('t','in',['发货额','退货'])]</field>
             <field name="view_id" ref="fg_account_period_check_tree_view"/>
             <field name="search_view_id" ref="view_fg_account_period_clear_filter"/>
         </record>

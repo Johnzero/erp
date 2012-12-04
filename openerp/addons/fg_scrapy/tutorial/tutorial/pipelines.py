@@ -21,7 +21,6 @@ class JsonWriterPipeline(object):
         
         reload(sys)
         sys.setdefaultencoding('utf8')
-        
         dirv = os.path.abspath("")
         wkb = xlrd.open_workbook(dirv+"\\"+"updateitems.xls")
         sheet = wkb.sheets()[0]
@@ -37,16 +36,19 @@ class JsonWriterPipeline(object):
             
         reg4 = (';q=(.*?)&amp;')
         li4 = re.findall(reg4,li)
+        price = 0
         for rows in range(sheet.nrows):
             if li4[0].strip() == sheet.cell(rows,0).value.strip():
                 price = sheet.cell(rows,1).value
-            else:price = 0
         #get storename
-        reg2 = '>\S+\s+(\S+)\s+</a>'
+        reg2 ='>(.*)</a>'
         name = re.findall(reg2,item['link'])
-        
+        reg = '[u"\xa0"]+(.*)'
+        name = re.findall(reg,name[0])
+        if not len(name):
+            name = [""]
         self.file.write(li2[0] + ''','href':''' + "'" + li3[0] + "'" + ",'date':" + "'" + cdate + "'" + ",'item':" + "'" +
-                        li4[0] + "'"  + ",'standardprice':" + "'" + str(price) + "'" + ",'name':" + "'" + str(name[0]) + "'" + '\n' )
+                        li4[0] + "'"  + ",'standardprice':" + "'" + str(price) + "'" + ",'name':" + "'" + str(name[0].strip()) + "'" + '\n' )
         
         return item
 

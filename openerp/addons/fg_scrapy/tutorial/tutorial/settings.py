@@ -13,7 +13,7 @@ NEWSPIDER_MODULE = 'tutorial.spiders'
 ITEM_PIPELINES = ['tutorial.pipelines.JsonWriterPipeline']
 LOG_LEVEL = 'WARNING'
 DOWNLOAD_TIMEOUT = 540
-DOWNLOAD_DELAY = 1
+#DOWNLOAD_DELAY = 1
 #LOG_FILE = r'C:\Users\Administrator\Desktop\log.txt'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'

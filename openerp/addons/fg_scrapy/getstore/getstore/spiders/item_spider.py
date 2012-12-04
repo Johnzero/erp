@@ -15,62 +15,94 @@ import urllib2
 class ItemSpider(BaseSpider):
 	
     name = "item"
-    allowed_domains = ["http://s.taobao.com/"]
+    allowed_domains = [""]
     reload(sys)
     #socket.setdefaulttimeout(8.0)
     sys.setdefaultencoding('utf8')
-    
     dirf = os.path.abspath('.')
-    wkb = xlrd.open_workbook(dirf+"\\FGA.xls")
-    sheet = wkb.sheets()[0]
     
     itemname = []
-    for rows in range(sheet.nrows):
-    	if rows >0:
-    	    itemname.append(sheet.cell(rows,0).value)
-    append = 'http://s.taobao.com/search?&q=%B8%BB%B9%E2'
     urls = []
-    for i in itemname:
-	urls.append(append+i+'&style=grid')
+    listurls = []
+    
+    urls = ['http://shopsearch.taobao.com/search?v=shopsearch&q=%B8%BB%B9%E2','http://s.etao.com/search?spm=1002.8.1.1272.AMP1SB&q=%B8%BB%B9%E2&style=grid&initiative_id=setao_20121101&fseller=%BE%A9%B6%AB%C9%CC%B3%C7%2C%D1%C7%C2%ED%D1%B7%2C%B5%B1%B5%B1%CD%F8%2C%BF%E2%B0%CD%B9%BA%CE%EF%2C2688%CD%F8%B5%EA%2C1%BA%C5%B5%EA%2C%B2%A9%BF%E2%CA%E9%B3%C7%2C%D6%D0%D3%CA%BF%EC%B9%BA%2C%D6%D0%B9%FA%BB%A5%B6%AF%B3%F6%B0%E6%CD%F8%2C%C8%FD%CC%E6%B9%BA%CE%EF%CD%F8%B9%D9%CD%F8%2C%C0%FB%C8%BA%D2%BD%D2%A9%D0%C5%CF%A2%CD%F8%2C99%CD%F8%C9%CF%CA%E9%B3%C7%2C%C0%FB%C8%BA%C9%CC%B3%C7%2C%D2%BB%BA%C5%C9%CC%B3%C7%B9%D9%CD%F8%2C%B5%C0%CE%BB%B9%BA%C9%CC%B3%C7%2C%C2%F2%B2%E8%CD%F8%2C%C2%F2%B6%E0%CD%F8%2C%B9%C5%BC%AE%CD%F8%2CQQ%CD%F8%B9%BA%B9%D9%CD%F8%2C%B5%E3%B5%E3%CD%F8%2C%CE%B5%C0%B6%CA%E9%B5%EA%2C%D6%D0%B9%FA%CD%BC%CA%E9%CD%F8%2C%CD%F8%C9%CF%CC%EC%BA%E7%B9%D9%CD%F8%2C%C8%CA%BA%CD%B4%BA%CC%EC%B0%D9%BB%F5%2C%D2%F8%C1%AA%D4%DA%CF%DF%2C%BC%D2%C0%D6%B8%A3%D4%DA%CF%DF%C9%CC%B3%C7%2C%C2%F3%B5%C2%C1%FA%B9%D9%B7%BD%CD%F8%C9%CF%C9%CC%B3%C7',
+	   ]
+    
     for url in urls:
-	try:
-	    request = urllib2.Request(urls[0],headers={"User-Agent":"Mozilla-Firefox5.0"})
-	    res = urllib2.urlopen(request)
-	except:
-	    pass
-	data = res.read()
-    
-	#class="cat-noresult"
-	reg3 = 'class="cat-noresult"'
-	noresult = re.findall(reg3,data)
-	
-	if not noresult:
+	if not 'shopsearch' in url: 
+	    try:
+		request = urllib2.Request(url,headers={"User-Agent":"Mozilla-Firefox5.0"})
+		res = urllib2.urlopen(request)
+	    except:
+		pass
+	    data = res.read()
 	    
-	    reg = 'page-bottom">(.*?)page-skip'
-	    reg2 = 'href="(.*?)"'
-	    string = re.findall(reg,data)
-	    print url,"*************"
-	    print string,"***************"
-	    string2 = re.findall(reg2,string[0])
-	    for urlitem in string2:
-		url = "http://s.taobao.com" + urlitem
-		if not url in urls:
-		    urls.append(url)
+	    reg3 = 'class="correction-panel"'
+	    noresult = re.findall(reg3,data)
+	    if not noresult:
+		if data:
+		    reg = '<span>(.*)</span><span>'
+		    reg2 = "\xb9\xb2(.*)\xd2\xb3"
+		    string = re.findall(reg,data)
+		    if string:
+			string2= re.findall(reg2,string[0])
+			num = int(string2[0])
+			urladd = ''
+			for n in range(num):
+			    urladd = url + "&s=" + str(n*36)
+			    if not urladd in listurls:
+				listurls.append(urladd)
+		    else:
+			listurls.append(url)
+	    else:
+		continue
+	
 	else:
-	    continue
+	    try:
+		request = urllib2.Request(url,headers={"User-Agent":"Mozilla-Firefox5.0"})
+		res = urllib2.urlopen(request)
+	    except:
+		pass
+	    data = res.read()
+	    reg3 = 'class="correction-panel"'
+	    noresult = re.findall(reg3,data)
+	    if not noresult:
+		if data:
+		    reg2 = "\xb9\xb2(.*)\xd2\xb3"
+		    string = re.findall(reg2,data)
+		    if string:
+			num = int(string[0])
+			urladd = ''
+			for n in range(num):
+			    urladd = url + "&s=" + str(n*20)
+			    if not urladd in listurls:
+				listurls.append(urladd)
+		    else:
+			listurls.append(url)
+	    else:
+		continue
+	
+	print len(listurls),"*******"
     
-    #start_urls = ['http://s.taobao.com/search?&q=FZ1002-280&style=grid']
-    start_urls=[url for url in urls]
-    print start_urls
+    start_urls = [ l for l in listurls]
+    #start_urls = ['http://shopsearch.taobao.com/search?q=%B8%BB%B9%E2&v=shopsearch&fs=1&jumpto=1&s=0&n=20']	
+    
     def parse(self, response):
         hxs = HtmlXPathSelector(response)
-	sites = hxs.select('//li[@class="list-item"]')
+        sites = hxs.select('//div[@class="griditem"]')
 	items = []
-	for site in sites:
-	    item = GetstoreItem()          
-	    item["link"] = site.extract()
-	    items.append(item)
-        #sites = hxs.select('//div[@class="griditem"]')
-        return items
-    
-    
+	if sites:
+	    for site in sites:
+		item = GetstoreItem()          
+		item['title'] = site.select('h2[@class="title"]').extract()[0]
+		item['link'] = site.select('div/div/a[@class="label-m-info"]').extract()[0]
+		items.append(item)
+	    
+	else:
+	    sites = hxs.select('//li[@class="list-item"]')
+	    for a in sites:
+		it = GetstoreItem()          
+		it['title'] = a.extract()
+		items.append(it)
+        
+	return items

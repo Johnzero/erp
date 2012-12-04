@@ -78,10 +78,12 @@ class fg_online_shop_violation(osv.osv):
         "user_id":fields.many2one('res.users', '记录人', readonly=True),
         
         "url":fields.text("页面URL地址", required=True),
-        "screenshot":fields.binary("违规页面截图", required=True),
+        "screenshot":fields.binary("违规页面截图",),
         "product_model":fields.char("货号",size=64,required=True),
-        "reason": fields.text('违规原因', required=True),
-        "point": fields.integer('扣分', required=True),
+        "starandprice":fields.char("终端零售价格",size=64),
+        "price":fields.char("该店价格",size=64),
+        "reason": fields.text('违规原因', required=False),
+        "point": fields.integer('扣分', required=False),
         'note':fields.text('附注'),
     }
 

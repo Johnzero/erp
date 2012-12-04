@@ -12,6 +12,8 @@
         	<field eval="'scrapy'" name="model" />
         	<field eval="'run_scheduler'" name="function" />
         	<field name="args">()</field>
+		<field name="active">1</field>
+		<field name="priority">1</field>
         </record>
     </data>
 </openerp>

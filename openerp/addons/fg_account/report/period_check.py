@@ -22,6 +22,8 @@ class reconcile_item(osv.osv_memory):
         'note':fields.text('附注'),
     }
     
+    _order = 'o_date asc'
+    
     def button_view(self, cr, uid, ids, context=None):
         record = self.browse(cr, uid, ids)[0]
 
@@ -31,12 +33,14 @@ class reconcile_item(osv.osv_memory):
                 'view_mode': 'form',
                 'view_type': 'form',
                 'res_model': record.ref_doc._table_name,
-                'res_id': record.id,
+                'res_id': record.ref_doc.id,
                 'target': 'new',
                 'context': context,
             }
-        if record.ref_doc._table_name == 'fg_account.bill':
-            r['res_id'] = record.id - 1000000000
+        #if record.ref_doc._table_name == 'fg_account.bill':
+        #    r['res_id'] = record.id - 1000000000
+        #
+        #print r
         
         return r
 
@@ -59,7 +63,7 @@ class period_check(osv.osv):
         'due_date_to':fields.function(lambda *a,**k:{}, method=True, type='date',string="结束日期"),
         'note':fields.text('附注'),
     }
-    _order = 'id asc'
+    _order = 'o_date asc'
     
     def button_view(self, cr, uid, ids, context=None):
         record = self.browse(cr, uid, ids)[0]
@@ -132,7 +136,7 @@ class period_check(osv.osv):
             			'fg_sale.order,' || o."id" AS ref_doc,
             			o.date_order AS o_date,
             			o.partner_id AS o_partner,
-            			'退回' AS T,
+            			'退货' AS T,
             			o.reconciled AS reconciled,
             			SUM(line.subtotal_amount)AS amount,
             			o.note AS note,
@@ -155,11 +159,11 @@ class period_check(osv.osv):
             			(bill."id"+ 1000000000) AS ID,
             			bill.name as name,
             			'fg_account.bill,' || bill."id" AS ref_doc,
-            			bill.date_paying AS o_date,
+            			bill.date_check AS o_date,
             			bill.partner_id AS o_parnter,
             			cate."name" AS T,
             			bill.reconciled AS reconciled,
-            			bill.amount AS amount,
+            			(0-bill.amount) AS amount,
             			bill.note AS note,
             			False as cleared
             		FROM
