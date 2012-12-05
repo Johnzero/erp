@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 	<data>
@@ -8,4 +9,16 @@
 	        <field name="name">竞争对手分析子系统 / 管理员</field>
 	    </record>
 	</data>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+	    <record id="group_fg_competitor_user" model="res.groups">
+	        <field name="name">竞争对手分析子系统 / 用户</field>
+	    </record>
+	    <record id="group_fg_competitor_manager" model="res.groups">
+	        <field name="name">竞争对手分析子系统 / 管理员</field>
+	    </record>
+	</data>
+>>>>>>> 114326c9601ad8c13a1884a69ead2e8c1cf432d1
 </openerp>

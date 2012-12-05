@@ -374,12 +374,17 @@ class reconcile_export(osv.osv_memory):
                 
                 if p[2] == '发货额':
                     last_amount = last_amount + p[4]
+<<<<<<< HEAD
                     sheet1.write(i, 2, p[4])
+=======
+                    sheet1.write(i, 2, abs(p[4]))
+>>>>>>> 114326c9601ad8c13a1884a69ead2e8c1cf432d1
                 elif p[2] == '退货':
                     last_amount = last_amount + p[4]
-                    sheet1.write(i, 3, p[4])
+                    sheet1.write(i, 3, abs(p[4]))
                 elif p[2] == '现金':
                     last_amount = last_amount + p[4]
+<<<<<<< HEAD
                     sheet1.write(i, 4, p[4])
                 elif p[2] == '转账':
                     last_amount = last_amount + p[4]
@@ -387,6 +392,15 @@ class reconcile_export(osv.osv_memory):
                 elif p[2] == '让利':
                     last_amount = last_amount + p[4]
                     sheet1.write(i, 7, p[4])
+=======
+                    sheet1.write(i, 4, abs(p[4]))
+                elif p[2] == '转账':
+                    last_amount = last_amount + p[4]
+                    sheet1.write(i, 6, abs(p[4]))
+                elif p[2] == '让利':
+                    last_amount = last_amount + p[4]
+                    sheet1.write(i, 7, abs(p[4]))
+>>>>>>> 114326c9601ad8c13a1884a69ead2e8c1cf432d1
                     
                 sheet1.write(i, 8, last_amount)
                 
