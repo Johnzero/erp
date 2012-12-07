@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record id="fg_hr_attendance_import_wizard" model="ir.ui.view">
+            <field name="name">导入考勤明细</field>
+            <field name="model">fg_hr.attendance.import.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+              <form string="说明">
+				    <field name="work_time"/>
+                    <field name="excel"/>
+                    <group colspan="4" col="6">
+                        <button  icon="gtk-close" special="cancel" string="关闭"/>
+                        <button icon="gtk-ok" name="import_list" string="导入" type="object"/>
+                    </group>
+            </form>
+            </field>
+        </record>
+		
+        <record id="action_fg_hr_attendance_import_wizard" model="ir.actions.act_window">
+            <field name="name">导入考勤明细</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">fg_hr.attendance.import.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="fg_hr_attendance_import_wizard"/>
+            <field name="target">new</field>
+        </record>
+		
+		<menuitem id="menu_fghr_attendance_import_wizard" action="action_fg_hr_attendance_import_wizard" parent="menu_fghr_attendance" sequence="2"/>
+		
+	</data>
+</openerp>

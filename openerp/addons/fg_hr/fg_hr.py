@@ -13,6 +13,7 @@ class fghr_salary(osv.osv):
         'post':fields.float('岗位工资', digits=(8, 1)),
         'performance':fields.float('绩效工资', digits=(8, 1)),
     }
+    
 
 class fghr_attendance(osv.osv):
     _name = 'fg_hr.attendance'
@@ -20,15 +21,19 @@ class fghr_attendance(osv.osv):
     
     _columns = {
         'employee_id': fields.many2one('hr.employee', '员工', required=True, select=True),
-        'data': fields.date('考勤日期', required=True, select=True),
+        'date': fields.date('考勤日期', required=True, select=True),
         'date_import': fields.date('导入日期'),
         'am_checkin': fields.datetime('早晨上班'),
         'am_checkout': fields.datetime('早晨下班'),
         'pm_checkin': fields.datetime('下午上班'),
         'pm_checkout': fields.datetime('下午下班'),
+        'state': fields.selection([('normal', '正常'), ('late', '迟到'), ('early', '早退'), ('abnormal','不正常')], '状态', select=True),
+        'note':fields.char('附注', size=200),
     }
     
+    _order = 'date desc'
     
     _defaults = {
         'date_import': fields.date.context_today,
+        'state': 'normal',
     }

@@ -13,6 +13,7 @@
     'update_xml': [
         'security/ir.model.access.csv',
         'hr_view.xml',
+        'wizard/wizards.xml',
     ],
     'demo_xml': [],
     'installable': True,

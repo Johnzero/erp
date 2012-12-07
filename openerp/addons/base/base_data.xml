@@ -1099,7 +1099,7 @@
         <record id="main_company" model="res.company">
             <field name="name">安徽省富光实业股份有限公司</field>
             <field name="partner_id" ref="main_partner"/>
-            <field name="rml_footer1">网址: www.fuguangchina.com - 电话: (+86) 551-8751888</field>
+            <field name="rml_footer1">网址: www.fuguang.cn - 电话: (+86) 551-8751888</field>
             <field name="rml_footer2">真情相伴富光杯</field>
             <field name="currency_id" ref="base.CNY"/>
         </record>
