@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+        <record id="fghr_salary_tree" model="ir.ui.view">
+            <field name="name">fg_hr.salary.tree</field>
+            <field name="model">fg_hr.salary</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="工资配置" editable="bottom">
+                    <field name="employee_id"/>
+                    <field name="basic"/>
+                    <field name="post"/>
+                    <field name="performance"/>
+                </tree>
+            </field>
+        </record>
+		
+        <record id="fghr_salary_form" model="ir.ui.view">
+            <field name="name">fg_hr.salary.form</field>
+            <field name="model">fg_hr.salary</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="工资配置">
+                    <field name="employee_id"/>
+                    <field name="basic"/>
+                    <field name="post"/>
+                    <field name="performance"/>
+                </form>
+			</field>
+		</record>
+		
+        <record id="fghr_attendance_tree" model="ir.ui.view">
+            <field name="name">fg_hr.attendance.tree</field>
+            <field name="model">fg_hr.attendance</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="考勤记录" editable="bottom">
+					<field name="data"/>
+                    <field name="employee_id"/>
+                    <field name="am_checkin"/>
+                    <field name="am_checkout"/>
+                    <field name="pm_checkin"/>
+					<field name="pm_checkout"/>
+                </tree>
+            </field>
+        </record>
+		
+        <record id="fghr_attendance_form" model="ir.ui.view">
+            <field name="name">fg_hr.attendance.form</field>
+            <field name="model">fg_hr.attendance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="考勤记录">
+					<field name="data"/>
+                    <field name="employee_id"/>
+                    <field name="am_checkin"/>
+                    <field name="am_checkout"/>
+                    <field name="pm_checkin"/>
+					<field name="pm_checkout"/>
+                </form>
+			</field>
+		</record>
+		
+        <record id="fghr_salary_tree_action" model="ir.actions.act_window">
+            <field name="name">工资配置</field>
+            <field name="res_model">fg_hr.salary</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="fghr_salary_tree"/>
+            <!-- <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_employee_filter"/> -->
+        </record>
+	
+		
+        <record id="fghr_attendance_tree_action" model="ir.actions.act_window">
+            <field name="name">工资配置</field>
+            <field name="res_model">fg_hr.attendance</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="fghr_attendance_tree"/>
+            <!-- <field name="domain">[('parent_id','=',False)]</field>
+            <field name="search_view_id" ref="view_employee_filter"/> -->
+        </record>
+		
+		<menuitem id="menu_fghr_salary" name="工资配置" parent="hr.menu_hr_configuration" sequence="1" action="fghr_salary_tree_action"/>
+		
+		<menuitem id="menu_fghr_attendance" name="考勤" parent="hr.menu_hr_root" groups="base.group_hr_user,base.group_hr_manager" sequence="2"/>
+		
+		<menuitem id="menu_fghr_attendance_list" action="fghr_attendance_tree_action" name="考勤明细" parent="menu_fghr_attendance" sequence="1"/>
+		
+	</data>
+</openerp>

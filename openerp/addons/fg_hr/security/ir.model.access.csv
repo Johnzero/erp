@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fg_hr_salary_user,fg_hr.salary user,model_fg_hr_salary,base.group_hr_user,1,1,1,0
+access_fg_hr_salary_manager,fg_hr.salary manager,model_fg_hr_salary,base.group_hr_manager,1,1,1,1
+
+access_fg_hr_salary_user,fg_hr.salary user,model_fg_hr_salary,base.group_hr_user,1,1,1,0
+access_fg_hr_attendance_manager,fg_hr.attendance manager,model_fg_hr_attendance,base.group_hr_manager,1,1,1,1
