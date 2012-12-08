@@ -27,7 +27,9 @@ class fghr_attendance(osv.osv):
         'am_checkout': fields.datetime('早晨下班'),
         'pm_checkin': fields.datetime('下午上班'),
         'pm_checkout': fields.datetime('下午下班'),
-        'state': fields.selection([('normal', '正常'), ('late', '迟到'), ('early', '早退'), ('abnormal','不正常')], '状态', select=True),
+        'late': fields.integer('迟到(分钟)'),
+        'early': fields.integer('早退(分钟)'),
+        'state': fields.selection([('normal', '正常'), ('late', '迟到'), ('early', '早退'), ('abnormal','记录不完整')], '状态', select=True),
         'note':fields.char('附注', size=200),
     }
     

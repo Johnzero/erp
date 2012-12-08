@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from osv import osv, fields
-import time, xlrd, base64
-from datetime import datetime
-from tools import DEFAULT_SERVER_DATE_FORMAT
-import xlwt, cStringIO
+import time, xlrd, base64, xlwt, cStringIO
+from datetime import datetime,timedelta
+
+def convert_datetime(dt, t):
+    return datetime(dt.tm_year, dt.tm_mon, dt.tm_mday, *t[-3:])
 
 class attendance_import(osv.osv_memory):
     _name = "fg_hr.attendance.import.wizard"
@@ -21,6 +22,8 @@ class attendance_import(osv.osv_memory):
     
     def import_list(self, cr, uid, ids, context=None):
         result = {'type': 'ir.actions.act_window_close'}
+        
+        
         for wiz in self.browse(cr,uid,ids):
             if not wiz.excel: continue
             excel = xlrd.open_workbook(file_contents=base64.decodestring(wiz.excel))
@@ -34,66 +37,70 @@ class attendance_import(osv.osv_memory):
             
             new_ids = []
             for rx in range(sh.nrows):
-                if sh.cell(rx, 2).value:
-                    print '---------------'
-                    print sh.cell(rx, 2).value
-                    print datetime.strptime(' '.join([sh.cell(rx, 2).value, '07:30:00']), '%Y-%m-%d %H:%M:%S')
-                    print '---------------'
-                
                 data = {}
-                try:
-                    date_s = sh.cell(rx, 2).value.strip()
-                    print date_s
-                    date = time.strptime(date_s.strip(),'%Y.%m.%d')
-                    data['date'] = date
-                except:
+                empl_name = sh.cell(rx, 2).value.strip()
+                if not empl_name or empl_name=='姓名' : continue
+                empl_list = empl_obj.search(cr, uid, [('name','=',empl_name)])
+                if empl_list:
+                    data['employee_id'] = empl_list[0]
+                else:
                     continue
-                
-                am_start_work = datetime.strptime(' '.join([date_s, '07:30:00']), '%Y-%m-%d %H:%M:%S')
-                am_end_word = datetime.strptime(' '.join([date_s, '11:30:00']), '%Y-%m-%d %H:%M:%S')
-                pm_start_work = datetime.strptime(' '.join([date_s, '13:30:00']), '%Y-%m-%d %H:%M:%S')
-                pm_end_word = datetime.strptime(' '.join([date_s, '17:30:00']), '%Y-%m-%d %H:%M:%S')
-                if wiz.work_time == 'summer':
-                    am_start_work = datetime.strptime(' '.join([date_s, '07:00:00']), '%Y-%m-%d %H:%M:%S')
-                    pm_start_work = datetime.strptime(' '.join([date_s, '14:30:00']), '%Y-%m-%d %H:%M:%S')
-                    pm_end_word = datetime.strptime(' '.join([date_s, '18:00:00']), '%Y-%m-%d %H:%M:%S')
-                
-                empl_name = str(sh.cell(rx, 0).value).strip()
-                print empl_name
-                if empl_name:
-                    empl_list = empl_obj.search(cr, uid, [('name','=',empl_name)])
-                    if empl_list:
-                        data['employee_id'] = empl_list[0]
+
+                try:
+                    date_s = sh.cell(rx, 4).value.strip()
+                    date = time.strptime(date_s,'%Y-%m-%d')
+                    data['date'] = date_s
+                    am_s = am_e = pm_s = pm_e = ''
+                    if sh.cell(rx, 5).value:
+                        am_s = xlrd.xldate_as_tuple(sh.cell(rx, 5).value, 0)
+                        am_s = convert_datetime(date, am_s)
+                        data['am_checkin'] = datetime.strftime(am_s-timedelta(hours=8), '%Y-%m-%d %H:%M:%S')
+                        
+                    if sh.cell(rx, 6).value:
+                        am_e = xlrd.xldate_as_tuple(sh.cell(rx, 6).value, 0)
+                        am_e = convert_datetime(date, am_e)
+                        data['am_checkout'] = datetime.strftime(am_e-timedelta(hours=8), '%Y-%m-%d %H:%M:%S')
+                    
+                    if sh.cell(rx, 7).value:
+                        pm_s = xlrd.xldate_as_tuple(sh.cell(rx, 7).value, 0)
+                        pm_s = convert_datetime(date, pm_s)
+                        data['pm_checkin'] = datetime.strftime(pm_s-timedelta(hours=8), '%Y-%m-%d %H:%M:%S')
+                        
+                    if sh.cell(rx, 8).value:
+                        pm_e = xlrd.xldate_as_tuple(sh.cell(rx, 8).value, 0)
+                        pm_e = convert_datetime(date, pm_e)
+                        data['pm_checkout'] = datetime.strftime(pm_e-timedelta(hours=8), '%Y-%m-%d %H:%M:%S')
+
+                        am_start_work = datetime.strptime(' '.join([date_s, '07:30:00']), '%Y-%m-%d %H:%M:%S')
+                        am_end_work = datetime.strptime(' '.join([date_s, '11:30:00']), '%Y-%m-%d %H:%M:%S')
+                        pm_start_work = datetime.strptime(' '.join([date_s, '13:30:00']), '%Y-%m-%d %H:%M:%S')
+                        pm_end_work = datetime.strptime(' '.join([date_s, '17:30:00']), '%Y-%m-%d %H:%M:%S')
+                        
+                        if wiz.work_time == 'summer':
+                            am_start_work = datetime.strptime(' '.join([date_s, '07:00:00']), '%Y-%m-%d %H:%M:%S')
+                            pm_start_work = datetime.strptime(' '.join([date_s, '14:30:00']), '%Y-%m-%d %H:%M:%S')
+                            pm_end_work = datetime.strptime(' '.join([date_s, '18:00:00']), '%Y-%m-%d %H:%M:%S')
+                    
+                    if am_s and am_e and pm_s and pm_e:
+                        #see if it's late.
+                        data['late'] = 0
+                        am_dd = (am_s-am_start_work).total_seconds()
+                        if am_dd > 60:
+                            data['state'] = 'late'
+                            data['late'] = round(am_dd/60)
+                        
+                        pm_dd = (pm_s-pm_start_work).total_seconds()
+                        if pm_dd > 60:
+                            data['state'] = 'late'
+                            data['late'] = data['late'] + round(pm_dd/60)
+                        
+                        if (am_e < am_end_work) or (pm_e<pm_end_work):
+                            data['state'] = 'early'
                     else:
-                        continue
-                else:
+                        data['state'] = 'abnormal'
+                except Exception as e:
                     continue
-                try:
-                    if str(sh.cell(rx, 3).value).strip():
-                        data['am_checkin'] = datetime.strptime(' '.join([date_s, str(sh.cell(rx, 3).value).strip()]), 
-                            '%Y-%m-%d %H:%M:%S')
-                    if str(sh.cell(rx, 4).value).strip():
-                        data['am_checkout'] = datetime.strptime(' '.join([date_s, str(sh.cell(rx, 4).value).strip()]), 
-                            '%Y-%m-%d %H:%M:%S')
-                    if str(sh.cell(rx, 5).value).strip():
-                        data['pm_checkin'] = datetime.strptime(' '.join([date_s, str(sh.cell(rx, 5).value).strip()]), 
-                            '%Y-%m-%d %H:%M:%S')
-                    if str(sh.cell(rx, 6).value).strip():
-                        data['pm_checkout'] = datetime.strptime(' '.join([date_s, str(sh.cell(rx, 6).value).strip()]), 
-                            '%Y-%m-%d %H:%M:%S')
-                except:
-                    continue
-                
-                #see that is the state.
-                data['state'] = 'normal'
-                if data['am_checkin'] and data['am_checkout'] and data['pm_checkin'] and data['pm_checkout']:
-                    if data['am_checkin'] < am_start_work or data['pm_checkin'] < pm_start_work:
-                        data['state'] = 'late'
-                    if data['am_checkout'] > am_end_work or data['pm_checkout'] > pm_end_work:
-                        data['state'] = 'early'
-                else:
-                    data['state'] = 'abnormal'
-                
+
                 id = att_obj.create(cr, uid, data)
                 new_ids.append(id)
             
@@ -103,3 +110,87 @@ class attendance_import(osv.osv_memory):
             result['domain'] = "[('id','in', ["+','.join(map(str, new_ids))+"])]"
             
         return result
+        
+        
+class salary_export(osv.osv_memory):
+    _name = "fg_hr.salary.export.wizard"
+    _description = "导出"
+    
+    _columns = {
+        'work_time': fields.selection([('summer', '夏季'), ('winter', '冬季')], '时令'),
+        'date_start': fields.date('开始日期',  required=True),
+        'date_end': fields.date('结束日期',  required=True),
+        'name': fields.char('文件名', 16,),
+        'data': fields.binary('文件',),
+        'state': fields.selection( [('choose','choose'),   # choose
+                                     ('get','get'),         # get the file
+                                   ] ),
+    }
+    
+    _defaults = {
+        'date_end': fields.date.context_today,
+        'state': lambda *a: 'choose',
+        'name': 'salary.xls',
+    }
+    
+    
+    def export_excel(self, cr, uid, ids, context=None):
+        book = xlwt.Workbook(encoding='utf-8')
+        this = self.browse(cr, uid, ids)[0]
+        
+        sheet1 = book.add_sheet('salary')
+        sql = """
+        SELECT
+        	att.employee_id,
+        	SUM(
+        		CASE
+        		WHEN att."state" = 'normal' THEN
+        			1
+        		ELSE
+        			0
+        		END
+        	)AS normal,
+        	SUM(
+        		CASE
+        		WHEN att."state" = 'late' THEN
+        			att.late
+        		ELSE
+        			0
+        		END
+        	)AS late,
+        	SUM(
+        		CASE
+        		WHEN att."state" = 'early' THEN
+        			1
+        		ELSE
+        			0
+        		END
+        	)AS early,
+        	SUM(
+        		CASE
+        		WHEN att."state" = 'abnormal' THEN
+        			1
+        		ELSE
+        			0
+        		END
+        	)AS abnormal
+        FROM
+        	fg_hr_attendance att
+        WHERE
+        	att."date" >= to_date('2012-11-01', 'YYYY-MM-DD')
+        AND att."date" <= to_date('2012-11-30', 'YYYY-MM-DD')
+        GROUP BY
+        	att.employee_id
+        """
+        
+        cr.execute()
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+
+        out=base64.encodestring(buf.getvalue())
+
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':this.name }, context=context)
+        
+            
+    
