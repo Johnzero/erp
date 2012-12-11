@@ -1,33 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-	<data>
-        <record id="fg_hr_attendance_import_wizard" model="ir.ui.view">
-            <field name="name">导入考勤明细</field>
-            <field name="model">fg_hr.attendance.import.wizard</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-              <form string="说明">
-				    <field name="work_time"/>
-                    <field name="excel"/>
-                    <group colspan="4" col="6">
-                        <button  icon="gtk-close" special="cancel" string="关闭"/>
-                        <button icon="gtk-ok" name="import_list" string="导入" type="object"/>
-                    </group>
-            </form>
-            </field>
-        </record>
-		
-        <record id="action_fg_hr_attendance_import_wizard" model="ir.actions.act_window">
-            <field name="name">导入考勤明细</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">fg_hr.attendance.import.wizard</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="fg_hr_attendance_import_wizard"/>
-            <field name="target">new</field>
-        </record>
-		
-		<menuitem id="menu_fghr_attendance_import_wizard" action="action_fg_hr_attendance_import_wizard" parent="menu_fghr_attendance" sequence="2"/>
-		
-	</data>
+        <data>
+            <record id="fg_hr_attendance_import_wizard" model="ir.ui.view">
+                <field name="name">导入考勤明细</field>
+                <field name="model">fg_hr.attendance.import.wizard</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                  <form string="说明">
+                        <separator colspan="4" string="选择的日期和导入的月份应该一致，不能重复导入。" />
+                        <field name="date"/>
+                        <field name="excel"/>
+                        <group colspan="4" col="6">
+                            <button  icon="gtk-close" special="cancel" string="关闭"/>
+                            <button icon="gtk-ok" name="import_list" string="导入" type="object"/>
+                        </group>
+                </form>
+                </field>
+            </record>
+                    
+            <record id="action_fg_hr_attendance_import_wizard" model="ir.actions.act_window">
+                <field name="name">导入考勤明细</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">fg_hr.attendance.import.wizard</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="fg_hr_attendance_import_wizard"/>
+                <field name="target">new</field>
+            </record>
+            
+            
+            <record id="fg_hr_salary_export_wizard" model="ir.ui.view">
+                <field name="name">导出工资报表</field>
+                <field name="model">fg_hr.salary.export.wizard</field>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+                  <form string="说明">
+                        <group states="choose">
+                            <field name="date"/>
+                            <field invisible="1" name="state"/>
+                        </group>
+                        <group colspan="4" col="6" states="choose">
+                            <button  icon="gtk-close" special="cancel" string="关闭"/>
+                            <button icon="gtk-ok" name="export_excel" string="导出" type="object"/>
+                        </group>
+                        <group states="get">
+                            <separator string="导出完成, 点击'另存为'下载统计表." colspan="4"/>
+                            <field name="name" invisible="1"/>
+                            <field name="data" nolabel="1" readonly="1" filename="name" />
+                        </group>
+                        <group colspan="8" col="8" states="get">
+                            <separator string="" colspan="8"/>
+                            <label colspan="7" width="220"/>
+                            <button icon="gtk-close" name="button_cancel" special="cancel" string="关闭" type="object"/>
+                        </group>
+                    </form>
+                </field>
+            </record>
+                    
+            <record id="action_fg_hr_salary_export_wizard" model="ir.actions.act_window">
+                <field name="name">导出工资报表</field>
+                <field name="type">ir.actions.act_window</field>
+                <field name="res_model">fg_hr.salary.export.wizard</field>
+                <field name="view_type">form</field>
+                <field name="view_mode">form</field>
+                <field name="view_id" ref="fg_hr_salary_export_wizard"/>
+                <field name="target">new</field>
+            </record>
+                
+            <menuitem id="menu_fghr_attendance_import_wizard" action="action_fg_hr_attendance_import_wizard" parent="menu_fghr_attendance" sequence="2"/>
+            <menuitem id="menu_fghr_salary_export_wizard" action="action_fg_hr_salary_export_wizard" parent="menu_fghr_attendance" sequence="3"/>
+        </data>
 </openerp>
