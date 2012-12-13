@@ -253,12 +253,26 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="促销单品统计">
-                     <field name="partner_id"/>
+                    <group states="choose">
+                    <field name="partner_id"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
-                    <group colspan="4" col="6">
+                    <field name="keyword"/>
+                    <field invisible="1" name="state"/>
+                </group>
+                <group states="get">
+                    <separator string="导出完成, 点击'另存为'下载统计表." colspan="4"/>
+                    <field name="name" invisible="1"/>
+                    <field name="data" nolabel="1" readonly="1" filename="name" />
+                </group>
+                    <group colspan="4" col="6" states="choose">
                         <button  icon="gtk-close" special="cancel" string="关闭"/>
-                        <button icon="gtk-ok" name="show_result" string="生成" type="object"/>
+                        <button icon="gtk-ok" name="export_result" string="导出" type="object"/>
+                    </group>
+                    <group colspan="8" col="8" states="get">
+                        <separator string="" colspan="8"/>
+                        <label colspan="7" width="220"/>
+                        <button icon="gtk-close" name="button_cancel" special="cancel" string="关闭" type="object"/>
                     </group>
                 </form>
             </field>

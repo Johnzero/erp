@@ -11,55 +11,98 @@ class fuguang_discount_product(osv.osv_memory):
     _description = "促销单品统计"
     
     _columns = {
+        'name': fields.char('文件名', 64, readonly=True),
         'partner_id': fields.many2one('res.partner', '客户', required=True),
         'date_start': fields.date('开始日期', required=True),
+        'keyword': fields.char('关键字', size=64),
         'date_end': fields.date('截止日期', required=True),
+        'data': fields.binary('文件', readonly=True),
+        'state': fields.selection( [('choose','choose'),   # choose 
+                                     ('get','get'),         # get the file
+                                   ] ),
     }
     
     _defaults = {
         'date_end': fields.date.context_today,
+        'keyword':'让利',
+        'state': lambda *a: 'choose',
+        'name': '促销单品统计.xls',
     }
     
-    def show_result(self, cr, uid, ids, context=None):
+    def export_result(self, cr, uid, ids, context=None):
         this = self.browse(cr, uid, ids)[0]
         sql = """
         SELECT
                 product.name_template,
+                product.default_code,
+                product."source",
                 SUM (line.product_uom_qty) AS uom_qty,
+                uom."name" AS uom_name,
                 SUM (line.aux_qty) AS aux_qty
         FROM
                 product_product product
         JOIN fg_sale_order_line line ON line.product_id = product."id"
         JOIN fg_sale_order o ON line.order_id = o."id"
+        JOIN product_template templ ON templ."id" = product.product_tmpl_id
+        JOIN product_uom uom ON uom."id" = templ.uom_id
         WHERE
                 (
                         o."state" = 'done'
                         OR o.minus = TRUE
                 )
-        AND o.note LIKE '%%促销%%'
+        AND o.note LIKE '%%%s%%'
         AND o.partner_id = %s
         AND o.date_order >= '%s'
         AND o.date_order <= '%s'
+        AND line.product_uom_qty > 0
         GROUP BY
-                product.name_template
+                product.name_template,
+                product."source",
+                uom."name",
+                product.default_code
         """
+        book = xlwt.Workbook(encoding='utf-8')
+        sheet_dict = {}
+        def _new_sheet(name):
+            sheet = book.add_sheet(name)
+            sheet_dict[name] = len(sheet_dict)
+            
+            sheet.write(0,0,'产品名称')
+            sheet.write(0,1,'产品型号')
+            sheet.write(0,2,'事业部')
+            sheet.write(0,3,'件数')
+            sheet.write(0,4,'规格')
+            sheet.write(0,5,'只数')
+            return sheet
         
-        cr.execute(sql % (this.partner_id.id, this.date_start, this.date_end))
-        report_obj = self.pool.get('fg_data.report.horizontal')
+        def _get_or_create_sheet(name):
+            if not sheet_dict.has_key(name):
+                return _new_sheet(name)
+            else:
+                return book.get_sheet(sheet_dict[name])
         
-        ids = [report_obj.create(cr, uid, {'name':p[0], 'value':p[1], 'desc':('共 %s 只'%p[2])}) for p in cr.fetchall()]
         
-        act_obj = self.pool.get('ir.actions.act_window')
-        mod_obj = self.pool.get('ir.model.data')
+        def _write_line(sheet, data):
+            i = 0
+            row_count = len(sheet.rows)
+            for item in data:
+                sheet.write(row_count, i, item)
+                i = i + 1
         
-        result = mod_obj.get_object_reference(cr, uid, 'fg_data', 'action_fg_data_report_horizontal')
-        id = result and result[1] or False
+        cr.execute(sql % (this.keyword, this.partner_id.id, this.date_start, this.date_end))
+        for p in cr.fetchall():
+            sheet = _get_or_create_sheet(p[2] or '未知来源')
+            _write_line(sheet, p)
         
-        result = act_obj.read(cr, uid, [id], context=context)[0]
-        result['domain'] = "[('id','in', ["+','.join(map(str, ids))+"])]"
-        result['limit'] = 1000
-        return result
         
+        # TODO: here, is cr did not fetch anything, xlwr will raise errors.
+        
+        buf=cStringIO.StringIO()
+        book.save(buf)
+        
+        out=base64.encodestring(buf.getvalue())
+        file_name = '促销单品统计_(%s)_%s-%s.xls' % (this.partner_id.name, this.date_start, this.date_end)
+        return self.write(cr, uid, ids, {'state':'get', 'data':out, 'name':file_name}, context=context)
 
 
 class fuguang_product_sale_toplist(osv.osv_memory):
@@ -214,12 +257,6 @@ class fuguang_amount_by_partner_product(osv.osv_memory):
                 sheet.write(row_count, i, item)
                 i = i + 1
 
-        def _write_line(sheet, data):
-            i = 0
-            row_count = len(sheet.rows)
-            for item in data:
-                sheet.write(row_count, i, item)
-                i = i + 1
         
         for p in cr.fetchall():
             sheet = _get_or_create_sheet(p[2] or '未知来源')
