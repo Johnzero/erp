@@ -45,6 +45,7 @@ class sale_order(osv.osv):
         'note': fields.text('摘要'),
         'sales_ids': fields.related('partner_id','sales_ids', type='many2many', relation='res.users', string='负责人',store=False),
         'partner_cate_ids': fields.related('partner_id', 'category_id', type='many2many', relation='res.partner.category', string='客户分类',store=False),
+        'promotion':fields.boolean('促销'),
         'sync':fields.boolean('备用'),
     }
         
@@ -53,6 +54,7 @@ class sale_order(osv.osv):
         'state': 'draft',
         'minus': False, 
         'sync':False,
+        'promotion': False,
         'user_id': lambda obj, cr, uid, context: uid,
         'partner_shipping_id': lambda self, cr, uid, context: context.get('partner_id', False) and self.pool.get('res.partner').address_get(cr, uid, [context['partner_id']], ['default'])['default'],
     }

@@ -29,6 +29,7 @@
                     <field name="partner_id"/>
                     <field name="amount_total" sum="共计"/>
                     <field name="minus"/>
+                    <field name="promotion"/>
                     <field name="state"/>
                 </tree>
             </field>
@@ -48,6 +49,7 @@
                         <field name="date_confirm"/>
                         <field name="confirmer_id"/>
                         <field name="minus"/>
+                        <field name="promotion"/>
                         <field name="amount_total"/>
                     </group>
                     <newline/>
